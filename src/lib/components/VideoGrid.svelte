@@ -1,28 +1,34 @@
 <script lang="ts">
   import { user } from "$lib/firebase";
   import { onMount } from "svelte";
+  import VideoPlayer from "./VideoPlayer.svelte";
 
-  interface Video {
+  interface VideoFileInfo {
     id: number;
-    title: string;
-    thumbnail: string;
+    name: string;
+    size: number;
+    lastModified: Date;
+    contentType: string;
   }
 
-  let videos: Video[] = [];
+  let videos: VideoFileInfo[] = [];
   let isLoading: boolean = true;
 
   onMount(async () => {
-    // Simulate fetching videos from AWS
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    videos = [
-      { id: 1, title: "Video 1", thumbnail: "" },
-      { id: 2, title: "Video 2", thumbnail: "" },
-      { id: 3, title: "Video 3", thumbnail: "" },
-      { id: 4, title: "Video 4", thumbnail: "" },
-      { id: 5, title: "Video 5", thumbnail: "" },
-      { id: 6, title: "Video 6", thumbnail: "" },
-    ];
-    isLoading = false;
+    try {
+      const response = await fetch("/api/aws");
+      if (response.ok) {
+        videos = await response.json();
+        // Sort videos by id to ensure consistent order
+        videos.sort((a, b) => a.id - b.id);
+      } else {
+        console.error("Failed to fetch video files");
+      }
+    } catch (error) {
+      console.error("Error fetching video files:", error);
+    } finally {
+      isLoading = false;
+    }
   });
 
   function playVideo(videoId: number): void {
@@ -31,9 +37,17 @@
       // Implement your video playing logic here
     }
   }
+  const videoKey = "5th.mp4";
 </script>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+{#each videos as video (video.id)}
+  <div>
+    <VideoPlayer videoKey={video.name} />
+    <p class="mt-2 text-center font-semibold">{video.name}</p>
+  </div>
+{/each}
+
+<!-- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
   {#if isLoading}
     {#each Array(6) as _}
       <div class="card bg-base-200 shadow-xl animate-pulse">
@@ -78,4 +92,4 @@
       </div>
     {/each}
   {/if}
-</div>
+</div> -->
