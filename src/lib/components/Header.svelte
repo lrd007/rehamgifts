@@ -42,7 +42,7 @@
         class="flex-none bg-[#EE8FA5] hover:bg-[#F6BBC9] min-w-44 px-4 py-2 rounded-3xl"
       >
         {#if $user && userFullName}
-          <div class="dropdown dropdown-end">
+          <div class="dropdown dropdown-end mx-auto">
             <div
               class="flex items-center gap-2 cursor-pointer transition-all duration-300 group"
               on:click={toggleDropdown}
