@@ -30,7 +30,7 @@
   $: userFullName = $userData?.fullName.toUpperCase() || "";
 </script>
 
-<header class="bg-[#5603AD] text-primary-content shadow-lg">
+<header class="bg-black text-primary-content shadow-lg">
   <div class="container mx-auto px-4">
     <div class="navbar">
       <div class="flex-1">
@@ -38,41 +38,68 @@
           <img src={logo} alt="Reham Diva" class="h-24 w-auto" />
         </a>
       </div>
-      <div class="flex-none border-2 border-white p-4 rounded-xl">
+      <div class="flex-none">
         {#if $user && userFullName}
-          <div class="dropdown dropdown-end flex items-center gap-1 md:gap-2">
-            <span class="font-bold inline">{userFullName}</span>
-            <button
-              class="btn btn-ghost btn-circle avatar focus:outline-none flex items-center"
+          <div class="dropdown dropdown-end">
+            <div
+              class="flex items-center gap-2 cursor-pointer p-2 rounded-full transition-all duration-300 hover:bg-cyan-600 group border-2 border-white"
               on:click={toggleDropdown}
               on:keydown={handleKeyDown}
+              role="button"
+              tabindex="0"
               aria-haspopup="true"
               aria-expanded={dropdownOpen}
             >
-              <div class="w-10 rounded-full">
-                <img src={avatar} alt="User avatar" />
+              <span
+                class="font-bold inline username group-hover:text-purple-100"
+                >{userFullName}</span
+              >
+              <div
+                class="w-10 h-10 rounded-full overflow-hidden transition-transform duration-300 group-hover:rotate-[360deg]"
+              >
+                <img
+                  src={avatar}
+                  alt="User avatar"
+                  class="w-full h-full object-cover"
+                />
               </div>
-            </button>
+            </div>
             {#if dropdownOpen}
               <ul
-                class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
+                class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52"
               >
                 <li>
-                  <a href="{base}/profile" class="text-base-content">Profile</a>
+                  <a
+                    href="{base}/profile"
+                    class="text-gray-700 hover:bg-purple-100 hover:text-purple-900"
+                    >Profile</a
+                  >
                 </li>
                 <li>
                   <button
                     on:click={handleLogout}
-                    class="text-base-content w-full text-left">Logout</button
+                    class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900"
+                    >Logout</button
                   >
                 </li>
               </ul>
             {/if}
           </div>
         {:else}
-          <a href="{base}/login" class="btn btn-ghost">Login</a>
+          <a
+            href="{base}/login"
+            class="btn btn-ghost hover:bg-purple-600 hover:text-white transition-colors duration-300"
+            >Login</a
+          >
         {/if}
       </div>
     </div>
   </div>
 </header>
+
+<style>
+  .username {
+    font-style: italic;
+    color: white;
+  }
+</style>

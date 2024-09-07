@@ -1,24 +1,47 @@
 <!-- src/lib/components/Footer.svelte -->
-<footer class="bg-neutral text-neutral-content">
+<script>
+  import { _ } from "svelte-i18n";
+</script>
+
+<footer class="bg-neutral text-neutral-content mt-auto">
   <div class="container mx-auto px-4 py-8">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div>
-        <h3 class="text-lg font-bold mb-2">My Video Site</h3>
-        <p>Providing quality video content since 2023</p>
+        <h3 class="text-lg font-bold mb-2">{$_("footer.siteTitle")}</h3>
+        <p>{$_("footer.tagline")}</p>
       </div>
       <div>
-        <h3 class="text-lg font-bold mb-2">Quick Links</h3>
-        <ul>
-          <li><a href="/" class="link link-hover">Home</a></li>
-          <li><a href="/videos" class="link link-hover">Videos</a></li>
-          <li><a href="/about" class="link link-hover">About</a></li>
-          <li><a href="/contact" class="link link-hover">Contact</a></li>
+        <h3 class="text-lg font-bold mb-2">{$_("footer.quickLinks")}</h3>
+        <ul class="space-y-2">
+          <li>
+            <a href="/" class="hover:text-primary transition-colors"
+              >{$_("footer.home")}</a
+            >
+          </li>
+          <li>
+            <a href="/videos" class="hover:text-primary transition-colors"
+              >{$_("footer.videos")}</a
+            >
+          </li>
+          <li>
+            <a href="/about" class="hover:text-primary transition-colors"
+              >{$_("footer.about")}</a
+            >
+          </li>
+          <li>
+            <a href="/contact" class="hover:text-primary transition-colors"
+              >{$_("footer.contact")}</a
+            >
+          </li>
         </ul>
       </div>
       <div>
-        <h3 class="text-lg font-bold mb-2">Follow Us</h3>
+        <h3 class="text-lg font-bold mb-2">{$_("footer.followUs")}</h3>
         <div class="flex space-x-4">
-          <a href="#" class="btn btn-circle btn-outline">
+          <a
+            href="#"
+            class="btn btn-circle btn-outline hover:bg-primary hover:text-primary-content transition-colors"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -30,7 +53,10 @@
               ></path></svg
             >
           </a>
-          <a href="#" class="btn btn-circle btn-outline">
+          <a
+            href="#"
+            class="btn btn-circle btn-outline hover:bg-primary hover:text-primary-content transition-colors"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -42,7 +68,10 @@
               ></path></svg
             >
           </a>
-          <a href="#" class="btn btn-circle btn-outline">
+          <a
+            href="#"
+            class="btn btn-circle btn-outline hover:bg-primary hover:text-primary-content transition-colors"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -57,8 +86,16 @@
         </div>
       </div>
     </div>
-    <div class="mt-8 text-center">
-      <p>&copy; 2023 My Video Site. All rights reserved.</p>
-    </div>
+    <!-- <div class="mt-8 text-center">
+      <p>
+        {$_("footer.copyright", { values: { year: new Date().getFullYear() } })}
+      </p>
+    </div> -->
   </div>
 </footer>
+
+<style>
+  footer {
+    margin-top: auto;
+  }
+</style>

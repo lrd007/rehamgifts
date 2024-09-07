@@ -20,20 +20,22 @@
   });
 </script>
 
-<div class={$locale === "ar" ? "rtl" : "ltr"}>
+<div class={`flex flex-col min-h-screen ${$locale === "ar" ? "rtl" : "ltr"}`}>
   <Header />
 
-  <main class="container mx-auto px-4 py-8 grid gap-4">
+  <main class="container mx-auto px-4 py-8 flex-grow">
     <!-- Language toggle -->
-    <div class="col-span-12 flex justify-end mb-4">
+    <div class="flex justify-end mb-4">
       <LanguageToggle />
     </div>
 
     <!-- Main content area -->
-    <div class="col-span-12 md:col-span-9 lg:col-span-10">
-      <h1>{$_("greeting")}</h1>
-      <p>{$_("welcome")}</p>
-      <VideoGrid />
+    <div class="flex gap-4">
+      <div class="col-span-12 md:col-span-9 lg:col-span-10">
+        <h1>{$_("greeting")}</h1>
+        <p>{$_("welcome")}</p>
+        <VideoGrid />
+      </div>
     </div>
   </main>
 
