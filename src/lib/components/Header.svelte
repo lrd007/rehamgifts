@@ -30,7 +30,7 @@
   $: userFullName = $userData?.fullName.toUpperCase() || "";
 </script>
 
-<header class="bg-black text-primary-content shadow-lg">
+<header class="bg-[#da627d] text-white font-bold shadow-lg">
   <div class="container mx-auto px-4">
     <div class="navbar">
       <div class="flex-1">
@@ -38,11 +38,13 @@
           <img src={logo} alt="Reham Diva" class="h-24 w-auto" />
         </a>
       </div>
-      <div class="flex-none">
+      <div
+        class="flex-none bg-[#EE8FA5] hover:bg-[#F6BBC9] min-w-44 px-4 py-2 rounded-3xl"
+      >
         {#if $user && userFullName}
           <div class="dropdown dropdown-end">
             <div
-              class="flex items-center gap-2 cursor-pointer p-2 rounded-full transition-all duration-300 hover:bg-cyan-600 group border-2 border-white"
+              class="flex items-center gap-2 cursor-pointer transition-all duration-300 group"
               on:click={toggleDropdown}
               on:keydown={handleKeyDown}
               role="button"
@@ -50,12 +52,9 @@
               aria-haspopup="true"
               aria-expanded={dropdownOpen}
             >
-              <span
-                class="font-bold inline username group-hover:text-purple-100"
-                >{userFullName}</span
-              >
+              <span class="inline">{userFullName}</span>
               <div
-                class="w-10 h-10 rounded-full overflow-hidden transition-transform duration-300 group-hover:rotate-[360deg]"
+                class="w-10 h-10 rounded-full overflow-hidden transition-transform duration-300"
               >
                 <img
                   src={avatar}
@@ -66,7 +65,7 @@
             </div>
             {#if dropdownOpen}
               <ul
-                class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52"
+                class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52 z-50"
               >
                 <li>
                   <a
@@ -86,20 +85,9 @@
             {/if}
           </div>
         {:else}
-          <a
-            href="{base}/login"
-            class="btn btn-ghost hover:bg-purple-600 hover:text-white transition-colors duration-300"
-            >Login</a
-          >
+          <a href="{base}/login" class="mx-auto text-xl">Login</a>
         {/if}
       </div>
     </div>
   </div>
 </header>
-
-<style>
-  .username {
-    font-style: italic;
-    color: white;
-  }
-</style>

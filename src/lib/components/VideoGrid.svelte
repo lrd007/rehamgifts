@@ -83,9 +83,9 @@
   {#if isLoading}
     {#each Array(6) as _}
       <div class="card bg-base-200 shadow-xl animate-pulse">
-        <div class="h-72 bg-base-300"></div>
-        <div class="card-body">
-          <div class="h-4 bg-base-300 rounded w-3/4"></div>
+        <div class="h-56 bg-base-300 rounded-xl"></div>
+        <div class="card-body h-28">
+          <div class="h-6 bg-base-300 rounded w-3/4"></div>
         </div>
       </div>
     {/each}
