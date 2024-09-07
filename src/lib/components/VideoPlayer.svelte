@@ -13,26 +13,37 @@
   let volume: number = 1;
   let isLoaded: boolean = false;
   let isFullScreen: boolean = false;
+  let signedUrl: string = '';
 
-  function loadVideo(): void {
+  async function loadVideo(): Promise<void> {
     if ($user && !isLoaded) {
       status = "Loading video...";
-      videoElement.src = `/api/get-video-url/${videoKey}`;
-      isLoaded = true;
+      try {
+        const response = await fetch(`/api/get-video-url/${videoKey}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch video URL');
+        }
+        signedUrl = await response.text();
+        videoElement.src = signedUrl;
+        isLoaded = true;
 
-      videoElement.addEventListener("loadedmetadata", () => {
-        status = "";
-        duration = videoElement.duration;
-        togglePlay(); // Start playing once loaded
-      });
+        videoElement.addEventListener("loadedmetadata", () => {
+          status = "";
+          duration = videoElement.duration;
+          togglePlay(); // Start playing once loaded
+        });
 
-      videoElement.addEventListener("error", () => {
+        videoElement.addEventListener("error", () => {
+          status = "Error loading video";
+        });
+
+        videoElement.addEventListener("timeupdate", () => {
+          currentTime = videoElement.currentTime;
+        });
+      } catch (error) {
+        console.error('Error fetching video URL:', error);
         status = "Error loading video";
-      });
-
-      videoElement.addEventListener("timeupdate", () => {
-        currentTime = videoElement.currentTime;
-      });
+      }
     } else if ($user && isLoaded) {
       togglePlay();
     }
