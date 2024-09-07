@@ -18,7 +18,8 @@ export const GET: RequestHandler = async ({ params, request }) => {
   }
 
   try {
-    const cloudfrontUrl = `https://${CLOUDFRONT_DOMAIN}/${key}`;
+    const encodedKey = encodeURIComponent(key);
+    const cloudfrontUrl = `https://${CLOUDFRONT_DOMAIN}/${encodedKey}`;
 
     // Generate a signed URL that's valid for 1 hour
     const signedUrl = getSignedUrl({
