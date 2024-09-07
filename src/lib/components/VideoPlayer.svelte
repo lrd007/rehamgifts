@@ -19,7 +19,8 @@
     if ($user && !isLoaded) {
       status = "Loading video...";
       try {
-        const response = await fetch(`/api/get-video-url/${videoKey}`);
+        const response = await fetch(`https://d17qpfya0tgdyb.cloudfront.net/${videoKey}`);
+        console.log(response)
         if (!response.ok) {
           throw new Error('Failed to fetch video URL');
         }
