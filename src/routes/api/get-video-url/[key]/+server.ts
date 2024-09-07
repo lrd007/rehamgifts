@@ -29,43 +29,45 @@ export const GET: RequestHandler = async ({ params, request }) => {
     });
 
     // Fetch headers from CloudFront
-    const headResponse = await fetch(signedUrl, { method: "HEAD" });
-    const contentLength = headResponse.headers.get("Content-Length");
-    const contentType = headResponse.headers.get("Content-Type");
 
-    if (range) {
-      const parts = range.replace(/bytes=/, "").split("-");
-      const start = parseInt(parts[0], 10);
-      const end = parts[1]
-        ? parseInt(parts[1], 10)
-        : parseInt(contentLength, 10) - 1;
+    // const headResponse = await fetch(signedUrl, { method: "HEAD" });
+    // const contentLength = headResponse.headers.get("Content-Length");
+    // const contentType = headResponse.headers.get("Content-Type");
 
-      const chunkSize = end - start + 1;
+    // if (range) {
+    //   const parts = range.replace(/bytes=/, "").split("-");
+    //   const start = parseInt(parts[0], 10);
+    //   const end = parts[1]
+    //     ? parseInt(parts[1], 10)
+    //     : parseInt(contentLength, 10) - 1;
 
-      const response = await fetch(signedUrl, {
-        headers: { Range: `bytes=${start}-${end}` },
-      });
+    //   const chunkSize = end - start + 1;
 
-      return new Response(response.body, {
-        status: 206,
-        headers: {
-          "Content-Range": `bytes ${start}-${end}/${contentLength}`,
-          "Accept-Ranges": "bytes",
-          "Content-Length": chunkSize.toString(),
-          "Content-Type": contentType,
-        },
-      });
-    } else {
-      const response = await fetch(signedUrl);
+    //   const response = await fetch(signedUrl, {
+    //     headers: { Range: `bytes=${start}-${end}` },
+    //   });
 
-      return new Response(response.body, {
-        status: 200,
-        headers: {
-          "Content-Length": contentLength,
-          "Content-Type": contentType,
-        },
-      });
-    }
+    //   return new Response(response.body, {
+    //     status: 206,
+    //     headers: {
+    //       "Content-Range": `bytes ${start}-${end}/${contentLength}`,
+    //       "Accept-Ranges": "bytes",
+    //       "Content-Length": chunkSize.toString(),
+    //       "Content-Type": contentType,
+    //     },
+    //   });
+    // } else {
+    //   const response = await fetch(signedUrl);
+
+    //   return new Response(response.body, {
+    //     status: 200,
+    //     headers: {
+    //       "Content-Length": contentLength,
+    //       "Content-Type": contentType,
+    //     },
+    //   });
+    // }
+    return new Response(signedUrl, { status: 200 });
   } catch (err) {
     console.error("Error:", err);
     throw error(500, "Internal Server Error");
