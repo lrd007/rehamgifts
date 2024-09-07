@@ -8,14 +8,6 @@ import {
 
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 
-function getEncodedVideoUrl(filename: string): string {
-  // Encode the filename, preserving spaces
-  const encodedFilename = encodeURIComponent(filename).replace(/%20/g, " ");
-
-  // Construct the full URL using SvelteKit's base path
-  return `https://${CLOUDFRONT_DOMAIN}/${encodedFilename}`;
-}
-
 export const GET: RequestHandler = async ({ params, request }) => {
   const key = params.key;
   const range = request.headers.get("range");
@@ -26,10 +18,7 @@ export const GET: RequestHandler = async ({ params, request }) => {
   }
 
   try {
-    const filename = "6-Are you feminine or masculine.mp4";
-    const cloudfrontUrl = getEncodedVideoUrl(filename);
-    // const encodedKey = encodeURIComponent(key);
-    // const cloudfrontUrl = `https://${CLOUDFRONT_DOMAIN}/${encodedKey}`;
+    const cloudfrontUrl = `https://${CLOUDFRONT_DOMAIN}/${key}`;
 
     // Generate a signed URL that's valid for 1 hour
     const signedUrl = getSignedUrl({
