@@ -144,11 +144,34 @@
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      background-color 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9; /* Maintains a 16:9 aspect ratio */
+  }
+
+  .video-container:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.1);
   }
 
   .video-player {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 0.3s ease;
+  }
+
+  .video-container:hover .video-player {
+    filter: brightness(1.1);
   }
 
   .overlay {
@@ -159,6 +182,12 @@
     justify-content: center;
     color: white;
     font-weight: bold;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .video-container:hover .overlay {
+    opacity: 0.8;
   }
 
   .signin-overlay {
@@ -179,24 +208,75 @@
     padding: 10px;
     display: flex;
     align-items: center;
+    opacity: 0;
+    transform: translateY(100%);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .video-container:hover .custom-controls {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .progress-bar {
     flex-grow: 1;
     height: 5px;
-    background-color: gray;
+    background-color: rgba(255, 255, 255, 0.3);
     margin: 0 10px;
     cursor: pointer;
+    border-radius: 2.5px;
+    overflow: hidden;
   }
 
   .progress {
     height: 100%;
-    background-color: red;
+    background-color: #ff0000;
+    transition: width 0.1s linear;
   }
 
   button,
   input[type="range"] {
     margin: 0 5px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  button:hover,
+  input[type="range"]:hover {
+    opacity: 1;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100px;
+    background: transparent;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #ff0000;
+    cursor: pointer;
+    margin-top: -6px;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
   }
 
   :global(.video-container:fullscreen) {
