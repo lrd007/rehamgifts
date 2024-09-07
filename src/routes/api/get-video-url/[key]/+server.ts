@@ -11,7 +11,7 @@ import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 export const GET: RequestHandler = async ({ params, request }) => {
   const key = params.key;
   const range = request.headers.get("range");
-  console.log(key);
+  // console.log(key);
 
   if (!key) {
     throw error(400, "Video key is required");
