@@ -1,4 +1,3 @@
-// firebase.ts
 import { getApps, initializeApp } from "firebase/app";
 import { doc, getFirestore, onSnapshot, setDoc } from "firebase/firestore";
 import {
@@ -7,6 +6,7 @@ import {
   type User,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { writable, type Readable, derived } from "svelte/store";
 
@@ -129,6 +129,17 @@ export async function signInWithCredentials(email: string, password: string) {
     return userCredential.user;
   } catch (error) {
     console.error("Error signing in:", error);
+    throw error;
+  }
+}
+
+// Password Reset
+export async function resetPassword(email: string) {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    console.log("Password reset email sent successfully");
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
     throw error;
   }
 }

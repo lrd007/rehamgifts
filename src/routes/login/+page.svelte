@@ -3,6 +3,8 @@
   import { auth, user } from "$lib/firebase";
   import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 
+  export let data;
+
   async function signInWithGoogle() {
     const provider = new GoogleAuthProvider();
     const credential = await signInWithPopup(auth, provider);
@@ -39,7 +41,7 @@
       </div>
     </div>
   {:else}
-    <CredentialsLogin />
+  <CredentialsLogin userCountry={data.userCountry} countriesData={data.countriesData} />
     <div class="divider">OR</div>
     <button class="btn btn-primary" on:click={signInWithGoogle}>
       Sign in with Google
