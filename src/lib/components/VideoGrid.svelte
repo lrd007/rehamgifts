@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { user } from "$lib/firebase";
   import { onMount } from "svelte";
   import VideoPlayer from "./VideoPlayer.svelte";
 
@@ -31,45 +30,9 @@
     }
   });
 
-  function playVideo(videoId: number): void {
-    if ($user) {
-      console.log(`Playing video ${videoId}`);
-      // Implement your video playing logic here
-    }
-  }
-  const videoKey = "5th.mp4";
 </script>
 
-{#each videos as video (video.id)}
-  <div class="card bg-base-100 shadow-xl overflow-hidden">
-    <figure class="relative">
-      <VideoPlayer videoKey={video.name} />
-
-      {#if !$user}
-        <div
-          class="absolute inset-0 bg-base-300 bg-opacity-75 flex items-center justify-center"
-        >
-          <span class="text-base-content font-semibold">Sign in to watch</span>
-        </div>
-      {:else}
-        <div
-          class="absolute inset-0 bg-base-300 bg-opacity-0 hover:bg-opacity-50 flex items-center justify-center transition-opacity duration-300 cursor-pointer"
-          on:click={() => playVideo(video.id)}
-        >
-          <span
-            class="text-base-content font-semibold opacity-0 hover:opacity-100 transition-opacity duration-300"
-            >Click to play</span
-          >
-        </div>
-      {/if}
-    </figure>
-    <div class="card-body">
-      <h2 class="card-title text-lg">{video.name}</h2>
-    </div>
-  </div>
-{/each}
-
-<!-- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
   {#if isLoading}
     {#each Array(6) as _}
       <div class="card bg-base-200 shadow-xl animate-pulse">
@@ -83,35 +46,15 @@
     {#each videos as video (video.id)}
       <div class="card bg-base-100 shadow-xl overflow-hidden">
         <figure class="relative">
-          <img
-            src={video.thumbnail}
-            alt={video.title}
-            class="w-full h-72 object-cover"
+          <VideoPlayer
+            videoKey={video.name}
+            dataVideoId={`video-${video.id}`}
           />
-          {#if !$user}
-            <div
-              class="absolute inset-0 bg-base-300 bg-opacity-75 flex items-center justify-center"
-            >
-              <span class="text-base-content font-semibold"
-                >Sign in to watch</span
-              >
-            </div>
-          {:else}
-            <div
-              class="absolute inset-0 bg-base-300 bg-opacity-0 hover:bg-opacity-50 flex items-center justify-center transition-opacity duration-300 cursor-pointer"
-              on:click={() => playVideo(video.id)}
-            >
-              <span
-                class="text-base-content font-semibold opacity-0 hover:opacity-100 transition-opacity duration-300"
-                >Click to play</span
-              >
-            </div>
-          {/if}
         </figure>
         <div class="card-body">
-          <h2 class="card-title text-lg">{video.title}</h2>
+          <h2 class="card-title text-lg">{video.name}</h2>
         </div>
       </div>
     {/each}
   {/if}
-</div> -->
+</div>

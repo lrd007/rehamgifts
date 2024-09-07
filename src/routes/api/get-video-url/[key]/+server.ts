@@ -1,81 +1,68 @@
 import { error } from "@sveltejs/kit";
 import type { RequestHandler } from "@sveltejs/kit";
 import {
-  AWS_ACCESS_KEY_ID,
-  AWS_SECRET_ACCESS_KEY,
-  AWS_REGION,
-  S3_BUCKET_NAME,
+  CLOUDFRONT_DOMAIN,
+  CLOUDFRONT_KEY_PAIR_ID,
+  CLOUDFRONT_PRIVATE_KEY,
 } from "$env/static/private";
 
-import AWS from "aws-sdk";
-
-AWS.config.update({
-  accessKeyId: AWS_ACCESS_KEY_ID,
-  secretAccessKey: AWS_SECRET_ACCESS_KEY,
-  region: AWS_REGION,
-});
-
-const s3 = new AWS.S3();
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "*",
-};
+import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 
 export const GET: RequestHandler = async ({ params, request }) => {
   const key = params.key;
   const range = request.headers.get("range");
+  console.log(key);
 
   if (!key) {
     throw error(400, "Video key is required");
   }
 
   try {
-    const { ContentLength, ContentType } = await s3
-      .headObject({
-        Bucket: S3_BUCKET_NAME,
-        Key: key,
-      })
-      .promise();
+    const cloudfrontUrl = `https://${CLOUDFRONT_DOMAIN}/${key}`;
+
+    // Generate a signed URL that's valid for 1 hour
+    const signedUrl = getSignedUrl({
+      url: cloudfrontUrl,
+      keyPairId: CLOUDFRONT_KEY_PAIR_ID,
+      privateKey: CLOUDFRONT_PRIVATE_KEY,
+      dateLessThan: new Date(Date.now() + 3600000).toISOString(), // Current time + 1 hour
+    });
+
+    // Fetch headers from CloudFront
+    const headResponse = await fetch(signedUrl, { method: "HEAD" });
+    const contentLength = headResponse.headers.get("Content-Length");
+    const contentType = headResponse.headers.get("Content-Type");
 
     if (range) {
       const parts = range.replace(/bytes=/, "").split("-");
       const start = parseInt(parts[0], 10);
-      const end = parts[1] ? parseInt(parts[1], 10) : ContentLength - 1;
+      const end = parts[1]
+        ? parseInt(parts[1], 10)
+        : parseInt(contentLength, 10) - 1;
 
       const chunkSize = end - start + 1;
 
-      const stream = s3
-        .getObject({
-          Bucket: S3_BUCKET_NAME,
-          Key: key,
-          Range: `bytes=${start}-${end}`,
-        })
-        .createReadStream();
+      const response = await fetch(signedUrl, {
+        headers: { Range: `bytes=${start}-${end}` },
+      });
 
-      return new Response(stream, {
+      return new Response(response.body, {
         status: 206,
         headers: {
-          "Content-Range": `bytes ${start}-${end}/${ContentLength}`,
+          "Content-Range": `bytes ${start}-${end}/${contentLength}`,
           "Accept-Ranges": "bytes",
           "Content-Length": chunkSize.toString(),
-          "Content-Type": ContentType,
+          "Content-Type": contentType,
         },
       });
     } else {
-      const stream = s3
-        .getObject({
-          Bucket: S3_BUCKET_NAME,
-          Key: key,
-        })
-        .createReadStream();
+      const response = await fetch(signedUrl);
 
-      return new Response(stream, {
+      return new Response(response.body, {
         status: 200,
         headers: {
-          "Content-Length": ContentLength.toString(),
-          "Content-Type": ContentType,
+          "Content-Length": contentLength,
+          "Content-Type": contentType,
         },
       });
     }
