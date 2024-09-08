@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
   // const res = await fetch("https://ipapi.co/json/");
   // const data: IPAPIResponse = await res.json();
   // const userCountry = data.country_code;
-  const userCountry = "IN";
+  // const userCountry = "IN";
   // console.log(userCountry);
 
   // Prepare countries data
@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
   );
 
   return {
-    userCountry,
+    // userCountry,
     countriesData,
   };
 };

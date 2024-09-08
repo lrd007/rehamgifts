@@ -15,7 +15,7 @@
   import ForgotPassword from "./ForgotPassword.svelte";
 
   // Props
-  export let userCountry: string;
+  // export let userCountry: string;
   export let countriesData: Country[];
 
   interface FormErrors {
@@ -47,7 +47,7 @@
   );
 
   onMount(() => {
-    selectedCountry = countriesData[0];
+    // selectedCountry = countriesData[0];
     // selectedCountry =
     //   countriesData.find((c) => c.code === userCountry) || countriesData[0];
   });
