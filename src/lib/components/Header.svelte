@@ -118,16 +118,16 @@
             {#if dropdownOpen}
               <div
                 class="dropdown-wrapper fixed inset-0 z-[1002]"
-                on:click|self={toggleDropdown}
+                
               >
                 <ul
                   class="absolute right-4 mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52"
                 >
                   <li>
-                    <button
-                      on:click|preventDefault|stopPropagation={handleProfileClick}
+                    <a
+                      href=""{base}/login"
                       class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900 py-4 px-4"
-                      >Profile</button
+                      >Profile</a
                     >
                   </li>
                   <li>
