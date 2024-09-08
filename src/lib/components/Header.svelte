@@ -62,7 +62,7 @@
 
 <header
   bind:this={headerRef}
-  class="bg-rgPrimary text-white font-bold shadow-lg relative"
+  class="bg-rgPrimary font-bold shadow-lg relative"
   class:fixed={isHeaderFixed}
 >
   <div class="header-pattern-container overflow-hidden absolute inset-0">
@@ -109,14 +109,13 @@
               <li>
                 <a
                   href="/login"
-                  class="text-white-700 hover:bg-purple-100 hover:text-purple-900"
-                  >Profile</a
+                  class=" hover:bg-purple-100 hover:text-purple-900">Profile</a
                 >
               </li>
               <li>
                 <a
                   on:click={handleLogout}
-                  class="text-white-700 w-full text-left hover:bg-purple-100 hover:text-purple-900"
+                  class="w-full text-left hover:bg-purple-100 hover:text-purple-900"
                   >Logout</a
                 >
               </li>
