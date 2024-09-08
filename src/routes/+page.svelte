@@ -20,7 +20,7 @@
   });
 </script>
 
-<div class="flex flex-col min-h-screen">
+<div class="flex flex-col min-h-screen bg-rgPrimary">
   <Header />
 
   <main class="container mx-auto px-4 py-8 flex-grow">

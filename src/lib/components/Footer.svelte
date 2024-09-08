@@ -4,7 +4,7 @@
   import { base } from "$app/paths";
 </script>
 
-<footer class="footer footer-center bg-[#da627d] text-white p-4 gap-y-2">
+<footer class="footer footer-center bg-rgPrimary shadow-lg text-white p-4 gap-y-2">
   <aside>
     <a href="{base}/" class="flex items-center">
       <img src={footerLogo} alt="Reham Diva Logo" class="h-24 w-auto" />

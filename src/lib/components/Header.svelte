@@ -30,7 +30,7 @@
   $: userFullName = $userData?.fullName.toUpperCase() || "";
 </script>
 
-<header class="bg-[#da627d] text-white font-bold shadow-lg">
+<header class="bg-rgPrimary text-white font-bold shadow-lg ">
   <div class="container mx-auto px-4">
     <div class="navbar">
       <div class="flex-1">
@@ -39,7 +39,7 @@
         </a>
       </div>
       <div
-        class="flex-none bg-[#EE8FA5] hover:bg-[#F6BBC9] min-w-44 px-4 py-2 rounded-3xl"
+        class="flex-none bg-rgHighlight hover:bg-rgHighlightHover min-w-44 px-4 py-2 rounded-3xl"
       >
         {#if $user && userFullName}
           <div class="dropdown dropdown-end mx-auto">
