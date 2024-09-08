@@ -7,27 +7,19 @@
   import { auth } from "$lib/firebase";
   import LanguageToggle from "./LanguageToggle.svelte";
   import { onMount } from "svelte";
-  import { invalidateAll, goto } from "$app/navigation";
+  import { invalidateAll } from "$app/navigation";
   export let userID;
+  console.log(userID);
 
   async function handleLogout() {
     try {
       await fetch("/api/signin", { method: "DELETE" });
       await signOut(auth);
-      setTimeout(() => {
-        invalidateAll();
-        goto(`${base}/`); // Redirect to home page after logout
-      }, 0);
+      invalidateAll();
+      // Optionally, you can redirect the user or update the UI here
     } catch (error) {
       console.error("Error signing out:", error);
     }
-  }
-
-  function handleProfileClick() {
-    alert("testing");
-    setTimeout(() => {
-      goto(`${base}/login`);
-    }, 0); // Navigate to the profile page
   }
 
   let dropdownOpen = false;
@@ -84,20 +76,10 @@
         </a>
       </div>
       <LanguageToggle />
-      <div
-        class="flex-none sm:bg-rgHighlight sm:hover:bg-rgHighlightHover sm:min-w-44 px-4 py-2 rounded-3xl ml-2 sm:ml-4"
-      >
+      <div class="dropdown">
         {#if userID}
-          <div class="dropdown dropdown-end mx-auto">
-            <div
-              class="flex items-center gap-2 cursor-pointer transition-all duration-300 group"
-              on:click={toggleDropdown}
-              on:keydown={handleKeyDown}
-              role="button"
-              tabindex="0"
-              aria-haspopup="true"
-              aria-expanded={dropdownOpen}
-            >
+          <div>
+            <div tabindex="0" role="button" class="btn m-1">
               <span class="sm:inline hidden min-w-[100px]">
                 {#if userFullName}
                   {userFullName}
@@ -115,34 +97,31 @@
                 />
               </div>
             </div>
-            {#if dropdownOpen}
-              <div
-                class="dropdown-wrapper fixed inset-0 z-[1002]"
-                
-              >
-                <ul
-                  class="absolute right-4 mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52"
+
+            <ul
+              tabindex="0"
+              class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+            >
+              <li>
+                <a
+                  href="/login"
+                  class="text-gray-700 hover:bg-purple-100 hover:text-purple-900"
+                  >Profile</a
                 >
-                  <li>
-                    <a
-                      href="{base}/login"
-                      class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900 py-4 px-4"
-                      >Profile</a
-                    >
-                  </li>
-                  <li>
-                    <button
-                      on:click|preventDefault|stopPropagation={handleLogout}
-                      class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900 py-4 px-4"
-                      >Logout</button
-                    >
-                  </li>
-                </ul>
-              </div>
-            {/if}
+              </li>
+              <li>
+                <a
+                  on:click={handleLogout}
+                  class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900"
+                  >Logout</a
+                >
+              </li>
+            </ul>
           </div>
         {:else}
-          <a href="{base}/login" class="mx-auto text-xl">Login</a>
+          <div tabindex="0" role="button" class="btn m-1">
+            <a href="{base}/login">Login</a>
+          </div>
         {/if}
       </div>
     </div>
@@ -154,6 +133,10 @@
 {/if}
 
 <style lang="postcss">
+  .dropdown .div {
+    background-attachment: rgb(240 66 142 / var(--tw-bg-opacity));
+  }
+
   .header-pattern-container {
     z-index: 0;
   }
