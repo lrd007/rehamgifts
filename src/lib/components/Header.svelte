@@ -24,6 +24,7 @@
   }
 
   function handleProfileClick() {
+    alert("testing");
     setTimeout(() => {
       goto(`${base}/login`);
     }, 0); // Navigate to the profile page
