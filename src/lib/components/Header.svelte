@@ -125,7 +125,7 @@
                 >
                   <li>
                     <a
-                      href=""{base}/login"
+                      href="{base}/login"
                       class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900 py-4 px-4"
                       >Profile</a
                     >
