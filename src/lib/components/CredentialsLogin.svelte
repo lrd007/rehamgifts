@@ -40,7 +40,7 @@
   let selectedCountry: Country;
   let searchTerm = "";
   let searchInput: HTMLInputElement;
-  let dropdownOpen = false;
+  let dropdownOpen = true;
 
   $: filteredCountries = countriesData.filter((country) =>
     country.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -277,6 +277,24 @@
             <span class="label-text">Phone Number</span>
           </label>
           <div class="flex">
+            <button type="button" on:click={toggleDropdown}> code </button>
+            {#if dropdownOpen}
+              <ul>
+                <li>1</li>
+                <li>1</li>
+                <li>1</li>
+              </ul>
+            {/if}
+            <input
+              id="phone"
+              type="tel"
+              bind:value={phoneNumber}
+              placeholder="Phone Number"
+              required
+              class="input input-bordered w-full max-w-xs ml-2"
+            />
+          </div>
+          <!-- <div class="flex">
             <div class="dropdown">
               <button
                 type="button"
@@ -339,7 +357,7 @@
               required
               class="input input-bordered w-full max-w-xs ml-2"
             />
-          </div>
+          </div> -->
           {#if $errors.phoneNumber}<span class="text-error text-sm mt-1"
               >{$errors.phoneNumber}</span
             >{/if}
