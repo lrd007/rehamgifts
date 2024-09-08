@@ -11,6 +11,7 @@
     const credential = await signInWithPopup(auth, provider);
 
     const idToken = await credential.user.getIdToken();
+    console.log(idToken);
 
     const res = await fetch("/api/signin", {
       method: "POST",

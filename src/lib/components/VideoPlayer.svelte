@@ -1,73 +1,119 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { user } from "$lib/firebase";
+  import {
+    Play,
+    Pause,
+    Volume2,
+    VolumeX,
+    Maximize,
+    Minimize,
+  } from "lucide-svelte";
+
   export let videoKey: string;
-  export let dataVideoId: string;
+  export let thumbnail: string;
 
   let videoElement: HTMLVideoElement;
   let videoContainer: HTMLDivElement;
-  let status: string = "Click to load video";
+  let status: string = "";
   let isPlaying: boolean = false;
   let currentTime: number = 0;
   let duration: number = 0;
   let volume: number = 1;
+  let isMuted: boolean = false;
   let isLoaded: boolean = false;
   let isFullScreen: boolean = false;
-  let signedUrl: string = '';
+  let signedUrl: string = "";
 
-  async function loadVideo(): Promise<void> {
-    if ($user && !isLoaded) {
-      status = "Loading video...";
-      try {
-        const response = await fetch(`/api/get-video-url/${videoKey}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch video URL');
-        }
-        signedUrl = await response.text();
-        videoElement.src = signedUrl;
-        isLoaded = true;
+  $: progress = (currentTime / duration) * 100 || 0;
 
-        videoElement.addEventListener("loadedmetadata", () => {
-          status = "";
-          duration = videoElement.duration;
-          togglePlay(); // Start playing once loaded
-        });
+  // Store all video players
+  let allPlayers: HTMLVideoElement[] = [];
 
-        videoElement.addEventListener("error", () => {
-          status = "Error loading video";
-        });
+  onMount(() => {
+    allPlayers = Array.from(document.querySelectorAll("video"));
+    document.addEventListener("fullscreenchange", () => {
+      isFullScreen = !!document.fullscreenElement;
+    });
+  });
 
-        videoElement.addEventListener("timeupdate", () => {
-          currentTime = videoElement.currentTime;
-        });
-      } catch (error) {
-        console.error('Error fetching video URL:', error);
-        status = "Error loading video";
-      }
-    } else if ($user && isLoaded) {
-      togglePlay();
+  async function loadAndPlayVideo(): Promise<void> {
+    if (!$user || isLoaded) return;
+
+    // Pause all other videos before loading the new one
+    pauseAllVideos();
+
+    status = "Loading video...";
+    try {
+      const response = await fetch(`/api/get-video-url/${videoKey}`);
+      if (!response.ok) throw new Error("Failed to fetch video URL");
+
+      signedUrl = await response.text();
+      videoElement.src = signedUrl;
+      isLoaded = true;
+
+      videoElement.addEventListener("loadedmetadata", () => {
+        status = "";
+        duration = videoElement.duration;
+        playVideo();
+      });
+
+      videoElement.addEventListener("timeupdate", () => {
+        currentTime = videoElement.currentTime;
+      });
+
+      videoElement.addEventListener("play", () => {
+        isPlaying = true;
+        pauseOtherVideos();
+      });
+
+      videoElement.addEventListener("pause", () => {
+        isPlaying = false;
+      });
+    } catch (error) {
+      console.error("Error fetching video URL:", error);
+      status = "Error loading video";
     }
+  }
+
+  function playVideo(): void {
+    if (!$user || !isLoaded) return;
+    videoElement.play();
+    isPlaying = true;
+    pauseOtherVideos();
+  }
+
+  function pauseVideo(): void {
+    if (!$user || !isLoaded) return;
+    videoElement.pause();
+    isPlaying = false;
+  }
+
+  function pauseAllVideos(): void {
+    allPlayers.forEach((player) => {
+      if (!player.paused) {
+        player.pause();
+      }
+    });
+  }
+
+  function pauseOtherVideos(): void {
+    allPlayers.forEach((player) => {
+      if (player !== videoElement && !player.paused) {
+        player.pause();
+      }
+    });
   }
 
   function togglePlay(): void {
-    if ($user && isLoaded) {
-      if (videoElement.paused) {
-        videoElement.play();
-        isPlaying = true;
-      } else {
-        videoElement.pause();
-        isPlaying = false;
-      }
-    }
+    isPlaying ? pauseVideo() : playVideo();
   }
 
   function seekTo(event: MouseEvent): void {
-    if ($user && isLoaded) {
-      const rect = (event.target as HTMLElement).getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const clickedValue = (x / rect.width) * duration;
-      videoElement.currentTime = clickedValue;
-    }
+    if (!$user || !isLoaded) return;
+    const rect = (event.target as HTMLElement).getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    videoElement.currentTime = (x / rect.width) * duration;
   }
 
   function formatTime(time: number): string {
@@ -76,64 +122,96 @@
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   }
 
+  function toggleMute(): void {
+    if (!$user || !isLoaded) return;
+    videoElement.muted = !videoElement.muted;
+    isMuted = videoElement.muted;
+    volume = isMuted ? 0 : 1;
+  }
+
   function updateVolume(): void {
-    if ($user && isLoaded) {
-      videoElement.volume = volume;
-    }
+    if (!$user || !isLoaded) return;
+    videoElement.volume = volume;
+    isMuted = volume === 0;
   }
 
   function toggleFullScreen(): void {
     if (!document.fullscreenElement) {
-      if (videoContainer.requestFullscreen) {
-        videoContainer.requestFullscreen();
-      }
-      isFullScreen = true;
+      videoContainer.requestFullscreen();
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-      isFullScreen = false;
+      document.exitFullscreen();
     }
+    isFullScreen = !isFullScreen;
   }
-
-  onMount(() => {
-    document.addEventListener("fullscreenchange", () => {
-      isFullScreen = !!document.fullscreenElement;
-    });
-  });
 </script>
 
-<div class="video-container" bind:this={videoContainer}>
-  <video bind:this={videoElement} on:click={loadVideo} class="video-player">
+<div
+  class="relative w-full max-w-4xl mx-auto rounded-lg overflow-hidden aspect-video bg-black shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group"
+  bind:this={videoContainer}
+>
+  <video
+    bind:this={videoElement}
+    class="w-full h-full object-cover"
+    poster={thumbnail}
+    on:click={togglePlay}
+  >
     Your browser does not support the video tag.
   </video>
 
   {#if !$user}
-    <div class="overlay signin-overlay">
+    <div
+      class="absolute inset-0 flex items-center justify-center text-white font-bold bg-black bg-opacity-70"
+    >
       <span>Sign in to watch</span>
     </div>
   {:else if !isLoaded}
-    <div class="overlay load-overlay" on:click={loadVideo}>
-      <span>{status}</span>
+    <div
+      class="absolute inset-0 flex items-center justify-center text-white bg-black bg-opacity-50 cursor-pointer"
+      on:click={loadAndPlayVideo}
+    >
+      <Play size={48} />
     </div>
   {:else if status}
-    <div class="overlay">
+    <div
+      class="absolute inset-0 flex items-center justify-center text-white bg-black bg-opacity-50"
+    >
       <p id="status">{status}</p>
     </div>
   {/if}
 
   {#if isLoaded}
-    <div class="custom-controls">
-      <button on:click={togglePlay}>
-        {isPlaying ? "❚❚" : "▶"}
+    <div
+      class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-2 flex items-center opacity-0 translate-y-full transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0"
+    >
+      <button
+        class="text-white opacity-70 hover:opacity-100 transition-opacity duration-300"
+        on:click={togglePlay}
+      >
+        {#if isPlaying}
+          <Pause class="w-6 h-6" />
+        {:else}
+          <Play class="w-6 h-6" />
+        {/if}
       </button>
-      <div class="progress-bar" on:click={seekTo}>
-        <div
-          class="progress"
-          style="width: {(currentTime / duration) * 100}%"
-        ></div>
+      <div
+        class="flex-grow mx-2 h-1 bg-white bg-opacity-30 rounded cursor-pointer"
+        on:click={seekTo}
+      >
+        <div class="h-full bg-red-600 rounded" style="width: {progress}%"></div>
       </div>
-      <span>{formatTime(currentTime)} / {formatTime(duration)}</span>
+      <span class="text-white text-sm mx-2"
+        >{formatTime(currentTime)} / {formatTime(duration)}</span
+      >
+      <button
+        class="text-white opacity-70 hover:opacity-100 transition-opacity duration-300"
+        on:click={toggleMute}
+      >
+        {#if isMuted}
+          <VolumeX class="w-6 h-6" />
+        {:else}
+          <Volume2 class="w-6 h-6" />
+        {/if}
+      </button>
       <input
         type="range"
         min="0"
@@ -141,161 +219,44 @@
         step="0.1"
         bind:value={volume}
         on:input={updateVolume}
+        class="w-24 mx-2"
       />
-      <button on:click={toggleFullScreen}>
-        {isFullScreen ? "⤢" : "⤡"}
+      <button
+        class="text-white opacity-70 hover:opacity-100 transition-opacity duration-300"
+        on:click={toggleFullScreen}
+      >
+        {#if isFullScreen}
+          <Minimize class="w-6 h-6" />
+        {:else}
+          <Maximize class="w-6 h-6" />
+        {/if}
       </button>
     </div>
   {/if}
 </div>
 
 <style>
-  .video-container {
-    position: relative;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease,
-      background-color 0.3s ease;
-    background-color: rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
-    overflow: hidden;
-    aspect-ratio: 16 / 9; /* Maintains a 16:9 aspect ratio */
-  }
-
-  .video-container:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-
-  .video-player {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: filter 0.3s ease;
-  }
-
-  .video-container:hover .video-player {
-    filter: brightness(1.1);
-  }
-
-  .overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-  }
-
-  .video-container:hover .overlay {
-    opacity: 0.8;
-  }
-
-  .signin-overlay {
-    background-color: rgba(0, 0, 0, 0.7);
-  }
-
-  .load-overlay {
-    background-color: rgba(0, 0, 0, 0.5);
-    cursor: pointer;
-  }
-
-  .custom-controls {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(100%);
-    transition:
-      opacity 0.3s ease,
-      transform 0.3s ease;
-  }
-
-  .video-container:hover .custom-controls {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .progress-bar {
-    flex-grow: 1;
-    height: 5px;
-    background-color: rgba(255, 255, 255, 0.3);
-    margin: 0 10px;
-    cursor: pointer;
-    border-radius: 2.5px;
-    overflow: hidden;
-  }
-
-  .progress {
-    height: 100%;
-    background-color: #ff0000;
-    transition: width 0.1s linear;
-  }
-
-  button,
-  input[type="range"] {
-    margin: 0 5px;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-  }
-
-  button:hover,
-  input[type="range"]:hover {
-    opacity: 1;
-  }
-
-  button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-  }
-
+  /* Custom styles for range input */
   input[type="range"] {
     -webkit-appearance: none;
-    width: 100px;
-    background: transparent;
+    @apply bg-transparent;
   }
 
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: #ff0000;
-    cursor: pointer;
-    margin-top: -6px;
+    @apply h-4 w-4 rounded-full bg-red-600 cursor-pointer -mt-1.5;
   }
 
   input[type="range"]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 2px;
+    @apply w-full h-1 bg-white bg-opacity-30 rounded;
   }
 
+  /* Fullscreen styles */
   :global(.video-container:fullscreen) {
-    max-width: none;
-    width: 100%;
+    @apply max-w-none w-full;
   }
 
   :global(.video-container:fullscreen .video-player) {
-    height: 100%;
+    @apply h-full;
   }
 </style>

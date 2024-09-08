@@ -89,14 +89,36 @@
 
     try {
       if (isRegistering) {
-        await registerWithEmailAndPassword(
+        const registeredUser = await registerWithEmailAndPassword(
           email,
           password,
           fullName,
           formatPhoneNumber(phoneNumber, selectedCountry)
         );
+        const idToken = await registeredUser.getIdToken();
+        const res = await fetch("/api/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ idToken }),
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
       } else {
-        await signInWithCredentials(email, password);
+        const user = await signInWithCredentials(email, password);
+        const idToken = await user.getIdToken();
+        const res = await fetch("/api/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ idToken }),
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
       }
       goto("/"); // Redirect to home page after successful auth
     } catch (err: any) {

@@ -14,11 +14,11 @@
     class="hidden"
   />
   
-  <div class="swap-on w-18 h-10 bg-[#EE8FA5] rounded-full flex items-center p-2">
+  <div class="swap-on w-18 h-10 bg-rgHighlight rounded-full flex items-center p-2">
     <span>English</span>
   </div>
   
-  <div class="swap-off w-18 h-10 bg-[#EE8FA5] rounded-full flex items-center p-2">
+  <div class="swap-off w-18 h-10 bg-rgHighlight rounded-full flex items-center p-2">
     <span>عربي</span>
   </div>
 </label>
