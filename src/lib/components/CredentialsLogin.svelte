@@ -17,7 +17,7 @@
   import CountryDropdown from "./CountryDropdown.svelte";
   import PasswordInput from "./PasswordInput.svelte";
 
-  export let userCountry: string;
+  // export let userCountry: string;
   export let countriesData: Country[];
 
   interface FormData {
@@ -273,21 +273,32 @@
           <label class="label" for="phone">
             <span class="label-text">Phone Number</span>
           </label>
-          <div class="flex">
-            <CountryDropdown
-              {countriesData}
-              {selectedCountry}
-              onSelect={handleCountrySelect}
-            />
-            <input
-              id="phone"
-              name="phoneNumber"
-              type="tel"
-              bind:value={$formData.phoneNumber}
-              placeholder="Phone Number"
-              required
-              class="input input-bordered w-full max-w-xs ml-2"
-            />
+          <div class="flex items-center space-x-2 w-full max-w-2xl">
+            <div class="w-1/2">
+              <select
+                id="country-select"
+                class="select select-bordered w-full"
+                bind:value={selectedCountry}
+                required
+              >
+                <option value="" disabled selected>Select country</option>
+                {#each countriesData as country}
+                  <option value={country}>
+                    {country.name} (+{country.phoneCode})
+                  </option>
+                {/each}
+              </select>
+            </div>
+            <div class="w-1/2">
+              <input
+                id="phone"
+                type="tel"
+                bind:value={phoneNumber}
+                placeholder="Phone Number"
+                required
+                class="input input-bordered w-full"
+              />
+            </div>
           </div>
           {#if $errors.phoneNumber}<span class="text-error text-sm mt-1"
               >{$errors.phoneNumber}</span
