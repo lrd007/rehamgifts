@@ -19,14 +19,14 @@
 
   let dropdownOpen = false;
   let isHeaderFixed = false;
-  let headerRef: HTMLElement;
-  let headerHeight: number;
+  let headerRef: HTMLElement | null = null;
+  let headerHeight = 0;
 
   function toggleDropdown() {
     dropdownOpen = !dropdownOpen;
   }
 
-  function handleKeyDown(event: { key: string }) {
+  function handleKeyDown(event: KeyboardEvent) {
     if (event.key === "Enter" || event.key === " ") {
       toggleDropdown();
     }
@@ -57,9 +57,12 @@
 
 <header
   bind:this={headerRef}
-  class="bg-rgPrimary text-white font-bold shadow-lg relative overflow-hidden header-pattern"
+  class="bg-rgPrimary text-white font-bold shadow-lg relative"
   class:fixed={isHeaderFixed}
 >
+  <div class="header-pattern-container overflow-hidden absolute inset-0">
+    <div class="header-pattern w-full h-full"></div>
+  </div>
   <div class="container mx-auto px-4 relative">
     <div class="navbar">
       <div class="flex-1">
@@ -94,24 +97,28 @@
               </div>
             </div>
             {#if dropdownOpen}
-              <ul
-                class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52"
+              <div
+                class="dropdown-wrapper absolute top-full left-0 right-0 z-[1002]"
               >
-                <li>
-                  <a
-                    href="/login"
-                    class="text-gray-700 hover:bg-purple-100 hover:text-purple-900"
-                    >Profile</a
-                  >
-                </li>
-                <li>
-                  <button
-                    on:click={handleLogout}
-                    class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900"
-                    >Logout</button
-                  >
-                </li>
-              </ul>
+                <ul
+                  class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52"
+                >
+                  <li>
+                    <a
+                      href="/login"
+                      class="text-gray-700 hover:bg-purple-100 hover:text-purple-900"
+                      >Profile</a
+                    >
+                  </li>
+                  <li>
+                    <button
+                      on:click={handleLogout}
+                      class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900"
+                      >Logout</button
+                    >
+                  </li>
+                </ul>
+              </div>
             {/if}
           </div>
         {:else}
@@ -127,6 +134,10 @@
 {/if}
 
 <style lang="postcss">
+  .header-pattern-container {
+    z-index: 0;
+  }
+
   .header-pattern::before,
   .header-pattern::after {
     content: " ";
