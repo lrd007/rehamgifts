@@ -57,10 +57,10 @@
 
 <header
   bind:this={headerRef}
-  class="bg-rgPrimary text-white font-bold shadow-lg relative overflow-hidden header-pattern"
+  class="bg-rgPrimary text-white font-bold shadow-lg relative overflow-visible header-pattern"
   class:fixed={isHeaderFixed}
 >
-  <div class="container mx-auto px-4 relative z-10">
+  <div class="container mx-auto px-4 relative">
     <div class="navbar">
       <div class="flex-1">
         <a href="{base}/" class="flex items-center">
@@ -95,7 +95,7 @@
             </div>
             {#if dropdownOpen}
               <ul
-                class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52 z-50"
+                class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52"
               >
                 <li>
                   <a
@@ -163,6 +163,7 @@
 
   /* Styles for fixed header with slower animation */
   header {
+    z-index: 1000;
     transition:
       transform 0.6s ease-in-out,
       box-shadow 0.6s ease-in-out;
@@ -174,7 +175,6 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transform: translateY(0);
   }
@@ -182,5 +182,17 @@
   header:not(.fixed) {
     transform: translateY(0);
     box-shadow: none;
+  }
+
+  /* Ensure dropdown is not clipped */
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown-content {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1001;
   }
 </style>
