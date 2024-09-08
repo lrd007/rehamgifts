@@ -69,7 +69,7 @@
               >
                 <li>
                   <a
-                    href="{base}/profile"
+                    href="/login"
                     class="text-gray-700 hover:bg-purple-100 hover:text-purple-900"
                     >Profile</a
                   >
