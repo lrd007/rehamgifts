@@ -14,15 +14,19 @@
     try {
       await fetch("/api/signin", { method: "DELETE" });
       await signOut(auth);
-      invalidateAll();
-      goto(`${base}/`); // Redirect to home page after logout
+      setTimeout(() => {
+        invalidateAll();
+        goto(`${base}/`); // Redirect to home page after logout
+      }, 0);
     } catch (error) {
       console.error("Error signing out:", error);
     }
   }
 
   function handleProfileClick() {
-    goto(`${base}/login`); // Navigate to the profile page
+    setTimeout(() => {
+      goto(`${base}/login`);
+    }, 0); // Navigate to the profile page
   }
 
   let dropdownOpen = false;
