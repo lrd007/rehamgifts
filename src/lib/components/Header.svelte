@@ -1,7 +1,7 @@
 <script lang="ts">
   import { base } from "$app/paths";
   import logo from "$lib/assets/rehamdiva-logo.png";
-  import { user, userData, type UserData } from "$lib/firebase";
+  import { userData } from "$lib/firebase";
   import avatar from "$lib/assets/avatar.png";
   import { signOut } from "firebase/auth";
   import { auth } from "$lib/firebase";
@@ -12,6 +12,7 @@
 
   async function handleLogout() {
     try {
+      await fetch("/api/signin", { method: "DELETE" });
       await signOut(auth);
       invalidateAll();
       goto(`${base}/`); // Redirect to home page after logout
@@ -25,32 +26,63 @@
   }
 
   let dropdownOpen = false;
+  let isHeaderFixed = false;
+  let headerRef: HTMLElement | null = null;
+  let headerHeight = 0;
 
   function toggleDropdown() {
     dropdownOpen = !dropdownOpen;
   }
 
-  function handleKeyDown(event: { key: string }) {
+  function handleKeyDown(event: KeyboardEvent) {
     if (event.key === "Enter" || event.key === " ") {
       toggleDropdown();
     }
   }
 
+  onMount(() => {
+    if (headerRef) {
+      headerHeight = headerRef.offsetHeight;
+    }
+
+    const handleScroll = () => {
+      if (window.pageYOffset > headerHeight) {
+        isHeaderFixed = true;
+      } else {
+        isHeaderFixed = false;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  });
+
   $: userFullName = $userData?.fullName.toUpperCase() || "";
 </script>
 
-<header class="bg-[#da627d] text-white font-bold shadow-lg">
-  <div class="container mx-auto px-4">
+<header
+  bind:this={headerRef}
+  class="bg-rgPrimary text-white font-bold shadow-lg relative"
+  class:fixed={isHeaderFixed}
+>
+  <div class="header-pattern-container overflow-hidden absolute inset-0">
+    <div class="header-pattern w-full h-full"></div>
+  </div>
+  <div class="container mx-auto px-4 relative">
     <div class="navbar">
       <div class="flex-1">
         <a href="{base}/" class="flex items-center">
           <img src={logo} alt="Reham Diva" class="h-24 w-auto" />
         </a>
       </div>
+      <LanguageToggle />
       <div
-        class="flex-none bg-[#EE8FA5] hover:bg-[#F6BBC9] min-w-44 px-4 py-2 rounded-3xl"
+        class="flex-none sm:bg-rgHighlight sm:hover:bg-rgHighlightHover sm:min-w-44 px-4 py-2 rounded-3xl ml-2 sm:ml-4"
       >
-        {#if $user && userFullName}
+        {#if userID}
           <div class="dropdown dropdown-end mx-auto">
             <div
               class="flex items-center gap-2 cursor-pointer transition-all duration-300 group"
@@ -61,7 +93,13 @@
               aria-haspopup="true"
               aria-expanded={dropdownOpen}
             >
-              <span class="inline">{userFullName}</span>
+              <span class="sm:inline hidden min-w-[100px]">
+                {#if userFullName}
+                  {userFullName}
+                {:else}
+                  <div class="skeleton h-1 w-28"></div>
+                {/if}
+              </span>
               <div
                 class="w-10 h-10 rounded-full overflow-hidden transition-transform duration-300"
               >
@@ -105,3 +143,82 @@
     </div>
   </div>
 </header>
+
+{#if isHeaderFixed}
+  <div style="height: {headerHeight}px;"></div>
+{/if}
+
+<style lang="postcss">
+  .header-pattern-container {
+    z-index: 0;
+  }
+
+  .header-pattern::before,
+  .header-pattern::after {
+    content: " ";
+    @apply absolute top-0 bg-cover opacity-20 pointer-events-none;
+    background-image: url("$lib/assets/reham-assets/pattern-transparent.png");
+    aspect-ratio: 1032 / 942;
+  }
+
+  .header-pattern::before {
+    @apply left-0;
+    width: 516px; /* 50% of original width */
+    transform: translate(-18%, 8%) rotate(165deg);
+  }
+
+  .header-pattern::after {
+    @apply right-0;
+    width: 516px; /* 50% of original width */
+    transform: translate(5%, -77%) rotate(270deg);
+  }
+
+  @media (max-width: 640px) {
+    .header-pattern::before {
+      display: none;
+      width: 309.6px; /* 30% of original width */
+      transform: translate(-25%, 15%) rotate(165deg);
+    }
+
+    .header-pattern::after {
+      width: 330px;
+      transform: translate(12%, -65%) rotate(270deg);
+      /* display: none; */
+    }
+  }
+
+  /* Styles for fixed header with slower animation */
+  header {
+    z-index: 1000;
+    transition:
+      transform 0.6s ease-in-out,
+      box-shadow 0.6s ease-in-out;
+    will-change: transform;
+  }
+
+  header.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+  }
+
+  header:not(.fixed) {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  /* Ensure dropdown is not clipped */
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown-content {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1001;
+  }
+</style>

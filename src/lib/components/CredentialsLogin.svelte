@@ -15,7 +15,7 @@
   import ForgotPassword from "./ForgotPassword.svelte";
 
   // Props
-  export let userCountry: string;
+  // export let userCountry: string;
   export let countriesData: Country[];
 
   interface FormErrors {
@@ -38,18 +38,8 @@
   let showPassword = false;
   let showConfirmPassword = false;
   let selectedCountry: Country;
-  let searchTerm = "";
-  let searchInput: HTMLInputElement;
-  let dropdownOpen = false;
 
-  $: filteredCountries = countriesData.filter((country) =>
-    country.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  onMount(() => {
-    selectedCountry =
-      countriesData.find((c) => c.code === userCountry) || countriesData[0];
-  });
+  onMount(() => {});
 
   function formatPhoneNumber(number: string, country: Country): string {
     const phoneNumber = parsePhoneNumberFromString(
@@ -57,11 +47,6 @@
       country.code as CountryCode
     );
     return phoneNumber ? phoneNumber.formatInternational() : number;
-  }
-
-  function handleCountrySelect(country: Country): void {
-    selectedCountry = country;
-    phoneNumber = formatPhoneNumber(phoneNumber, country);
   }
 
   function validateForm() {
@@ -104,14 +89,36 @@
 
     try {
       if (isRegistering) {
-        await registerWithEmailAndPassword(
+        const registeredUser = await registerWithEmailAndPassword(
           email,
           password,
           fullName,
-          phoneNumber
+          formatPhoneNumber(phoneNumber, selectedCountry)
         );
+        const idToken = await registeredUser.getIdToken();
+        const res = await fetch("/api/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ idToken }),
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
       } else {
-        await signInWithCredentials(email, password);
+        const user = await signInWithCredentials(email, password);
+        const idToken = await user.getIdToken();
+        const res = await fetch("/api/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ idToken }),
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
       }
       goto("/"); // Redirect to home page after successful auth
     } catch (err: any) {
@@ -131,15 +138,6 @@
       showConfirmPassword = !showConfirmPassword;
     }
   }
-
-  function toggleDropdown() {
-    dropdownOpen = !dropdownOpen;
-    if (dropdownOpen) {
-      // Use setTimeout to ensure the input is in the DOM before focusing
-      setTimeout(() => searchInput?.focus(), 0);
-    }
-  }
-
   function toggleForgotPassword() {
     showForgotPassword = !showForgotPassword;
   }
@@ -275,69 +273,32 @@
           <label class="label" for="phone">
             <span class="label-text">Phone Number</span>
           </label>
-          <div class="flex">
-            <div class="dropdown">
-              <button
-                type="button"
-                class="btn m-1 flex-nowrap"
-                on:click={toggleDropdown}
-                aria-haspopup="listbox"
-                aria-expanded={dropdownOpen}
+          <div class="flex items-center space-x-2 w-full max-w-2xl">
+            <div class="w-1/2">
+              <select
+                id="country-select"
+                class="select select-bordered w-full"
+                bind:value={selectedCountry}
+                required
               >
-                {#if selectedCountry}
-                  <img
-                    src={selectedCountry.flag}
-                    alt={selectedCountry.name}
-                    class="w-5 h-5 mr-2"
-                  />
-                  +{selectedCountry.phoneCode}
-                {/if}
-              </button>
-              {#if dropdownOpen}
-                <ul
-                  class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-60 overflow-y-auto"
-                  role="listbox"
-                >
-                  <li>
-                    <input
-                      bind:this={searchInput}
-                      type="text"
-                      placeholder="Search countries"
-                      class="input input-bordered w-full"
-                      bind:value={searchTerm}
-                    />
-                  </li>
-                  {#each filteredCountries as country}
-                    <li>
-                      <button
-                        type="button"
-                        on:click={() => {
-                          handleCountrySelect(country);
-                          dropdownOpen = false;
-                        }}
-                        role="option"
-                        aria-selected={selectedCountry?.code === country.code}
-                      >
-                        <img
-                          src={country.flag}
-                          alt={country.name}
-                          class="w-5 h-5 mr-2"
-                        />
-                        {country.name} (+{country.phoneCode})
-                      </button>
-                    </li>
-                  {/each}
-                </ul>
-              {/if}
+                <option value="" disabled selected>Select country</option>
+                {#each countriesData as country}
+                  <option value={country}>
+                    {country.name} (+{country.phoneCode})
+                  </option>
+                {/each}
+              </select>
             </div>
-            <input
-              id="phone"
-              type="tel"
-              bind:value={phoneNumber}
-              placeholder="Phone Number"
-              required
-              class="input input-bordered w-full max-w-xs ml-2"
-            />
+            <div class="w-1/2">
+              <input
+                id="phone"
+                type="tel"
+                bind:value={phoneNumber}
+                placeholder="Phone Number"
+                required
+                class="input input-bordered w-full"
+              />
+            </div>
           </div>
           {#if $errors.phoneNumber}<span class="text-error text-sm mt-1"
               >{$errors.phoneNumber}</span

@@ -4,7 +4,9 @@
   import { base } from "$app/paths";
 </script>
 
-<footer class="footer footer-center bg-[#da627d] text-white p-4 gap-y-2">
+<footer
+  class="footer footer-center bg-rgPrimary text-white p-4 gap-y-2 relative overflow-hidden footer-pattern"
+>
   <aside>
     <a href="{base}/" class="flex items-center">
       <img src={footerLogo} alt="Reham Diva Logo" class="h-24 w-auto" />
@@ -126,3 +128,35 @@
     </div>
   </nav>
 </footer>
+
+<style lang="postcss">
+  .footer-pattern::before,
+  .footer-pattern::after {
+    content: " ";
+    @apply absolute bg-cover opacity-20 pointer-events-none;
+    background-image: url("$lib/assets/reham-assets/pattern-transparent.png");
+    aspect-ratio: 1032 / 942;
+  }
+
+  .footer-pattern::before {
+    @apply left-0 bottom-0;
+    width: 516px; /* 50% of original width */
+    transform: translate(-30%, 30%) rotate(45deg);
+  }
+
+  .footer-pattern::after {
+    @apply right-0 top-0;
+    width: 516px; /* 50% of original width */
+    transform: translate(20%, -20%) rotate(15deg);
+  }
+
+  @media (max-width: 640px) {
+    .footer-pattern::before {
+      transform: translate(-25%, 0%) rotate(0deg);
+    }
+
+    .footer-pattern::after {
+      display: none;
+    }
+  }
+</style>
