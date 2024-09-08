@@ -5,14 +5,23 @@
   import avatar from "$lib/assets/avatar.png";
   import { signOut } from "firebase/auth";
   import { auth } from "$lib/firebase";
+  import LanguageToggle from "./LanguageToggle.svelte";
+  import { onMount } from "svelte";
+  import { invalidateAll, goto } from "$app/navigation";
+  export let userID;
 
   async function handleLogout() {
     try {
       await signOut(auth);
-      // Optionally, you can redirect the user or update the UI here
+      invalidateAll();
+      goto(`${base}/`); // Redirect to home page after logout
     } catch (error) {
       console.error("Error signing out:", error);
     }
+  }
+
+  function handleProfileClick() {
+    goto(`${base}/login`); // Navigate to the profile page
   }
 
   let dropdownOpen = false;
@@ -64,24 +73,29 @@
               </div>
             </div>
             {#if dropdownOpen}
-              <ul
-                class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52 z-50"
+              <div
+                class="dropdown-wrapper fixed inset-0 z-[1002]"
+                on:click|self={toggleDropdown}
               >
-                <li>
-                  <a
-                    href="{base}/profile"
-                    class="text-gray-700 hover:bg-purple-100 hover:text-purple-900"
-                    >Profile</a
-                  >
-                </li>
-                <li>
-                  <button
-                    on:click={handleLogout}
-                    class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900"
-                    >Logout</button
-                  >
-                </li>
-              </ul>
+                <ul
+                  class="absolute right-4 mt-3 p-2 shadow menu menu-compact dropdown-content bg-white rounded-box w-52"
+                >
+                  <li>
+                    <button
+                      on:click|preventDefault|stopPropagation={handleProfileClick}
+                      class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900 py-4 px-4"
+                      >Profile</button
+                    >
+                  </li>
+                  <li>
+                    <button
+                      on:click|preventDefault|stopPropagation={handleLogout}
+                      class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900 py-4 px-4"
+                      >Logout</button
+                    >
+                  </li>
+                </ul>
+              </div>
             {/if}
           </div>
         {:else}
