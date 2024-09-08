@@ -123,7 +123,11 @@
             </ul>
           </div>
         {:else}
-          <div tabindex="0" role="button" class="btn m-1">
+          <div
+            tabindex="1"
+            role="button"
+            class="text-white sm:min-w-44 btn m-1 flex-none bg-rgHighlight sm:hover:bg-rgHighlightHover rounded-3xl border-none"
+          >
             <a href="{base}/login">Login</a>
           </div>
         {/if}
