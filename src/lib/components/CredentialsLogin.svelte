@@ -134,10 +134,10 @@
 
   function toggleDropdown() {
     dropdownOpen = !dropdownOpen;
-    if (dropdownOpen) {
-      // Use setTimeout to ensure the input is in the DOM before focusing
-      setTimeout(() => searchInput?.focus(), 0);
-    }
+    // if (dropdownOpen) {
+    //   // Use setTimeout to ensure the input is in the DOM before focusing
+    //   setTimeout(() => searchInput?.focus(), 0);
+    // }
   }
 
   function toggleForgotPassword() {
