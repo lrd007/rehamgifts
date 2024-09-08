@@ -5,6 +5,7 @@
   import avatar from "$lib/assets/avatar.png";
   import { signOut } from "firebase/auth";
   import { auth } from "$lib/firebase";
+  import LanguageToggle from "./LanguageToggle.svelte";
 
   async function handleLogout() {
     try {
@@ -30,16 +31,19 @@
   $: userFullName = $userData?.fullName.toUpperCase() || "";
 </script>
 
-<header class="bg-rgPrimary text-white font-bold shadow-lg ">
-  <div class="container mx-auto px-4">
+<header
+  class="bg-rgPrimary text-white font-bold shadow-lg relative overflow-hidden header-pattern"
+>
+  <div class="container mx-auto px-4 relative z-10">
     <div class="navbar">
       <div class="flex-1">
         <a href="{base}/" class="flex items-center">
           <img src={logo} alt="Reham Diva" class="h-24 w-auto" />
         </a>
       </div>
+      <LanguageToggle />
       <div
-        class="flex-none bg-rgHighlight hover:bg-rgHighlightHover min-w-44 px-4 py-2 rounded-3xl"
+        class="flex-none sm:bg-rgHighlight sm:hover:bg-rgHighlightHover sm:min-w-44 px-4 py-2 rounded-3xl ml-2 sm:ml-4"
       >
         {#if $user && userFullName}
           <div class="dropdown dropdown-end mx-auto">
@@ -52,7 +56,7 @@
               aria-haspopup="true"
               aria-expanded={dropdownOpen}
             >
-              <span class="inline">{userFullName}</span>
+              <span class="sm:inline hidden">{userFullName}</span>
               <div
                 class="w-10 h-10 rounded-full overflow-hidden transition-transform duration-300"
               >
@@ -91,3 +95,39 @@
     </div>
   </div>
 </header>
+
+<style lang="postcss">
+  .header-pattern::before,
+  .header-pattern::after {
+    content: " ";
+    @apply absolute top-0 bg-cover opacity-20 pointer-events-none;
+    background-image: url("$lib/assets/reham-assets/pattern-transparent.png");
+    aspect-ratio: 1032 / 942;
+  }
+
+  .header-pattern::before {
+    @apply left-0;
+    width: 516px; /* 50% of original width */
+    transform: translate(-18%, 8%) rotate(165deg);
+  }
+
+  .header-pattern::after {
+    @apply right-0;
+    width: 516px; /* 50% of original width */
+    transform: translate(5%, -77%) rotate(270deg);
+  }
+
+  @media (max-width: 640px) {
+    .header-pattern::before {
+      display: none;
+      width: 309.6px; /* 30% of original width */
+      transform: translate(-25%, 15%) rotate(165deg);
+    }
+
+    .header-pattern::after {
+      width: 330px;
+      transform: translate(12%, -65%) rotate(270deg);
+      /* display: none; */
+    }
+  }
+</style>
