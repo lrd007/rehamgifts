@@ -8,9 +8,11 @@ interface IPAPIResponse {
 
 export const load: PageServerLoad = async ({ fetch }) => {
   // Fetch user's country based on IP
-  const res = await fetch("https://ipapi.co/json/");
-  const data: IPAPIResponse = await res.json();
-  const userCountry = data.country_code;
+  // const res = await fetch("https://ipapi.co/json/");
+  // const data: IPAPIResponse = await res.json();
+  // const userCountry = data.country_code;
+  const userCountry = "IN";
+  // console.log(userCountry);
 
   // Prepare countries data
   const countriesData: Country[] = Object.entries(countries).map(
