@@ -6,6 +6,7 @@
   import { signOut } from "firebase/auth";
   import { auth } from "$lib/firebase";
   import LanguageToggle from "./LanguageToggle.svelte";
+  import { onMount } from "svelte";
 
   async function handleLogout() {
     try {
@@ -17,6 +18,9 @@
   }
 
   let dropdownOpen = false;
+  let isHeaderFixed = false;
+  let headerRef: HTMLElement;
+  let headerHeight: number;
 
   function toggleDropdown() {
     dropdownOpen = !dropdownOpen;
@@ -28,11 +32,33 @@
     }
   }
 
+  onMount(() => {
+    if (headerRef) {
+      headerHeight = headerRef.offsetHeight;
+    }
+
+    const handleScroll = () => {
+      if (window.pageYOffset > headerHeight) {
+        isHeaderFixed = true;
+      } else {
+        isHeaderFixed = false;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  });
+
   $: userFullName = $userData?.fullName.toUpperCase() || "";
 </script>
 
 <header
+  bind:this={headerRef}
   class="bg-rgPrimary text-white font-bold shadow-lg relative overflow-hidden header-pattern"
+  class:fixed={isHeaderFixed}
 >
   <div class="container mx-auto px-4 relative z-10">
     <div class="navbar">
@@ -96,6 +122,10 @@
   </div>
 </header>
 
+{#if isHeaderFixed}
+  <div style="height: {headerHeight}px;"></div>
+{/if}
+
 <style lang="postcss">
   .header-pattern::before,
   .header-pattern::after {
@@ -129,5 +159,28 @@
       transform: translate(12%, -65%) rotate(270deg);
       /* display: none; */
     }
+  }
+
+  /* Styles for fixed header with slower animation */
+  header {
+    transition:
+      transform 0.6s ease-in-out,
+      box-shadow 0.6s ease-in-out;
+    will-change: transform;
+  }
+
+  header.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+  }
+
+  header:not(.fixed) {
+    transform: translateY(0);
+    box-shadow: none;
   }
 </style>

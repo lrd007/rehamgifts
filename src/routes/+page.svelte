@@ -9,45 +9,83 @@
 
   <main class="relative overflow-hidden main-pattern">
     <div class="container mx-auto px-4 py-8 relative z-10">
-      <!-- Your main content goes here -->
       <div class="col-span-12 md:col-span-9 lg:col-span-10">
         <VideoGrid />
       </div>
     </div>
+    <div class="pattern left"></div>
+    <div class="pattern right"></div>
   </main>
 
   <Footer />
 </div>
 
-<!-- <style lang="postcss">
-  .main-pattern::before,
-  .main-pattern::after {
+<style lang="postcss">
+  .main-pattern {
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .pattern {
     content: " ";
-    @apply absolute bg-cover opacity-80 pointer-events-none;
-    background-image: url("$lib/assets/reham-assets/pattern-primary.png");
-    width: 363px;
-    height: 332px;
+    position: fixed;
+    background-image: url("$lib/assets/reham-assets/pattern-light-3x.png");
+    background-size: cover;
+    opacity: 1;
+    pointer-events: none;
+    width: 544px;
+    height: 497px;
+    transition: transform 0.1s ease-out;
+    top: 0;
+    animation-name: translateAnimation;
+    animation-duration: 1ms; /* Firefox requires this to apply the animation */
+    animation-direction: alternate;
+    animation-timeline: scroll(block nearest);
   }
 
-  .main-pattern::before {
-    @apply left-0 top-1/4;
-    transform: translate(-40%, -50%) rotate(30deg);
+  .pattern.left {
+    left: -20%;
   }
 
-  .main-pattern::after {
-    @apply right-0 bottom-1/4;
-    transform: translate(0%, 50%) rotate(-90deg);
+  .pattern.right {
+    top: 15%;
+    right: -10%;
+    transform: scaleX(-1);
+  }
+
+  @media (min-width: 641px) {
+    @keyframes translateAnimation {
+      from {
+        transform: translateX(0%);
+      }
+      to {
+        transform: translateX(50%);
+      }
+    }
+
+    .pattern.right {
+      animation-direction: alternate-reverse;
+    }
   }
 
   @media (max-width: 640px) {
-    .main-pattern::before {
-      @apply left-0 top-0;
-      transform: translate(-30%, -30%) rotate(30deg);
+    .pattern.left {
+      display: none;
     }
 
-    .main-pattern::after {
-      @apply right-0 bottom-0;
-      transform: translate(30%, 30%) rotate(-15deg);
+    .pattern.right {
+      top: 20%;
+      left: 45%;
+      /* transform: translateX(-50%) rotate(-30deg) scaleX(-1); */
+    }
+
+    @keyframes translateAnimation {
+      from {
+        transform: translate(0%, 0%) rotate(0deg) scaleX(-1);
+      }
+      to {
+        transform: translate(-50%, 0%) rotate(-30deg) scaleX(-1);
+      }
     }
   }
-</style> -->
+</style>
