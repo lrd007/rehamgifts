@@ -1,16 +1,21 @@
 <script lang="ts">
   import { base } from "$app/paths";
   import logo from "$lib/assets/rehamdiva-logo.png";
-  import { user, userData, type UserData } from "$lib/firebase";
+  import { userData } from "$lib/firebase";
   import avatar from "$lib/assets/avatar.png";
   import { signOut } from "firebase/auth";
   import { auth } from "$lib/firebase";
   import LanguageToggle from "./LanguageToggle.svelte";
   import { onMount } from "svelte";
+  import { invalidateAll } from "$app/navigation";
+  export let userID;
+  console.log(userID);
 
   async function handleLogout() {
     try {
+      await fetch("/api/signin", { method: "DELETE" });
       await signOut(auth);
+      invalidateAll();
       // Optionally, you can redirect the user or update the UI here
     } catch (error) {
       console.error("Error signing out:", error);
@@ -74,7 +79,7 @@
       <div
         class="flex-none sm:bg-rgHighlight sm:hover:bg-rgHighlightHover sm:min-w-44 px-4 py-2 rounded-3xl ml-2 sm:ml-4"
       >
-        {#if $user && userFullName}
+        {#if userID}
           <div class="dropdown dropdown-end mx-auto">
             <div
               class="flex items-center gap-2 cursor-pointer transition-all duration-300 group"
@@ -85,7 +90,13 @@
               aria-haspopup="true"
               aria-expanded={dropdownOpen}
             >
-              <span class="sm:inline hidden">{userFullName}</span>
+              <span class="sm:inline hidden min-w-[100px]">
+                {#if userFullName}
+                  {userFullName}
+                {:else}
+                  <div class="skeleton h-1 w-28"></div>
+                {/if}
+              </span>
               <div
                 class="w-10 h-10 rounded-full overflow-hidden transition-transform duration-300"
               >

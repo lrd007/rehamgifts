@@ -2,10 +2,11 @@
   import Footer from "$lib/components/Footer.svelte";
   import Header from "$lib/components/Header.svelte";
   import VideoGrid from "$lib/components/VideoGrid.svelte";
+  export let data;
 </script>
 
 <div class="flex flex-col min-h-screen">
-  <Header />
+  <Header userID={data.userID} />
 
   <main class="relative overflow-hidden main-pattern">
     <div class="container mx-auto px-4 py-8 relative z-10">

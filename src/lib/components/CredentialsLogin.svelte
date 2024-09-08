@@ -47,11 +47,11 @@
   let errors: Writable<FormErrors> = writable({});
   let isRegistering = false;
   let showForgotPassword = false;
+  let isLoading = false;
   let selectedCountry =
     countriesData.find((c) => c.code === userCountry) || countriesData[0];
 
   $: {
-    // Automatically format phone number when country changes
     if ($formData.phoneNumber) {
       $formData.phoneNumber = formatPhoneNumber(
         $formData.phoneNumber,
@@ -95,7 +95,7 @@
   }
 
   async function handleSubmit(event: SubmitEvent) {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
     const currentFormData = Object.fromEntries(
@@ -106,23 +106,68 @@
     errors.set(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+      isLoading = true;
+      errors.update((e) => ({ ...e, form: undefined })); // Clear previous form errors
+
       try {
         if (isRegistering) {
-          await registerWithEmailAndPassword(
+          const regUser = await registerWithEmailAndPassword(
             currentFormData.email,
             currentFormData.password,
             currentFormData.fullName,
             currentFormData.phoneNumber
           );
+          console.log({regUser});
         } else {
-          await signInWithCredentials(
+          const user = await signInWithCredentials(
             currentFormData.email,
             currentFormData.password
           );
+          console.log({user});
+          const idToken = await user.getIdToken();
+          const res = await fetch("/api/signin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ idToken }),
+          });
+
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
         }
         goto("/"); // Redirect to home page after successful auth
       } catch (err: any) {
-        errors.update((e) => ({ ...e, form: err.message }));
+        console.error("Authentication error:", err);
+        let errorMessage = "An unexpected error occurred. Please try again.";
+
+        if (err.code) {
+          switch (err.code) {
+            case "auth/email-already-in-use":
+              errorMessage = "This email is already registered.";
+              break;
+            case "auth/invalid-email":
+              errorMessage = "Invalid email address.";
+              break;
+            case "auth/weak-password":
+              errorMessage =
+                "Password is too weak. Please choose a stronger password.";
+              break;
+            case "auth/user-not-found":
+            case "auth/wrong-password":
+              errorMessage = "Invalid email or password.";
+              break;
+            case "auth/too-many-requests":
+              errorMessage =
+                "Too many failed attempts. Please try again later.";
+              break;
+          }
+        }
+
+        errors.update((e) => ({ ...e, form: errorMessage }));
+      } finally {
+        isLoading = false;
       }
     }
   }
@@ -144,12 +189,25 @@
   }
 
   async function handleForgotPassword(email: string) {
+    isLoading = true;
+    errors.update((e) => ({ ...e, form: undefined })); // Clear previous form errors
+
     try {
       await resetPassword(email);
       alert("Password reset email sent. Please check your inbox.");
       showForgotPassword = false;
     } catch (err: any) {
-      errors.update((e) => ({ ...e, form: err.message }));
+      console.error("Password reset error:", err);
+      let errorMessage =
+        "Failed to send password reset email. Please try again.";
+
+      if (err.code === "auth/user-not-found") {
+        errorMessage = "No account found with this email address.";
+      }
+
+      errors.update((e) => ({ ...e, form: errorMessage }));
+    } finally {
+      isLoading = false;
     }
   }
 </script>
@@ -238,8 +296,8 @@
 
         {#if $errors.form}<p class="text-error mt-2">{$errors.form}</p>{/if}
 
-        <button type="submit" class="btn btn-primary mt-4">
-          {isRegistering ? "Register" : "Login"}
+        <button type="submit" class="btn btn-primary mt-4" disabled={isLoading}>
+          {isLoading ? "Processing..." : isRegistering ? "Register" : "Login"}
         </button>
       </form>
       <button
@@ -248,6 +306,7 @@
           errors.set({});
         }}
         class="btn btn-link mt-2"
+        disabled={isLoading}
       >
         {isRegistering
           ? "Already have an account? Login"
@@ -257,6 +316,7 @@
         <button
           on:click={() => (showForgotPassword = true)}
           class="btn btn-link mt-2"
+          disabled={isLoading}
         >
           Forgot Password?
         </button>
