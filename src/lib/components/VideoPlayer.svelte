@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { user } from "$lib/firebase";
+
   export let videoKey: string;
-  export let dataVideoId: string;
+  export let thumbnail: any;
 
   let videoElement: HTMLVideoElement;
   let videoContainer: HTMLDivElement;
@@ -13,7 +14,7 @@
   let volume: number = 1;
   let isLoaded: boolean = false;
   let isFullScreen: boolean = false;
-  let signedUrl: string = '';
+  let signedUrl: string = "";
 
   async function loadVideo(): Promise<void> {
     if ($user && !isLoaded) {
@@ -21,7 +22,7 @@
       try {
         const response = await fetch(`/api/get-video-url/${videoKey}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch video URL');
+          throw new Error("Failed to fetch video URL");
         }
         signedUrl = await response.text();
         videoElement.src = signedUrl;
@@ -41,7 +42,7 @@
           currentTime = videoElement.currentTime;
         });
       } catch (error) {
-        console.error('Error fetching video URL:', error);
+        console.error("Error fetching video URL:", error);
         status = "Error loading video";
       }
     } else if ($user && isLoaded) {
@@ -104,7 +105,12 @@
 </script>
 
 <div class="video-container" bind:this={videoContainer}>
-  <video bind:this={videoElement} on:click={loadVideo} class="video-player">
+  <video
+    bind:this={videoElement}
+    on:click={loadVideo}
+    class="video-player"
+    poster={thumbnail}
+  >
     Your browser does not support the video tag.
   </video>
 
