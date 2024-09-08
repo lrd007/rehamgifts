@@ -51,9 +51,9 @@
     </div>
   {:else}
     <CredentialsLogin countriesData={data.countriesData} />
-    <div class="divider">OR</div>
+    <!-- <div class="divider">OR</div>
     <button class="btn btn-primary" on:click={signInWithGoogle}>
       Sign in with Google
-    </button>
+    </button> -->
   {/if}
 </div>
