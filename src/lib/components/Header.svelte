@@ -79,8 +79,12 @@
       <div class="dropdown">
         {#if userID}
           <div>
-            <div tabindex="0" role="button" class="btn m-1">
-              <span class="sm:inline hidden min-w-[100px]">
+            <div
+              tabindex="0"
+              role="button"
+              class="btn m-1 flex-none bg-rgHighlight sm:hover:bg-rgHighlightHover rounded-3xl border-none"
+            >
+              <span class="sm:inline hidden min-w-[100px] text-white">
                 {#if userFullName}
                   {userFullName}
                 {:else}
@@ -105,14 +109,14 @@
               <li>
                 <a
                   href="/login"
-                  class="text-gray-700 hover:bg-purple-100 hover:text-purple-900"
+                  class="text-white-700 hover:bg-purple-100 hover:text-purple-900"
                   >Profile</a
                 >
               </li>
               <li>
                 <a
                   on:click={handleLogout}
-                  class="text-gray-700 w-full text-left hover:bg-purple-100 hover:text-purple-900"
+                  class="text-white-700 w-full text-left hover:bg-purple-100 hover:text-purple-900"
                   >Logout</a
                 >
               </li>
@@ -133,7 +137,7 @@
 {/if}
 
 <style lang="postcss">
-  .dropdown .div {
+  .dropdowndiv {
     background-attachment: rgb(240 66 142 / var(--tw-bg-opacity));
   }
 
