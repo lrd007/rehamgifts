@@ -57,7 +57,7 @@
 
 <header
   bind:this={headerRef}
-  class="bg-rgPrimary text-white font-bold shadow-lg relative overflow-visible header-pattern"
+  class="bg-rgPrimary text-white font-bold shadow-lg relative overflow-hidden header-pattern"
   class:fixed={isHeaderFixed}
 >
   <div class="container mx-auto px-4 relative">
