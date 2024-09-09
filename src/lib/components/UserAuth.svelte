@@ -59,19 +59,19 @@
     </div>
     <ul
       tabindex="0"
-      class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow text-black"
+      class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
     >
-      <li class="hover:bg-pink-100 hover:text-pink-900">
-        <a href="{base}/profile">Profile</a>
-      </li>
-      <li class="hover:bg-pink-100 hover:text-pink-900">
-        <button on:click={handleLogout}>Logout</button>
-      </li>
       <li class="md:hidden hover:bg-pink-100 hover:text-pink-900">
         <a href="{base}/about">About Us</a>
       </li>
       <li class="md:hidden hover:bg-pink-100 hover:text-pink-900">
         <a href="{base}/contact">Contact Us</a>
+      </li>
+      <li class="hover:bg-pink-100 hover:text-pink-900">
+        <a href="{base}/profile">Profile</a>
+      </li>
+      <li class="bg-rgHighlight hover:ring-rgHighlightHover rounded-lg text-pink-50 ">
+        <button on:click={handleLogout}>Logout</button>
       </li>
     </ul>
   </div>

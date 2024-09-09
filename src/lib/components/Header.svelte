@@ -9,14 +9,14 @@
 
 <div class="sticky top-0 z-50 bg-rgPrimary">
   <div class="container mx-auto px-4">
-    <div class="navbar font-bold shadow-lg text-white relative">
+    <div class="navbar font-bold shadow-lg relative">
       <div class="navbar-start">
         <a href="{base}/" class="flex items-center">
           <img src={logo} alt="Reham Diva" class="h-20 w-auto" />
         </a>
       </div>
       <div class="navbar-center hidden md:flex">
-        <ul class="menu menu-horizontal px-1 text-base">
+        <ul class="menu menu-horizontal px-1 text-white text-base">
           <li><a href="{base}/">Home</a></li>
           <li><a href="{base}/about">About Us</a></li>
           <li><a href="{base}/contact">Contact Us</a></li>
