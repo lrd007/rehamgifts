@@ -1,3 +1,4 @@
+<!-- VideoGrid.svelte\ -->
 <script lang="ts">
   import { onMount } from "svelte";
   import VideoPlayer from "./VideoPlayer.svelte";

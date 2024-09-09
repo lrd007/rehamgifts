@@ -1,42 +1,46 @@
-<!-- PasswordInput.svelte -->
 <script lang="ts">
-    export let value: string;
-    export let name: string;
-    export let label: string;
-    export let error: string | undefined;
-  
-    let showPassword = false;
-  
-    function togglePasswordVisibility() {
-      showPassword = !showPassword;
+  import { onMount } from 'svelte';
+
+  export let id: string;
+  export let value: string;
+  export let placeholder: string = "Password";
+  export let required: boolean = true;
+  export let minlength: number = 8;
+  export let error: string | null | undefined = undefined;
+
+  let showPassword = false;
+  let inputElement: HTMLInputElement;
+
+  onMount(() => {
+    updateInputType();
+  });
+
+  function togglePasswordVisibility() {
+    showPassword = !showPassword;
+    updateInputType();
+  }
+
+  function updateInputType() {
+    if (inputElement) {
+      inputElement.type = showPassword ? "text" : "password";
     }
-  </script>
-  
-  <label class="label" for={name}>
-    <span class="label-text">{label}</span>
+  }
+</script>
+
+<div class="form-control w-full">
+  <label class="label" for={id}>
+    <span class="label-text"><slot>Password</slot></span>
   </label>
   <div class="relative">
-    {#if showPassword}
-      <input
-        {name}
-        id={name}
-        type="text"
-        bind:value
-        placeholder={label}
-        required
-        class="input input-bordered w-full max-w-xs pr-10"
-      />
-    {:else}
-      <input
-        {name}
-        id={name}
-        type="password"
-        bind:value
-        placeholder={label}
-        required
-        class="input input-bordered w-full max-w-xs pr-10"
-      />
-    {/if}
+    <input
+      {id}
+      bind:this={inputElement}
+      bind:value
+      {placeholder}
+      {required}
+      {minlength}
+      class="input input-bordered w-full pr-10"
+    />
     <button
       type="button"
       class="absolute inset-y-0 right-0 pr-3 flex items-center"
@@ -60,4 +64,9 @@
       </svg>
     </button>
   </div>
-  {#if error}<span class="text-error text-sm mt-1">{error}</span>{/if}
+  {#if error}
+    <label class="label">
+      <span class="label-text-alt text-error">{error}</span>
+    </label>
+  {/if}
+</div>

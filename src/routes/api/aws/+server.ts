@@ -43,7 +43,10 @@ function isVideoFile(contentType: string): boolean {
   );
 }
 
-function getFileName(key: string): string {
+function getFileName(key: string | undefined): string {
+  if (key === undefined) {
+    return "Unknown";
+  }
   return path.basename(key);
 }
 

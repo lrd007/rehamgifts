@@ -15,6 +15,10 @@
       Copyright © {new Date().getFullYear()} - Reham Diva - All right reserved
     </p>
   </aside>
+  <div class="grid grid-flow-col gap-4">
+    <a href="{base}/about">About</a>
+    <a href="{base}/contact">Contact</a>
+  </div>
   <nav>
     <div class="grid grid-flow-col gap-4">
       <a href="mailto:hello@reham.com" class="flex items-center gap-2">
@@ -134,7 +138,7 @@
   .footer-pattern::after {
     content: " ";
     @apply absolute bg-cover opacity-20 pointer-events-none;
-    background-image: url("$lib/assets/reham-assets/pattern-transparent.png");
+    background-image: url("$lib/assets/reham-assets/patterns/pattern-transparent.png");
     aspect-ratio: 1032 / 942;
   }
 

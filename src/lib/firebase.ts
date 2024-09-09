@@ -54,6 +54,7 @@ export interface UserData {
   fullName: string;
   email: string;
   phoneNumber: string;
+  watchedVideos: number[];
 }
 
 // Document store
@@ -78,16 +79,19 @@ function docStore<T>(path: string) {
 }
 
 // User data store
-export const userData: Readable<UserData | null> = derived(
-  user,
-  ($user, set) => {
-    if ($user) {
-      return docStore<UserData>(`users/${$user.uid}`).subscribe(set);
-    } else {
-      set(null);
-    }
+export const userData = writable<UserData | null>(null);
+
+// Update the onAuthStateChanged listener
+onAuthStateChanged(auth, (firebaseUser) => {
+  if (firebaseUser) {
+    const userDocRef = doc(db, "users", firebaseUser.uid);
+    onSnapshot(userDocRef, (snapshot) => {
+      userData.set(snapshot.data() as UserData | null);
+    });
+  } else {
+    userData.set(null);
   }
-);
+});
 
 // Email/Password Registration
 export async function registerWithEmailAndPassword(
@@ -109,6 +113,7 @@ export async function registerWithEmailAndPassword(
       fullName,
       email,
       phoneNumber,
+      watchedVideos: [],
     });
 
     return user;

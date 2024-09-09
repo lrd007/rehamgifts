@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import {
     parsePhoneNumberFromString,
     type CountryCode,
@@ -9,14 +8,24 @@
     signInWithCredentials,
     resetPassword,
   } from "$lib/firebase";
-  import { goto } from "$app/navigation";
-  import { writable, type Writable } from "svelte/store";
+  import { writable, derived, type Writable } from "svelte/store";
   import type { Country } from "$lib/types";
   import ForgotPassword from "./ForgotPassword.svelte";
+  import PasswordInput from "./PasswordInput.svelte";
+  import { createEventDispatcher } from "svelte";
 
   // Props
-  // export let userCountry: string;
   export let countriesData: Country[];
+  export let isLoading = false;
+
+  interface FormData {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    fullName: string;
+    phoneNumber: string;
+    selectedCountry: Country | null;
+  }
 
   interface FormErrors {
     email?: string;
@@ -27,19 +36,107 @@
     form?: string;
   }
 
-  let email = "";
-  let password = "";
-  let confirmPassword = "";
-  let fullName = "";
-  let phoneNumber = "";
+  const form: Writable<FormData> = writable({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    fullName: "",
+    phoneNumber: "",
+    selectedCountry: null,
+  });
+
   let isRegistering = false;
   let showForgotPassword = false;
   let errors: Writable<FormErrors> = writable({});
-  let showPassword = false;
-  let showConfirmPassword = false;
-  let selectedCountry: Country;
+  const dispatch = createEventDispatcher();
 
-  onMount(() => {});
+  const isFormValid = derived([form, errors], ([$form, $errors]) => {
+    if (isRegistering) {
+      return (
+        $form.email &&
+        $form.password &&
+        $form.confirmPassword &&
+        $form.fullName &&
+        $form.phoneNumber &&
+        $form.selectedCountry &&
+        Object.keys($errors).length === 0
+      );
+    } else {
+      return (
+        $form.email && $form.password && !$errors.email && !$errors.password
+      );
+    }
+  });
+
+  $: {
+    validateForm($form);
+  }
+
+  function validateForm($form: FormData) {
+    let newErrors: FormErrors = {};
+
+    if (!$form.email.trim()) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test($form.email))
+      newErrors.email = "Invalid email format";
+
+    if (!$form.password) newErrors.password = "Psuccessassword is required";
+    else if ($form.password.length < 8)
+      newErrors.password = "Password must be at least 8 characters";
+
+    if (isRegistering) {
+      if (!$form.fullName.trim()) newErrors.fullName = "Full name is required";
+
+      if (!$form.confirmPassword)
+        newErrors.confirmPassword = "Confirm password is required";
+      else if ($form.password !== $form.confirmPassword)
+        newErrors.confirmPassword = "Passwords do not match";
+
+      if (!$form.phoneNumber.trim())
+        newErrors.phoneNumber = "Phone number is required";
+      else if ($form.selectedCountry) {
+        const parsedNumber = parsePhoneNumberFromString(
+          $form.phoneNumber,
+          $form.selectedCountry.code as CountryCode
+        );
+        if (!parsedNumber || !parsedNumber.isValid()) {
+          newErrors.phoneNumber = "Invalid phone number format";
+        }
+      } else {
+        newErrors.phoneNumber = "Please select a country";
+      }
+    }
+
+    errors.set(newErrors);
+  }
+
+  async function handleAuth() {
+    if (!$isFormValid) return;
+    isLoading = true;
+
+    try {
+      const user = isRegistering
+        ? await registerWithEmailAndPassword(
+            $form.email,
+            $form.password,
+            $form.fullName,
+            formatPhoneNumber($form.phoneNumber, $form.selectedCountry!)
+          )
+        : await signInWithCredentials($form.email, $form.password);
+
+      const idToken = await user.getIdToken();
+      const res = await fetch("/api/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      dispatch("loginSuccess");
+    } catch (err: any) {
+      errors.update((e) => ({ ...e, form: err.message }));
+      isLoading = false;
+    }
+  }
 
   function formatPhoneNumber(number: string, country: Country): string {
     const phoneNumber = parsePhoneNumberFromString(
@@ -49,97 +146,9 @@
     return phoneNumber ? phoneNumber.formatInternational() : number;
   }
 
-  function validateForm() {
-    let newErrors: FormErrors = {};
-
-    if (!email) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(email))
-      newErrors.email = "Invalid email format";
-
-    if (!password) newErrors.password = "Password is required";
-    else if (password.length < 8)
-      newErrors.password = "Password must be at least 8 characters";
-
-    if (isRegistering) {
-      if (!fullName) newErrors.fullName = "Full name is required";
-
-      if (!confirmPassword)
-        newErrors.confirmPassword = "Confirm password is required";
-      else if (password !== confirmPassword)
-        newErrors.confirmPassword = "Passwords do not match";
-
-      if (!phoneNumber) newErrors.phoneNumber = "Phone number is required";
-      else {
-        const parsedNumber = parsePhoneNumberFromString(
-          phoneNumber,
-          selectedCountry.code as CountryCode
-        );
-        if (!parsedNumber || !parsedNumber.isValid()) {
-          newErrors.phoneNumber = "Invalid phone number format";
-        }
-      }
-    }
-
-    errors.set(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }
-
-  async function handleSubmit() {
-    if (!validateForm()) return;
-
-    try {
-      if (isRegistering) {
-        const registeredUser = await registerWithEmailAndPassword(
-          email,
-          password,
-          fullName,
-          formatPhoneNumber(phoneNumber, selectedCountry)
-        );
-        const idToken = await registeredUser.getIdToken();
-        const res = await fetch("/api/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ idToken }),
-        });
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-      } else {
-        const user = await signInWithCredentials(email, password);
-        const idToken = await user.getIdToken();
-        const res = await fetch("/api/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ idToken }),
-        });
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-      }
-      goto("/"); // Redirect to home page after successful auth
-    } catch (err: any) {
-      errors.update((e) => ({ ...e, form: err.message }));
-    }
-  }
-
   function toggleMode() {
     isRegistering = !isRegistering;
     errors.set({});
-  }
-
-  function togglePasswordVisibility(field: "password" | "confirmPassword") {
-    if (field === "password") {
-      showPassword = !showPassword;
-    } else {
-      showConfirmPassword = !showConfirmPassword;
-    }
-  }
-  function toggleForgotPassword() {
-    showForgotPassword = !showForgotPassword;
   }
 
   async function handleForgotPassword(email: string) {
@@ -157,119 +166,63 @@
   <div class="card-body">
     {#if showForgotPassword}
       <ForgotPassword
-        {email}
+        email={$form.email}
         onSubmit={handleForgotPassword}
-        onCancel={toggleForgotPassword}
+        onCancel={() => (showForgotPassword = false)}
       />
     {:else}
       <h2 class="card-title">{isRegistering ? "Register" : "Login"}</h2>
       <form
-        on:submit|preventDefault={handleSubmit}
+        on:submit|preventDefault={handleAuth}
         class="form-control w-full max-w-xs"
       >
-        <!-- Email input -->
         <label class="label" for="email">
           <span class="label-text">Email</span>
         </label>
         <input
           id="email"
           type="email"
-          bind:value={email}
+          bind:value={$form.email}
           placeholder="Email"
-          required
           class="input input-bordered w-full max-w-xs"
         />
         {#if $errors.email}<span class="text-error text-sm mt-1"
             >{$errors.email}</span
           >{/if}
 
-        <!-- Password input -->
-        <label class="label" for="password">
-          <span class="label-text">Password</span>
-        </label>
-        <div class="relative">
-          {#if showPassword}
-            <input
-              id="password-text"
-              type="text"
-              bind:value={password}
-              placeholder="Password"
-              required
-              class="input input-bordered w-full max-w-xs pr-10"
-            />
-          {:else}
-            <input
-              id="password"
-              type="password"
-              bind:value={password}
-              placeholder="Password"
-              required
-              class="input input-bordered w-full max-w-xs pr-10"
-            />
-          {/if}
-          <button
-            type="button"
-            class="absolute inset-y-0 right-0 pr-3 flex items-center"
-            on:click={() => togglePasswordVisibility("password")}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-5 h-5"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d={showPassword
-                  ? "M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
-                  : "M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z"}
-              />
-            </svg>
-          </button>
-        </div>
-        {#if $errors.password}<span class="text-error text-sm mt-1"
-            >{$errors.password}</span
-          >{/if}
+        <PasswordInput
+          id="password"
+          bind:value={$form.password}
+          error={$errors.password}
+          placeholder="Enter password"
+        >
+          Password
+        </PasswordInput>
 
         {#if isRegistering}
-          <!-- Confirm Password input -->
-          <label class="label" for="confirmPassword">
-            <span class="label-text">Confirm Password</span>
-          </label>
-          <div class="relative">
-            <input
-              id="confirmPassword"
-              type="password"
-              bind:value={confirmPassword}
-              placeholder="Confirm Password"
-              required
-              class="input input-bordered w-full max-w-xs pr-10"
-            />
-          </div>
-          {#if $errors.confirmPassword}<span class="text-error text-sm mt-1"
-              >{$errors.confirmPassword}</span
-            >{/if}
+          <PasswordInput
+            id="confirmPassword"
+            bind:value={$form.confirmPassword}
+            error={$errors.confirmPassword}
+            placeholder="Confirm password"
+          >
+            Confirm Password
+          </PasswordInput>
 
-          <!-- Full Name input -->
           <label class="label" for="fullName">
             <span class="label-text">Full Name</span>
           </label>
           <input
             id="fullName"
             type="text"
-            bind:value={fullName}
+            bind:value={$form.fullName}
             placeholder="Full Name"
-            required
             class="input input-bordered w-full max-w-xs"
           />
           {#if $errors.fullName}<span class="text-error text-sm mt-1"
               >{$errors.fullName}</span
             >{/if}
 
-          <!-- Phone Number input -->
           <label class="label" for="phone">
             <span class="label-text">Phone Number</span>
           </label>
@@ -278,10 +231,9 @@
               <select
                 id="country-select"
                 class="select select-bordered w-full"
-                bind:value={selectedCountry}
-                required
+                bind:value={$form.selectedCountry}
               >
-                <option value="" disabled selected>Select country</option>
+                <option value={null} disabled selected>Select country</option>
                 {#each countriesData as country}
                   <option value={country}>
                     {country.name} (+{country.phoneCode})
@@ -293,9 +245,8 @@
               <input
                 id="phone"
                 type="tel"
-                bind:value={phoneNumber}
+                bind:value={$form.phoneNumber}
                 placeholder="Phone Number"
-                required
                 class="input input-bordered w-full"
               />
             </div>
@@ -307,7 +258,14 @@
 
         {#if $errors.form}<p class="text-error mt-2">{$errors.form}</p>{/if}
 
-        <button type="submit" class="btn btn-primary mt-4">
+        <button
+          type="submit"
+          class="btn btn-primary mt-4"
+          disabled={!$isFormValid || isLoading}
+        >
+          {#if isLoading}
+            <span class="loading loading-spinner loading-sm"></span>
+          {/if}
           {isRegistering ? "Register" : "Login"}
         </button>
       </form>
@@ -317,7 +275,10 @@
           : "Need an account? Register"}
       </button>
       {#if !isRegistering}
-        <button on:click={toggleForgotPassword} class="btn btn-link mt-2">
+        <button
+          on:click={() => (showForgotPassword = true)}
+          class="btn btn-link mt-2"
+        >
           Forgot Password?
         </button>
       {/if}
