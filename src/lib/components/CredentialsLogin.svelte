@@ -13,6 +13,7 @@
   import ForgotPassword from "./ForgotPassword.svelte";
   import PasswordInput from "./PasswordInput.svelte";
   import { createEventDispatcher } from "svelte";
+  import { toast } from "@zerodevx/svelte-toast";
 
   // Props
   export let countriesData: Country[];
@@ -33,7 +34,6 @@
     confirmPassword?: string;
     fullName?: string;
     phoneNumber?: string;
-    form?: string;
   }
 
   const form: Writable<FormData> = writable({
@@ -72,6 +72,24 @@
     validateForm($form);
   }
 
+  function showError(message: string) {
+    toast.push(message, {
+      theme: {
+        "--toastBackground": "#F56565",
+        "--toastBarBackground": "#C53030",
+      },
+    });
+  }
+
+  function showSuccess(message: string) {
+    toast.push(message, {
+      theme: {
+        "--toastBackground": "#48BB78",
+        "--toastBarBackground": "#2F855A",
+      },
+    });
+  }
+
   function validateForm($form: FormData) {
     let newErrors: FormErrors = {};
 
@@ -79,7 +97,7 @@
     else if (!/\S+@\S+\.\S+/.test($form.email))
       newErrors.email = "Invalid email format";
 
-    if (!$form.password) newErrors.password = "Psuccessassword is required";
+    if (!$form.password) newErrors.password = "Password is required";
     else if ($form.password.length < 8)
       newErrors.password = "Password must be at least 8 characters";
 
@@ -130,10 +148,79 @@
         body: JSON.stringify({ idToken }),
       });
 
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(
+          errorData.message || `HTTP error! status: ${res.status}`
+        );
+      }
+
+      showSuccess(
+        isRegistering ? "Registration successful!" : "Login successful!"
+      );
       dispatch("loginSuccess");
     } catch (err: any) {
-      errors.update((e) => ({ ...e, form: err.message }));
+      let errorMessage = "An unexpected error occurred. Please try again.";
+
+      if (err.code) {
+        switch (err.code) {
+          // Registration errors
+          case "auth/email-already-in-use":
+            errorMessage =
+              "This email is already registered. Please use a different email or try logging in.";
+            break;
+          case "auth/invalid-email":
+            errorMessage =
+              "The email address is not valid. Please check and try again.";
+            break;
+          case "auth/weak-password":
+            errorMessage =
+              "The password is too weak. Please choose a stronger password (at least 6 characters).";
+            break;
+          case "auth/operation-not-allowed":
+            errorMessage =
+              "Account creation is currently disabled. Please contact support.";
+            break;
+
+          // Sign-in errors
+          case "auth/user-disabled":
+            errorMessage =
+              "This account has been disabled. Please contact support for assistance.";
+            break;
+          case "auth/user-not-found":
+            errorMessage =
+              "No account found with this email. Please check your email or register for a new account.";
+            break;
+          case "auth/wrong-password":
+            errorMessage =
+              "Incorrect password. Please try again or use the 'Forgot Password' option.";
+            break;
+          case "auth/invalid-login-credentials":
+          case "auth/invalid-credential":
+            errorMessage =
+              "Invalid login credentials. Please check your email and password and try again.";
+            break;
+
+          // General errors
+          case "auth/network-request-failed":
+            errorMessage =
+              "Network error. Please check your internet connection and try again.";
+            break;
+          case "auth/too-many-requests":
+            errorMessage =
+              "Too many unsuccessful attempts. Please try again later or reset your password.";
+            break;
+          case "auth/internal-error":
+            errorMessage =
+              "An internal error occurred. Please try again later.";
+            break;
+
+          default:
+            errorMessage = `Authentication error: ${err.message}`;
+        }
+      }
+
+      showError(errorMessage);
       isLoading = false;
     }
   }
@@ -154,10 +241,19 @@
   async function handleForgotPassword(email: string) {
     try {
       await resetPassword(email);
-      alert("Password reset email sent. Please check your inbox.");
+      showSuccess("Password reset email sent. Please check your inbox.");
       showForgotPassword = false;
     } catch (err: any) {
-      errors.update((e) => ({ ...e, form: err.message }));
+      let errorMessage =
+        "Failed to send password reset email. Please try again.";
+
+      if (err.code === "auth/user-not-found") {
+        errorMessage = "No account found with this email address.";
+      } else if (err.code === "auth/invalid-email") {
+        errorMessage = "Invalid email address. Please check and try again.";
+      }
+
+      showError(errorMessage);
     }
   }
 </script>
@@ -255,8 +351,6 @@
               >{$errors.phoneNumber}</span
             >{/if}
         {/if}
-
-        {#if $errors.form}<p class="text-error mt-2">{$errors.form}</p>{/if}
 
         <button
           type="submit"
