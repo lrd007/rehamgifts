@@ -4,7 +4,6 @@
   import logo from "$lib/assets/rehamdiva-logo.png";
   import LanguageToggle from "./LanguageToggle.svelte";
   import UserAuth from "./UserAuth.svelte";
-  export let userID;
 </script>
 
 <div class="sticky top-0 z-50 bg-rgPrimary">
@@ -24,7 +23,7 @@
       </div>
       <div class="navbar-end">
         <!-- <LanguageToggle /> -->
-        <UserAuth {userID} />
+        <UserAuth />
       </div>
     </div>
   </div>

@@ -6,8 +6,6 @@
   import { userData } from "$lib/firebase";
   import { goto } from "$app/navigation";
 
-  export let userID;
-
   $: userFullName = $userData?.fullName.toUpperCase();
 
   async function handleLogout() {
@@ -26,7 +24,7 @@
   }
 </script>
 
-{#if userID}
+{#if $userData}
   <div class="dropdown dropdown-end">
     <div
       tabindex="0"
@@ -70,8 +68,8 @@
       <li class="hover:bg-pink-100 hover:text-pink-900">
         <a href="{base}/profile">Profile</a>
       </li>
-      <li class="bg-rgHighlight hover:ring-rgHighlightHover rounded-lg text-pink-50 ">
-        <button on:click={handleLogout}>Logout</button>
+      <li class="hover:bg-pink-100 hover:text-pink-900">
+        <a on:click={handleLogout} href="javascript:void(0);">Logout</a>
       </li>
     </ul>
   </div>
