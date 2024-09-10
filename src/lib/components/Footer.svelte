@@ -8,7 +8,7 @@
   class="footer footer-center bg-rgPrimary text-white p-4 gap-y-2 relative overflow-hidden footer-pattern"
 >
   <aside>
-    <a href="{base}/" class="flex items-center">
+    <a href="https://reham.com/" target="_blank" class="flex items-center">
       <img src={footerLogo} alt="Reham Diva Logo" class="h-24 w-auto" />
     </a>
     <p>
@@ -90,7 +90,11 @@
   </nav>
   <nav>
     <div class="grid grid-flow-col gap-4">
-      <a href="#" aria-label="Twitter">
+      <a
+        href="https://x.com/rehamhouse1"
+        target="”_blank”"
+        aria-label="Twitter"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -103,30 +107,22 @@
           ></path>
         </svg>
       </a>
-      <a href="#" aria-label="YouTube">
+      <a
+        href="https://www.instagram.com/rehamhouse/"
+        target="_blank"
+        aria-label="Instagram"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
           viewBox="0 0 24 24"
-          class="fill-current"
+          fill="currentColor"
+          class="instagram-icon"
         >
           <path
-            d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"
-          ></path>
-        </svg>
-      </a>
-      <a href="#" aria-label="Facebook">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          class="fill-current"
-        >
-          <path
-            d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"
-          ></path>
+            d="M7.75 2h8.5C19.99 2 22 4.01 22 7.75v8.5C22 19.99 19.99 22 16.25 22h-8.5C4.01 22 2 19.99 2 16.25v-8.5C2 4.01 4.01 2 7.75 2zm8.5 1.5h-8.5A4.25 4.25 0 0 0 3.5 7.75v8.5a4.25 4.25 0 0 0 4.25 4.25h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5a4.25 4.25 0 0 0-4.25-4.25zm-4.25 3.5a5.25 5.25 0 1 1 0 10.5 5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm5.62-.37a1.12 1.12 0 1 1 0 2.25 1.12 1.12 0 0 1 0-2.25z"
+          />
         </svg>
       </a>
     </div>

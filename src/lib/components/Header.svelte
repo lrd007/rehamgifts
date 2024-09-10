@@ -23,7 +23,7 @@
         </ul>
       </div>
       <div class="navbar-end">
-        <LanguageToggle />
+        <!-- <LanguageToggle /> -->
         <UserAuth {userID} />
       </div>
     </div>
