@@ -3,6 +3,8 @@
   import VideoPlayer from "$lib/components/VideoPlayer.svelte";
   import { onMount } from "svelte";
   import { page } from "$app/stores";
+  import Comments from "$lib/components/Comments.svelte";
+  import type { VideoFileInfo } from "$lib/components/constants";
 
   $: videoKey = $page.params.videoId;
 
@@ -38,5 +40,6 @@
   <div>
     {video.description}
   </div>
-  
+
+  <Comments videoId={video.id} />
 {/if}

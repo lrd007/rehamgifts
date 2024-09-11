@@ -51,6 +51,7 @@ export const user = userStore();
 
 // User data interface
 export interface UserData {
+  id: string;
   fullName: string;
   email: string;
   phoneNumber: string;
@@ -86,7 +87,19 @@ onAuthStateChanged(auth, (firebaseUser) => {
   if (firebaseUser) {
     const userDocRef = doc(db, "users", firebaseUser.uid);
     onSnapshot(userDocRef, (snapshot) => {
-      userData.set(snapshot.data() as UserData | null);
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        userData.set({
+          id: snapshot.id, // This is the user's ID
+          fullName: data.fullName,
+          email: data.email,
+          phoneNumber: data.phoneNumber,
+          watchedVideos: data.watchedVideos,
+        });
+      } else {
+        console.log("No such document!");
+        userData.set(null);
+      }
     });
   } else {
     userData.set(null);
@@ -109,12 +122,14 @@ export async function registerWithEmailAndPassword(
     const user = userCredential.user;
 
     // Store user data in Firestore
-    await setDoc(doc(db, "users", user.uid), {
+    const newUserData: UserData = {
+      id: user.uid,
       fullName,
       email,
       phoneNumber,
       watchedVideos: [],
-    });
+    };
+    await setDoc(doc(db, "users", user.uid), newUserData);
 
     return user;
   } catch (error) {

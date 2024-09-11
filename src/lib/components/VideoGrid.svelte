@@ -4,6 +4,7 @@
   import { base } from "$app/paths";
   import { user } from "$lib/firebase";
   import { getThumbnailUrl } from "$lib/components/utilities";
+  import type { VideoFileInfo } from "./constants";
 
   let videos: VideoFileInfo[] = [];
   let isLoading: boolean = true;
