@@ -16,7 +16,6 @@
       const response = await fetch(`/api/video-data/${videoKey}`);
       if (response.ok) {
         video = await response.json();
-        console.log(video);
       } else {
         console.error("Failed to fetch video files");
       }

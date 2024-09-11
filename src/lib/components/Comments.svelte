@@ -20,7 +20,6 @@
   onMount(async () => {
     try {
       comments = await getCommentsByVideoId(videoId);
-      console.log(comments);
     } catch (error) {
       console.error("Failed to fetch comments:", error);
       // Handle error (e.g., show error message to user)
@@ -73,26 +72,32 @@
 <main>
   <h2>Comments</h2>
 
-  <ul>
-    {#each comments as comment (comment.id)}
-      <li>
-        <div class="comment-content">
-          <p class="comment-text">{comment.content}</p>
-          <div class="comment-meta">
-            <span class="user-name">By {comment.userName}</span>
-            <span class="comment-date"
-              >{new Date(comment.createdAt).toLocaleString()}</span
-            >
-          </div>
-        </div>
-        {#if comment.userId == $user?.uid}
-          <div class="comment-actions">
-            <button on:click={() => removeComment(comment.id)}>Delete</button>
-          </div>
-        {/if}
-      </li>
-    {/each}
-  </ul>
+  <div class="comments-container">
+    <div class="comments-scroll">
+      <ul>
+        {#each comments as comment (comment.id)}
+          <li>
+            <div class="comment-content">
+              <p class="comment-text">{comment.content}</p>
+              <div class="comment-meta">
+                <span class="user-name">By {comment.userName}</span>
+                <span class="comment-date"
+                  >{new Date(comment.createdAt).toLocaleString()}</span
+                >
+              </div>
+            </div>
+            {#if comment.userId == $user?.uid}
+              <div class="comment-actions">
+                <button on:click={() => removeComment(comment.id)}
+                  >Delete</button
+                >
+              </div>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    </div>
+  </div>
 
   <!-- New Comment Form -->
   <form on:submit|preventDefault={addComment}>
@@ -117,9 +122,23 @@
     color: #ffffff;
   }
 
+  .comments-container {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    height: 400px; /* Fixed height for the container */
+  }
+
+  .comments-scroll {
+    height: 100%;
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px;
+  }
+
   ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
   }
 
   li {
