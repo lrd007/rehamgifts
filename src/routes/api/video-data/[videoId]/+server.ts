@@ -12,7 +12,6 @@ export const GET: RequestHandler = async ({ params, request }) => {
       status: 404,
     });
   } else {
-    console.log(foundVideo);
     return new Response(JSON.stringify(foundVideo), { status: 200 });
   }
 };
