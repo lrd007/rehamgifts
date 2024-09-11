@@ -12,7 +12,7 @@
       <img src={footerLogo} alt="Reham Diva Logo" class="h-24 w-auto" />
     </a>
     <p>
-      Copyright © {new Date().getFullYear()} - Reham Diva - All right reserved
+      Copyright © {new Date().getFullYear()} - Reham House - All right reserved
     </p>
   </aside>
   <div class="grid grid-flow-col gap-4">

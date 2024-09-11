@@ -1,8 +1,8 @@
 <!-- Header.svelte -->
 <script lang="ts">
   import { base } from "$app/paths";
-  import logo from "$lib/assets/rehamdiva-logo.png";
-  import LanguageToggle from "./LanguageToggle.svelte";
+  import logo from "$lib/assets/rehamdiva-arabic-logo.svg";
+  // import LanguageToggle from "./LanguageToggle.svelte";
   import UserAuth from "./UserAuth.svelte";
 </script>
 
@@ -19,6 +19,7 @@
           <li><a href="{base}/">Home</a></li>
           <li><a href="{base}/about">About Us</a></li>
           <li><a href="{base}/contact">Contact Us</a></li>
+          <li><a href="https://reham.com/">Our Programs</a></li>
         </ul>
       </div>
       <div class="navbar-end">

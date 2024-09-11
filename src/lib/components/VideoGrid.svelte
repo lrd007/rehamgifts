@@ -2,21 +2,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import VideoPlayer from "./VideoPlayer.svelte";
-
-  interface VideoFileInfo {
-    id: number;
-    name: string;
-    size: number;
-    lastModified: Date;
-    contentType: string;
-  }
+  import { base } from "$app/paths";
+  import { user } from "$lib/firebase";
+  import { getThumbnailUrl } from "$lib/components/utilities";
 
   let videos: VideoFileInfo[] = [];
   let isLoading: boolean = true;
-
-  function getThumbnailUrl(id: number): string {
-    return new URL(`../assets/thumbnail/${id}.png`, import.meta.url).href;
-  }
 
   onMount(async () => {
     try {
@@ -28,54 +19,12 @@
       //   console.error("Failed to fetch video files");
       // }
 
-      videos = [
-        {
-          id: 1,
-          name: "1-Free awareness video lesson.mp4",
-          size: 86306669,
-          lastModified: new Date("2024-09-07T14:19:37.000Z"),
-          contentType: "video/mp4",
-        },
-        {
-          id: 2,
-          name: "2-feminine luxury.mp4",
-          size: 184001423,
-          lastModified: new Date("2024-09-07T14:19:37.000Z"),
-          contentType: "video/mp4",
-        },
-        {
-          id: 3,
-          name: "3-Is female or male leadership.mp4",
-          size: 96180227,
-          lastModified: new Date("2024-09-07T14:19:37.000Z"),
-          contentType: "video/mp4",
-        },
-        {
-          id: 4,
-          name: "4-emotional relationship feminine or masculine.mp4",
-          size: 94927207,
-          lastModified: new Date("2024-09-07T14:31:28.000Z"),
-          contentType: "video/mp4",
-        },
-        {
-          id: 5,
-          name: "5-Is motherhood feminine or masculine.mp4",
-          size: 50001804,
-          lastModified: new Date("2024-09-07T14:19:37.000Z"),
-          contentType: "video/mp4",
-        },
-        {
-          id: 6,
-          name: "6-Are you feminine or masculine.mp4",
-          size: 69241577,
-          lastModified: new Date("2024-09-07T14:19:37.000Z"),
-          contentType: "video/mp4",
-        },
-      ];
-
-      // Sort videos by id to ensure consistent order
-      // videos.sort((a, b) => a.id - b.id);
-      // console.log(videos);
+      const response = await fetch("/api/video-data");
+      if (response.ok) {
+        videos = await response.json();
+      } else {
+        console.error("Failed to fetch video files");
+      }
     } catch (error) {
       console.error("Error fetching video files:", error);
     } finally {
@@ -98,13 +47,25 @@
     {#each videos as video (video.id)}
       <div class="card bg-base-100 shadow-xl overflow-hidden">
         <figure class="relative">
-          <VideoPlayer
+          <!-- <VideoPlayer
             videoKey={video.name}
             thumbnail={getThumbnailUrl(video.id)}
-          />
+          /> -->
+          {#if !$user}
+            <div
+              class="absolute inset-0 flex items-center justify-center text-white font-bold bg-black bg-opacity-70"
+            >
+              <span>Sign in to watch</span>
+            </div>
+            <img src={getThumbnailUrl(video.id)} />
+          {:else}
+            <a href="{base}/watch/{video.id}">
+              <img src={getThumbnailUrl(video.id)} />
+            </a>
+          {/if}
         </figure>
         <div class="card-body">
-          <h2 class="card-title text-lg">{video.name}</h2>
+          <h2 class="card-title text-lg">{video.displayName}</h2>
         </div>
       </div>
     {/each}
