@@ -1,7 +1,6 @@
 <!-- VideoGrid.svelte\ -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import VideoPlayer from "./VideoPlayer.svelte";
   import { base } from "$app/paths";
   import { user } from "$lib/firebase";
   import { getThumbnailUrl } from "$lib/components/utilities";
@@ -47,10 +46,6 @@
     {#each videos as video (video.id)}
       <div class="card bg-base-100 shadow-xl overflow-hidden">
         <figure class="relative">
-          <!-- <VideoPlayer
-            videoKey={video.name}
-            thumbnail={getThumbnailUrl(video.id)}
-          /> -->
           {#if !$user}
             <div
               class="absolute inset-0 flex items-center justify-center text-white font-bold bg-black bg-opacity-70"
