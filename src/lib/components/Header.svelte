@@ -30,7 +30,7 @@
           <li><a href="{base}/contact">{$t("contact")}</a></li>
         </ul>
       </div>
-      <div class="navbar-end flex gap-4">
+      <div class="navbar-end flex gap-2 md:gap-4">
         <AnimatedButton buttonText={$t("programs")} link="https://reham.com/" />
         <LanguageToggle />
         <UserAuth />

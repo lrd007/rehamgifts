@@ -18,7 +18,7 @@
 
 <a
   href={link}
-  class="rainbow-button relative inline-flex items-center justify-center h-10 px-6 font-medium text-white bg-pink-400 rounded-full overflow-hidden transition-all duration-300 hover:bg-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+  class="rainbow-button btn relative inline-flex items-center justify-center h-10 px-6 font-medium text-white bg-pink-400 border-none rounded-full overflow-hidden transition-all duration-300 hover:bg-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
   class:animate={isAnimating}
 >
   <span class="relative z-10">{buttonText}</span>
