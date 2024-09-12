@@ -9,7 +9,9 @@ export default {
         rgHighlightHover: '#F46FA9'
       },
       fontFamily: {
-        didactGothic: ["Didact Gothic", "sans-serif"],
+        'century': ['Century Gothic', 'sans-serif'],
+        'century-bold': ['Century Gothic Bold', 'sans-serif'],
+        'dinar': ['GE Dinar One Medium', 'sans-serif'],
       },
     },
   },

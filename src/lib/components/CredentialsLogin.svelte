@@ -14,6 +14,7 @@
   import PasswordInput from "./PasswordInput.svelte";
   import { createEventDispatcher } from "svelte";
   import { toast } from "@zerodevx/svelte-toast";
+  import { t } from "$lib/language";
 
   // Props
   export let countriesData: Country[];
@@ -93,34 +94,34 @@
   function validateForm($form: FormData) {
     let newErrors: FormErrors = {};
 
-    if (!$form.email.trim()) newErrors.email = "Email is required";
+    if (!$form.email.trim()) newErrors.email = $t("emailRequired");
     else if (!/\S+@\S+\.\S+/.test($form.email))
-      newErrors.email = "Invalid email format";
+      newErrors.email = $t("invalidEmailFormat");
 
-    if (!$form.password) newErrors.password = "Password is required";
+    if (!$form.password) newErrors.password = $t("passwordRequired");
     else if ($form.password.length < 8)
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = $t("passwordMinLength");
 
     if (isRegistering) {
-      if (!$form.fullName.trim()) newErrors.fullName = "Full name is required";
+      if (!$form.fullName.trim()) newErrors.fullName = $t("fullNameRequired");
 
       if (!$form.confirmPassword)
-        newErrors.confirmPassword = "Confirm password is required";
+        newErrors.confirmPassword = $t("confirmPasswordRequired");
       else if ($form.password !== $form.confirmPassword)
-        newErrors.confirmPassword = "Passwords do not match";
+        newErrors.confirmPassword = $t("passwordsMismatch");
 
       if (!$form.phoneNumber.trim())
-        newErrors.phoneNumber = "Phone number is required";
+        newErrors.phoneNumber = $t("phoneNumberRequired");
       else if ($form.selectedCountry) {
         const parsedNumber = parsePhoneNumberFromString(
           $form.phoneNumber,
           $form.selectedCountry.code as CountryCode
         );
         if (!parsedNumber || !parsedNumber.isValid()) {
-          newErrors.phoneNumber = "Invalid phone number format";
+          newErrors.phoneNumber = $t("invalidPhoneFormat");
         }
       } else {
-        newErrors.phoneNumber = "Please select a country";
+        newErrors.phoneNumber = $t("selectCountry");
       }
     }
 
@@ -156,7 +157,7 @@
       }
 
       showSuccess(
-        isRegistering ? "Registration successful!" : "Login successful!"
+        isRegistering ? $t("registrationSuccessful") : $t("loginSuccessful")
       );
       dispatch("loginSuccess");
     } catch (err: any) {
@@ -241,16 +242,15 @@
   async function handleForgotPassword(email: string) {
     try {
       await resetPassword(email);
-      showSuccess("Password reset email sent. Please check your inbox.");
+      showSuccess($t("passwordResetEmailSent"));
       showForgotPassword = false;
     } catch (err: any) {
-      let errorMessage =
-        "Failed to send password reset email. Please try again.";
+      let errorMessage = $t("passwordResetFailed");
 
       if (err.code === "auth/user-not-found") {
-        errorMessage = "No account found with this email address.";
+        errorMessage = $t("noAccountFound");
       } else if (err.code === "auth/invalid-email") {
-        errorMessage = "Invalid email address. Please check and try again.";
+        errorMessage = $t("invalidEmailAddress");
       }
 
       showError(errorMessage);
@@ -267,19 +267,19 @@
         onCancel={() => (showForgotPassword = false)}
       />
     {:else}
-      <h2 class="card-title">{isRegistering ? "Register" : "Login"}</h2>
+      <h2 class="card-title">{isRegistering ? $t("register") : $t("login")}</h2>
       <form
         on:submit|preventDefault={handleAuth}
         class="form-control w-full max-w-xs"
       >
         <label class="label" for="email">
-          <span class="label-text">Email</span>
+          <span class="label-text">{$t("email")}</span>
         </label>
         <input
           id="email"
           type="email"
           bind:value={$form.email}
-          placeholder="Email"
+          placeholder={$t("emailPlaceholder")}
           class="input input-bordered w-full max-w-xs"
         />
         {#if $errors.email}<span class="text-error text-sm mt-1"
@@ -290,9 +290,9 @@
           id="password"
           bind:value={$form.password}
           error={$errors.password}
-          placeholder="Enter password"
+          placeholder={$t("enterPassword")}
         >
-          Password
+          {$t("password")}
         </PasswordInput>
 
         {#if isRegistering}
@@ -300,19 +300,19 @@
             id="confirmPassword"
             bind:value={$form.confirmPassword}
             error={$errors.confirmPassword}
-            placeholder="Confirm password"
+            placeholder={$t("confirmPassword")}
           >
-            Confirm Password
+            {$t("confirmPassword")}
           </PasswordInput>
 
           <label class="label" for="fullName">
-            <span class="label-text">Full Name</span>
+            <span class="label-text">{$t("fullName")}</span>
           </label>
           <input
             id="fullName"
             type="text"
             bind:value={$form.fullName}
-            placeholder="Full Name"
+            placeholder={$t("fullNamePlaceholder")}
             class="input input-bordered w-full max-w-xs"
           />
           {#if $errors.fullName}<span class="text-error text-sm mt-1"
@@ -320,7 +320,7 @@
             >{/if}
 
           <label class="label" for="phone">
-            <span class="label-text">Phone Number</span>
+            <span class="label-text">{$t("phoneNumber")}</span>
           </label>
           <div class="flex items-center space-x-2 w-full max-w-2xl">
             <div class="w-1/2">
@@ -329,7 +329,9 @@
                 class="select select-bordered w-full"
                 bind:value={$form.selectedCountry}
               >
-                <option value={null} disabled selected>Select country</option>
+                <option value={null} disabled selected
+                  >{$t("selectCountry")}</option
+                >
                 {#each countriesData as country}
                   <option value={country}>
                     {country.name} (+{country.phoneCode})
@@ -342,7 +344,7 @@
                 id="phone"
                 type="tel"
                 bind:value={$form.phoneNumber}
-                placeholder="Phone Number"
+                placeholder={$t("phoneNumberPlaceholder")}
                 class="input input-bordered w-full"
               />
             </div>
@@ -360,20 +362,18 @@
           {#if isLoading}
             <span class="loading loading-spinner loading-sm"></span>
           {/if}
-          {isRegistering ? "Register" : "Login"}
+          {isRegistering ? $t("register") : $t("login")}
         </button>
       </form>
       <button on:click={toggleMode} class="btn btn-link mt-2">
-        {isRegistering
-          ? "Already have an account? Login"
-          : "Need an account? Register"}
+        {isRegistering ? $t("alreadyHaveAccount") : $t("needAccount")}
       </button>
       {#if !isRegistering}
         <button
           on:click={() => (showForgotPassword = true)}
           class="btn btn-link mt-2"
         >
-          Forgot Password?
+          {$t("forgotPassword")}
         </button>
       {/if}
     {/if}

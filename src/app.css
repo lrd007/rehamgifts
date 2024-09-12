@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "Century Gothic";
+  src: url("/fonts/century-gothic.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Century Gothic";
+  src: url("/fonts/century-gothic-bold.woff2") format("woff2"),
+       url("/fonts/century-gothic-bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GE Dinar One Medium";
+  src: url("/fonts/ge-dinar-one-medium.woff2") format("woff2"),
+    url("/fonts/ge-dinar-one-medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}

@@ -4,12 +4,21 @@
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import Comments from "$lib/components/Comments.svelte";
-  import type { VideoFileInfo } from "$lib/components/constants";
+  import { t, language } from "$lib/language";
+  import type { VideoData } from "$lib/types";
 
   $: videoKey = $page.params.videoId;
 
-  let video: VideoFileInfo;
+  let video: VideoData | null = null;
   let isLoading: boolean = true;
+  let error: string = "";
+
+  function getLocalizedContent(
+    content: { en: string; ar: string },
+    lang: string
+  ): string {
+    return lang === "ar" ? content.ar : content.en;
+  }
 
   onMount(async () => {
     try {
@@ -17,10 +26,11 @@
       if (response.ok) {
         video = await response.json();
       } else {
-        console.error("Failed to fetch video files");
+        error = $t("fetchVideoError");
       }
-    } catch (error) {
-      console.error("Error fetching video files:", error);
+    } catch (err) {
+      console.error($t("fetchVideoErrorWithDetails"), err);
+      error = $t("fetchVideoError");
     } finally {
       isLoading = false;
     }
@@ -34,10 +44,32 @@
       <div class="h-6 bg-base-300 rounded w-3/4"></div>
     </div>
   </div>
-{:else}
+{:else if error}
+  <div class="alert alert-error shadow-lg">
+    <div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="stroke-current flex-shrink-0 h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        ><path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+        /></svg
+      >
+      <span>{error}</span>
+    </div>
+  </div>
+{:else if video}
+  <h1 class="text-2xl font-bold mb-4">
+    {getLocalizedContent(video.displayName, $language)}
+  </h1>
   <VideoPlayer videoKey={video.name} thumbnail={getThumbnailUrl(video.id)} />
-  <div>
-    {video.description}
+  <div id="videoDesc" class="mt-4">
+    <h2 class="text-xl font-semibold mb-2">{$t("description")}</h2>
+    <p>{getLocalizedContent(video.description, $language)}</p>
   </div>
 
   <Comments videoId={video.id} />

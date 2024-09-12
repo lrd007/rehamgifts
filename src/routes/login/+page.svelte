@@ -4,6 +4,7 @@
   import { signOut } from "firebase/auth";
   import { goto, invalidateAll } from "$app/navigation";
   import type { PageData } from "./$types";
+  import { t } from "$lib/language";
 
   export let data: PageData;
 
@@ -16,8 +17,8 @@
       await action();
       await invalidateAll();
     } catch (err) {
-      console.error("Authentication error:", err);
-      error = `Failed to ${isLoading ? "sign out" : "log in"}. Please try again.`;
+      console.error($t("authenticationError"), err);
+      error = $t(isLoading ? "signOutError" : "loginError");
     } finally {
       isLoading = false;
     }
@@ -27,7 +28,7 @@
     isLoading = true;
     return handleAuthAction(async () => {
       const res = await fetch("/api/signin", { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to sign out on server");
+      if (!res.ok) throw new Error($t("serverSignOutError"));
       await signOut(auth);
     });
   }
@@ -40,7 +41,7 @@
 </script>
 
 <div class="flex flex-col items-center justify-center min-h-screen bg-base-200">
-  <h2 class="text-3xl font-bold mb-8">Authentication</h2>
+  <h2 class="text-3xl font-bold mb-8">{$t("authentication")}</h2>
 
   {#if error}
     <div class="alert alert-error shadow-lg mb-4">
@@ -68,23 +69,23 @@
     <div class="card w-96 bg-base-100 shadow-xl">
       <div class="card-body items-center text-center">
         <h2 class="card-title">
-          Welcome, {$user.displayName || $user.email}
+          {$t("Welcome")}, {$user.displayName || $user.email}
         </h2>
-        <p class="text-success">You are logged in</p>
+        <p class="text-success">{$t("loggedInMessage")}</p>
         <div>
           <button
             class="btn btn-warning m-2"
             on:click={signOutSSR}
             disabled={isLoading}
           >
-            Sign out
+            {$t("signOut")}
           </button>
           <button
             class="btn btn-warning m-2"
             on:click={() => goto("/")}
             disabled={isLoading}
           >
-            Back
+            {$t("back")}
           </button>
         </div>
       </div>

@@ -1,36 +1,43 @@
-<!-- VideoGrid.svelte\ -->
+<!-- VideoGrid.svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
   import { base } from "$app/paths";
   import { user } from "$lib/firebase";
-  import { getThumbnailUrl } from "$lib/components/utilities";
   import type { VideoFileInfo } from "./constants";
+  import { getThumbnailUrl } from "./utilities";
+  import { language, t } from "$lib/language";
 
   let videos: VideoFileInfo[] = [];
   let isLoading: boolean = true;
 
   onMount(async () => {
     try {
-      // Uncomment this block to fetch from API
-      // const response = await fetch("/api/aws");
-      // if (response.ok) {
-      //   videos = await response.json();
-      // } else {
-      //   console.error("Failed to fetch video files");
-      // }
-
       const response = await fetch("/api/video-data");
       if (response.ok) {
         videos = await response.json();
       } else {
-        console.error("Failed to fetch video files");
+        console.error($t("fetchVideoError"));
       }
     } catch (error) {
-      console.error("Error fetching video files:", error);
+      console.error($t("fetchVideoErrorWithDetails"), error);
     } finally {
       isLoading = false;
     }
   });
+
+  // Add a reactive statement to refetch data when language changes
+  $: {
+    if (!isLoading) {
+      fetch(`/api/video-data?lang=${$language}`)
+        .then((response) => response.json())
+        .then((data) => {
+          videos = data;
+        })
+        .catch((error) => {
+          console.error($t("fetchVideoErrorWithDetails"), error);
+        });
+    }
+  }
 </script>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -51,12 +58,12 @@
             <div
               class="absolute inset-0 flex items-center justify-center text-white font-bold bg-black bg-opacity-70"
             >
-              <span>Sign in to watch</span>
+              <span>{$t("signInToWatch")}</span>
             </div>
-            <img src={getThumbnailUrl(video.id)} />
+            <img src={getThumbnailUrl(video.id)} alt={$t("videoThumbnail")} />
           {:else}
             <a href="{base}/watch/{video.id}">
-              <img src={getThumbnailUrl(video.id)} />
+              <img src={getThumbnailUrl(video.id)} alt={$t("videoThumbnail")} />
             </a>
           {/if}
         </figure>

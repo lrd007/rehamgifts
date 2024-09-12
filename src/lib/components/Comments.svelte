@@ -11,8 +11,8 @@
 
   export let videoId: number;
 
-  $: userFullName = $userData?.fullName;
-  $: userId = $user?.uid.toString();
+  $: userFullName = $userData?.fullName ?? "";
+  $: userId = $user?.uid.toString() ?? "";
 
   let comments: VideoComment[] = [];
   let newCommentContent = "";
@@ -58,8 +58,9 @@
     }
   }
 
-  async function removeComment(commentId: string) {
+  async function removeComment(commentId: string | undefined) {
     try {
+      if (commentId === undefined) throw new Error("undefined comment id");
       await deleteComment(commentId);
       comments = comments.filter((c) => c.id !== commentId);
     } catch (error) {

@@ -1,24 +1,28 @@
 <script lang="ts">
-  import { locale } from "svelte-i18n";
+  import { language } from "../language";
 
   function toggleLanguage(): void {
-    $locale = $locale === "en" ? "ar" : "en";
+    language.toggle();
   }
 </script>
 
 <label class="swap swap-rotate text-white">
   <input
     type="checkbox"
+    class="bg-transparent"
     on:change={toggleLanguage}
-    checked={$locale === "ar"}
-    class="hidden"
+    checked={$language === "ar"}
   />
-  
-  <div class="swap-on w-18 h-10 bg-rgHighlight rounded-full flex items-center p-2">
-    <span>English</span>
+
+  <div
+    class="swap-on w-18 h-10 bg-rgHighlight rounded-full flex items-center p-2"
+  >
+    <span class="mx-auto">English</span>
   </div>
-  
-  <div class="swap-off w-18 h-10 bg-rgHighlight rounded-full flex items-center p-2">
-    <span>عربي</span>
+
+  <div
+    class="swap-off w-18 h-10 bg-rgHighlight rounded-full flex items-center p-2"
+  >
+    <span class="mx-auto">عربي</span>
   </div>
 </label>

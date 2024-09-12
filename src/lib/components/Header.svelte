@@ -1,30 +1,37 @@
 <!-- Header.svelte -->
 <script lang="ts">
   import { base } from "$app/paths";
-  import logo from "$lib/assets/rehamdiva-arabic-logo.svg";
+  import { language, t } from "$lib/language";
+  import logoEn from "$lib/assets/reham-assets/branding/logo_white_name_2.png";
+  import logoAr from "$lib/assets/reham-assets/branding/reham-arabic-logo.svg"; // Assume this is the Arabic version
   import AnimatedButton from "./AnimatedButton.svelte";
   import LanguageToggle from "./LanguageToggle.svelte";
-  // import LanguageToggle from "./LanguageToggle.svelte";
   import UserAuth from "./UserAuth.svelte";
+  $: logo = $language === "ar" ? logoAr : logoEn;
 </script>
 
 <div class="sticky top-0 z-50 bg-rgPrimary shadow-lg">
   <div class="container mx-auto px-4">
     <div class="navbar font-bold relative">
       <div class="navbar-start">
-        <a href="{base}/" class="flex items-center">
-          <img src={logo} alt="Reham Diva" class="h-20 w-auto" />
+        <a href="{base}/" class="text-center">
+          <img
+            src={logo}
+            alt={$t("rehamDivaLogo")}
+            class="h-20 w-auto mx-auto"
+          />
+          <span class="text-white font-century-bold">{$t("house")}</span>
         </a>
       </div>
       <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1 text-white text-base">
-          <li><a href="{base}/">Home</a></li>
-          <li><a href="{base}/about">About</a></li>
-          <li><a href="{base}/contact">Contact</a></li>
+          <li><a href="{base}/">{$t("home")}</a></li>
+          <li><a href="{base}/about">{$t("about")}</a></li>
+          <li><a href="{base}/contact">{$t("contact")}</a></li>
         </ul>
       </div>
       <div class="navbar-end flex gap-4">
-        <AnimatedButton buttonText="Programs" link="https://reham.com/"/>
+        <AnimatedButton buttonText={$t("programs")} link="https://reham.com/" />
         <LanguageToggle />
         <UserAuth />
       </div>

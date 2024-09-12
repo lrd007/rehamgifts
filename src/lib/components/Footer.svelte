@@ -1,7 +1,9 @@
 <script>
-  import { _ } from "svelte-i18n";
-  import footerLogo from "$lib/assets/rehamdiva-arabic-logo.svg";
+  import footerLogo from "$lib/assets/reham-assets/branding/rehamdiva-arabic-logo.svg";
   import { base } from "$app/paths";
+  import { t } from "$lib/language";
+
+  $: currentYear = new Date().getFullYear();
 </script>
 
 <footer
@@ -9,15 +11,15 @@
 >
   <aside>
     <a href="https://reham.com/" target="_blank" class="flex items-center">
-      <img src={footerLogo} alt="Reham Diva Logo" class="h-24 w-auto" />
+      <img src={footerLogo} alt={$t("rehamDivaLogo")} class="h-24 w-auto" />
     </a>
     <p>
-      Copyright © {new Date().getFullYear()} - Reham House - All right reserved
+      {$t("copyright").replace("{year}", currentYear.toString())}
     </p>
   </aside>
   <div class="grid grid-flow-col gap-4">
-    <a href="{base}/about">About</a>
-    <a href="{base}/contact">Contact</a>
+    <a href="{base}/about">{$t("about")}</a>
+    <a href="{base}/contact">{$t("contact")}</a>
   </div>
   <nav>
     <div class="grid grid-flow-col gap-4">
@@ -92,8 +94,9 @@
     <div class="grid grid-flow-col gap-4">
       <a
         href="https://x.com/rehamhouse1"
-        target="”_blank”"
-        aria-label="Twitter"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={$t("twitter")}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +113,8 @@
       <a
         href="https://www.instagram.com/rehamhouse/"
         target="_blank"
-        aria-label="Instagram"
+        rel="noopener noreferrer"
+        aria-label={$t("instagram")}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

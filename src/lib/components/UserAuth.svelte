@@ -5,6 +5,7 @@
   import { invalidateAll } from "$app/navigation";
   import { userData } from "$lib/firebase";
   import { goto } from "$app/navigation";
+  import { t } from "$lib/language";
 
   $: userFullName = $userData?.fullName.toUpperCase();
 
@@ -15,7 +16,7 @@
       await invalidateAll();
       goto(`${base}/`);
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error($t("errorSigningOut"), error);
     }
   }
 
@@ -60,16 +61,16 @@
       class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
     >
       <li class="lg:hidden hover:bg-pink-100 hover:text-pink-900">
-        <a href="{base}/about">About Us</a>
+        <a href="{base}/about">{$t("about")}</a>
       </li>
       <li class="lg:hidden hover:bg-pink-100 hover:text-pink-900">
-        <a href="{base}/contact">Contact Us</a>
+        <a href="{base}/contact">{$t("contact")}</a>
       </li>
       <li class="hover:bg-pink-100 hover:text-pink-900">
-        <a href="{base}/profile">Profile</a>
+        <a href="{base}/profile">{$t("profile")}</a>
       </li>
       <li class="hover:bg-pink-100 hover:text-pink-900">
-        <a on:click={handleLogout} href="javascript:void(0);">Logout</a>
+        <a on:click={handleLogout} href="javascript:void(0);">{$t("logout")}</a>
       </li>
     </ul>
   </div>
@@ -78,6 +79,6 @@
     on:click={handleLogin}
     class="text-white sm:min-w-44 btn m-1 flex-none bg-rgHighlight sm:hover:bg-rgHighlightHover rounded-3xl border-none"
   >
-    Login
+    {$t("login")}
   </button>
 {/if}

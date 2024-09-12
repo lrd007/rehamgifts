@@ -1,15 +1,18 @@
 <script lang="ts">
+  import "../app.css";
+  import { SvelteToast } from "@zerodevx/svelte-toast";
   import Footer from "$lib/components/Footer.svelte";
   import Header from "$lib/components/Header.svelte";
-  import { SvelteToast } from "@zerodevx/svelte-toast";
-  import "../app.css";
-  import type { LayoutData } from "./$types";
-  export let data: LayoutData;
+  import { language } from "$lib/language";
 </script>
 
 <SvelteToast />
 
-<div class="flex flex-col min-h-screen font-didactGothic">
+<div
+  dir={$language === "ar" ? "rtl" : "ltr"}
+  lang={$language}
+  class="flex flex-col min-h-screen font-century"
+>
   <Header />
 
   <main class="flex-grow">
