@@ -29,7 +29,7 @@
     <div
       tabindex="0"
       role="button"
-      class="btn m-1 flex bg-rgHighlight sm:hover:bg-rgHighlightHover rounded-3xl border-none md:min-w-48"
+      class="btn flex bg-rgHighlight sm:hover:bg-rgHighlightHover rounded-3xl border-none md:min-w-48"
     >
       <span class="md:inline hidden min-w-[100px] text-white">
         {#if userFullName}

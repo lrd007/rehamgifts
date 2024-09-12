@@ -2,6 +2,7 @@
 <script lang="ts">
   import { base } from "$app/paths";
   import logo from "$lib/assets/rehamdiva-arabic-logo.svg";
+  import LanguageToggle from "./LanguageToggle.svelte";
   // import LanguageToggle from "./LanguageToggle.svelte";
   import UserAuth from "./UserAuth.svelte";
 </script>
@@ -17,13 +18,13 @@
       <div class="navbar-center hidden md:flex">
         <ul class="menu menu-horizontal px-1 text-white text-base">
           <li><a href="{base}/">Home</a></li>
-          <li><a href="{base}/about">About Us</a></li>
-          <li><a href="{base}/contact">Contact Us</a></li>
-          <li><a href="https://reham.com/">Our Programs</a></li>
+          <li><a href="{base}/about">About</a></li>
+          <li><a href="{base}/contact">Contact</a></li>
         </ul>
       </div>
-      <div class="navbar-end">
-        <!-- <LanguageToggle /> -->
+      <div class="navbar-end flex gap-4">
+        <a href="https://reham.com/" class="btn rounded-full bg-[#ea8bb9] border-2 border-white text-white">Our Programs</a>
+        <LanguageToggle />
         <UserAuth />
       </div>
     </div>
