@@ -63,10 +63,15 @@
     </div>
   </div>
 {:else if video}
-  <h1 class="text-2xl font-bold mb-4">
+  <h1 class="text-2xl font-bold">
     {getLocalizedContent(video.displayName, $language)}
   </h1>
-  <VideoPlayer videoKey={video.name} thumbnail={getThumbnailUrl(video.id)} />
+  <a href="https://reham.com/" class=""
+    >Click here for femininity and self-love programs</a
+  >
+  <div class="mt-4">
+    <VideoPlayer videoKey={video.name} thumbnail={getThumbnailUrl(video.id)} />
+  </div>
   <div id="videoDesc" class="mt-4">
     <h2 class="text-xl font-semibold mb-2">{$t("description")}</h2>
     <p>{getLocalizedContent(video.description, $language)}</p>
