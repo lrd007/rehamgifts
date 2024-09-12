@@ -59,10 +59,10 @@
       tabindex="0"
       class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
     >
-      <li class="md:hidden hover:bg-pink-100 hover:text-pink-900">
+      <li class="lg:hidden hover:bg-pink-100 hover:text-pink-900">
         <a href="{base}/about">About Us</a>
       </li>
-      <li class="md:hidden hover:bg-pink-100 hover:text-pink-900">
+      <li class="lg:hidden hover:bg-pink-100 hover:text-pink-900">
         <a href="{base}/contact">Contact Us</a>
       </li>
       <li class="hover:bg-pink-100 hover:text-pink-900">

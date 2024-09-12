@@ -2,6 +2,7 @@
 <script lang="ts">
   import { base } from "$app/paths";
   import logo from "$lib/assets/rehamdiva-arabic-logo.svg";
+  import AnimatedButton from "./AnimatedButton.svelte";
   import LanguageToggle from "./LanguageToggle.svelte";
   // import LanguageToggle from "./LanguageToggle.svelte";
   import UserAuth from "./UserAuth.svelte";
@@ -15,7 +16,7 @@
           <img src={logo} alt="Reham Diva" class="h-20 w-auto" />
         </a>
       </div>
-      <div class="navbar-center hidden md:flex">
+      <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1 text-white text-base">
           <li><a href="{base}/">Home</a></li>
           <li><a href="{base}/about">About</a></li>
@@ -23,7 +24,7 @@
         </ul>
       </div>
       <div class="navbar-end flex gap-4">
-        <a href="https://reham.com/" class="btn rounded-full bg-[#ea8bb9] border-2 border-white text-white">Our Programs</a>
+        <AnimatedButton buttonText="Programs"/>
         <LanguageToggle />
         <UserAuth />
       </div>
