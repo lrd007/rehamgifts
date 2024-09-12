@@ -8,9 +8,9 @@
   import UserAuth from "./UserAuth.svelte";
 </script>
 
-<div class="sticky top-0 z-50 bg-rgPrimary">
+<div class="sticky top-0 z-50 bg-rgPrimary shadow-lg">
   <div class="container mx-auto px-4">
-    <div class="navbar font-bold shadow-lg relative">
+    <div class="navbar font-bold relative">
       <div class="navbar-start">
         <a href="{base}/" class="flex items-center">
           <img src={logo} alt="Reham Diva" class="h-20 w-auto" />
@@ -24,7 +24,7 @@
         </ul>
       </div>
       <div class="navbar-end flex gap-4">
-        <AnimatedButton buttonText="Programs"/>
+        <AnimatedButton buttonText="Programs" link="https://reham.com/"/>
         <LanguageToggle />
         <UserAuth />
       </div>
