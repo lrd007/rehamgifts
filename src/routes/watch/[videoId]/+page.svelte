@@ -69,7 +69,11 @@
     >Click here for femininity and self-love programs</a
   >
   <div class="mt-4">
-    <VideoPlayer videoKey={video.name} thumbnail={getThumbnailUrl(video.id)} />
+    <VideoPlayer
+      videoUrl={video.videoUrl}
+      thumbnail={getThumbnailUrl(video.id)}
+      title={video.name}
+    />
   </div>
   <div id="videoDesc" class="mt-4">
     <h2 class="text-xl font-semibold mb-2">{$t("description")}</h2>

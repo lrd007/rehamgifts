@@ -32,6 +32,8 @@ export type VideoData = {
     en: string;
     ar: string;
   };
+  thumbnail: string;
+  videoUrl: string;
 };
 
 export interface VideoFileInfo {

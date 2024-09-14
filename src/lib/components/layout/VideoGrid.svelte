@@ -1,20 +1,19 @@
-<!-- VideoGrid.svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
   import { base } from "$app/paths";
-  import { getThumbnailUrl } from "$lib/utils";
-  import { language, t } from "$lib/stores/language";
-  import type { VideoFileInfo } from "$lib/types";
   import { user } from "$lib/stores/auth";
+  import type { Video } from "../constants";
+  import { language, t } from "$lib/stores/language";
 
-  let videos: VideoFileInfo[] = [];
+  let videos: Video[] = [];
   let isLoading: boolean = true;
 
-  onMount(async () => {
+  async function fetchVideoData() {
     try {
-      const response = await fetch("/api/video-data");
+      const response = await fetch(`/api/video-data?lang=${$language}`);
       if (response.ok) {
         videos = await response.json();
+        await Promise.all(videos.map(fetchThumbnail));
       } else {
         console.error($t("fetchVideoError"));
       }
@@ -23,21 +22,23 @@
     } finally {
       isLoading = false;
     }
-  });
+  }
 
-  // Add a reactive statement to refetch data when language changes
-  $: {
-    if (!isLoading) {
-      fetch(`/api/video-data?lang=${$language}`)
-        .then((response) => response.json())
-        .then((data) => {
-          videos = data;
-        })
-        .catch((error) => {
-          console.error($t("fetchVideoErrorWithDetails"), error);
-        });
+  async function fetchThumbnail(video: Video) {
+    try {
+      const response = await fetch(
+        `https://vimeo.com/api/oembed.json?url=${video.videoUrl}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        video.thumbnail = data.thumbnail_url;
+      }
+    } catch (error) {
+      console.error(`Error fetching thumbnail for video ${video.id}:`, error);
     }
   }
+
+  onMount(fetchVideoData);
 </script>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -60,15 +61,20 @@
             >
               <span>{$t("signInToWatch")}</span>
             </div>
-            <img src={getThumbnailUrl(video.id)} alt={$t("videoThumbnail")} />
-          {:else}
-            <a href="{base}/watch/{video.id}">
-              <img src={getThumbnailUrl(video.id)} alt={$t("videoThumbnail")} />
-            </a>
           {/if}
+
+          <a href={$user ? `${base}/watch/${video.id}` : "#"} class="block">
+            {#if video.thumbnail}
+              <img src={video.thumbnail} alt={$t("videoThumbnail")} />
+            {:else}
+              <div class="h-56 bg-base-300 flex items-center justify-center">
+                <span>{$t("thumbnailLoading")}</span>
+              </div>
+            {/if}
+          </a>
         </figure>
         <div class="card-body">
-          <h2 class="card-title text-lg">{video.displayName}</h2>
+          <h2 class="card-title text-lg">{video.name}</h2>
         </div>
       </div>
     {/each}
