@@ -13,7 +13,7 @@
     <a href="https://reham.com/" target="_blank" class="flex items-center">
       <img src={footerLogo} alt={$t("rehamDivaLogo")} class="h-24 w-auto" />
     </a>
-    <p>
+    <p class="text-xs sm:text-sm">
       {$t("copyright").replace("{year}", currentYear.toString())}
     </p>
   </aside>
@@ -22,7 +22,7 @@
     <a href="{base}/contact">{$t("contact")}</a>
   </div>
   <nav>
-    <div class="grid grid-flow-col gap-4">
+    <div class="flex flex-wrap justify-center gap-4">
       <a href="mailto:hello@reham.com" class="flex items-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
