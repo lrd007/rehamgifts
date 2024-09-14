@@ -1,9 +1,8 @@
 <script lang="ts">
   import "../app.css";
   import { SvelteToast } from "@zerodevx/svelte-toast";
-  import Footer from "$lib/components/Footer.svelte";
-  import Header from "$lib/components/Header.svelte";
-  import { language } from "$lib/language";
+  import { language } from "$lib/stores/language";
+  import { Header, Footer } from "$lib/components";
 </script>
 
 <SvelteToast />

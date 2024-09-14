@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { getThumbnailUrl } from "$lib/components/utilities";
-  import VideoPlayer from "$lib/components/VideoPlayer.svelte";
+  import { getThumbnailUrl } from "$lib/utils";
   import { onMount } from "svelte";
   import { page } from "$app/stores";
-  import Comments from "$lib/components/Comments.svelte";
-  import { t, language } from "$lib/language";
+  import { t, language } from "$lib/stores/language";
   import type { VideoData } from "$lib/types";
+  import { VideoPlayer, Comments } from "$lib/components";
 
   $: videoKey = $page.params.videoId;
 

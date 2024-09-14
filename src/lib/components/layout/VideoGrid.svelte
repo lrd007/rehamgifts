@@ -2,10 +2,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { base } from "$app/paths";
-  import { user } from "$lib/firebase";
-  import type { VideoFileInfo } from "./constants";
-  import { getThumbnailUrl } from "./utilities";
-  import { language, t } from "$lib/language";
+  import { getThumbnailUrl } from "$lib/utils";
+  import { language, t } from "$lib/stores/language";
+  import type { VideoFileInfo } from "$lib/types";
+  import { user } from "$lib/stores/auth";
 
   let videos: VideoFileInfo[] = [];
   let isLoading: boolean = true;

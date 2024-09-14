@@ -1,13 +1,13 @@
 <!-- /profile/+page.svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { user, userData, auth, db } from "$lib/firebase";
   import { updatePassword } from "firebase/auth";
   import { doc, updateDoc } from "firebase/firestore";
   import { fade } from "svelte/transition";
-  import PasswordChange from "$lib/components/PasswordChange.svelte";
-  import VideoProgress from "$lib/components/VideoProgress.svelte";
-  import ErrorMessage from "$lib/components/ErrorMessage.svelte";
+  import { ErrorMessage, PasswordChange, VideoProgress } from "$lib/components";
+  import { db } from "$lib/client/firebase";
+  import { user } from "$lib/stores/auth";
+  import { userData } from "$lib/stores/user";
 
   let loading = true;
   let error: string | null = null;

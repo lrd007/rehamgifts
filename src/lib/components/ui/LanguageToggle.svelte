@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { language } from "../language";
+  import { language } from "$lib/stores/language";
+
 
   function toggleLanguage(): void {
     language.toggle();

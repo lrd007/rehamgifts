@@ -1,12 +1,10 @@
 <!-- Header.svelte -->
 <script lang="ts">
   import { base } from "$app/paths";
-  import { language, t } from "$lib/language";
+  import { language, t } from "$lib/stores/language";
   import logoEn from "$lib/assets/reham-assets/branding/logo_white_name_2.png";
-  import logoAr from "$lib/assets/reham-assets/branding/reham-arabic-logo.svg"; // Assume this is the Arabic version
-  import AnimatedButton from "./AnimatedButton.svelte";
-  import LanguageToggle from "./LanguageToggle.svelte";
-  import UserAuth from "./UserAuth.svelte";
+  import logoAr from "$lib/assets/reham-assets/branding/reham-arabic-logo.svg";
+  import { AnimatedButton, LanguageToggle, UserAuth } from "..";
   $: logo = $language === "ar" ? logoAr : logoEn;
 </script>
 

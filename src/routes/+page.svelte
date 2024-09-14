@@ -1,7 +1,6 @@
 <!-- /+page.svelte -->
 <script lang="ts">
-  import Pattern from "$lib/components/Pattern.svelte";
-  import VideoGrid from "$lib/components/VideoGrid.svelte";
+  import { VideoGrid, Pattern } from "$lib/components";
 </script>
 
 <VideoGrid />

@@ -1,10 +1,11 @@
 <script lang="ts">
-  import CredentialsLogin from "$lib/components/CredentialsLogin.svelte";
-  import { auth, user } from "$lib/firebase";
   import { signOut } from "firebase/auth";
   import { goto, invalidateAll } from "$app/navigation";
   import type { PageData } from "./$types";
-  import { t } from "$lib/language";
+  import { t } from "$lib/stores/language";
+  import CredentialsLogin from "$lib/components/auth/CredentialsLogin.svelte";
+  import { user } from "$lib/stores/auth";
+  import { auth } from "$lib/client/firebase";
 
   export let data: PageData;
 

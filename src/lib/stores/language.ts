@@ -1,7 +1,7 @@
 import { writable, derived } from "svelte/store";
 import { browser } from "$app/environment";
 import { invalidateAll } from "$app/navigation";
-import { translations } from "./translations";
+import { translations } from "../utils/translations";
 
 type Language = "en" | "ar";
 

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import Pattern from "$lib/components/Pattern.svelte";
   import {
     instagramCircled,
     whatsappCircled,
     twitterCircled,
     emailCircled,
-  } from "$lib/icons";
+  } from "$lib/assets/icons";
+  import { Pattern } from "$lib/components";
 </script>
 
 <div class="md:px-12" dir="rtl">

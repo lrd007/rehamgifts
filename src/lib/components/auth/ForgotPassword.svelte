@@ -1,7 +1,7 @@
 <!-- ForgotPassword.svelte -->
 <script lang="ts">
   import { writable, type Writable } from "svelte/store";
-  import { t } from "$lib/language";
+  import { t } from "$lib/stores/language";
 
   export let email: string;
   export let onSubmit: (email: string) => Promise<void>;

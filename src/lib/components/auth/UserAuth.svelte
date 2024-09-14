@@ -1,11 +1,11 @@
 <script lang="ts">
   import { base } from "$app/paths";
   import { signOut } from "firebase/auth";
-  import { auth } from "$lib/firebase";
   import { invalidateAll } from "$app/navigation";
-  import { userData } from "$lib/firebase";
   import { goto } from "$app/navigation";
-  import { t } from "$lib/language";
+  import { t } from "$lib/stores/language";
+  import { userData } from "$lib/stores/user";
+  import { auth } from "$lib/client/firebase";
 
   $: userFullName = $userData?.fullName.toUpperCase();
 

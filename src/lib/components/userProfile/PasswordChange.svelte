@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
-  import PasswordInput from "./PasswordInput.svelte";
+  import { PasswordInput } from "..";
 
   const dispatch = createEventDispatcher<{
     changePassword: { newPassword: string };

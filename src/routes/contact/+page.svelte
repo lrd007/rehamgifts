@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import Pattern from '$lib/components/Pattern.svelte';
+  import { Pattern } from '$lib/components';
   import type { ActionData } from './$types';
 
   export let form: ActionData;

@@ -1,7 +1,7 @@
 <script>
   import footerLogo from "$lib/assets/reham-assets/branding/rehamdiva-arabic-logo.svg";
   import { base } from "$app/paths";
-  import { t } from "$lib/language";
+  import { t } from "$lib/stores/language";
 
   $: currentYear = new Date().getFullYear();
 </script>

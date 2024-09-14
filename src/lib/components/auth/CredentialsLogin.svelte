@@ -3,18 +3,14 @@
     parsePhoneNumberFromString,
     type CountryCode,
   } from "libphonenumber-js";
-  import {
-    registerWithEmailAndPassword,
-    signInWithCredentials,
-    resetPassword,
-  } from "$lib/firebase";
   import { writable, derived, type Writable } from "svelte/store";
   import type { Country } from "$lib/types";
   import ForgotPassword from "./ForgotPassword.svelte";
   import PasswordInput from "./PasswordInput.svelte";
   import { createEventDispatcher } from "svelte";
   import { toast } from "@zerodevx/svelte-toast";
-  import { t } from "$lib/language";
+  import { t } from "$lib/stores/language";
+  import { registerWithEmailAndPassword, signInWithCredentials, resetPassword } from "$lib/services/auth";
 
   // Props
   export let countriesData: Country[];

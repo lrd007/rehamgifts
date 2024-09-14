@@ -1,7 +1,6 @@
 <!-- VideoPlayer.svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { user } from "$lib/firebase";
   import {
     Play,
     Pause,
@@ -10,6 +9,7 @@
     Maximize,
     Minimize,
   } from "lucide-svelte";
+  import { user } from "$lib/stores/auth";
 
   export let videoKey: string;
   export let thumbnail: string;

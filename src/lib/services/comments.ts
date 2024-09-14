@@ -1,3 +1,4 @@
+// $lib/services/comments.ts
 import {
   collection,
   addDoc,
@@ -12,13 +13,12 @@ import {
   limit,
   Query,
   CollectionReference,
-  Timestamp,
 } from "firebase/firestore";
 
-import { db } from "./firebase"; // Assuming you have this import from your existing code
-import type { VideoComment } from "./components/constants";
+import { db } from "../client/firebase";
+import type { VideoComment } from "../types";
+import { convertTimestampToDate } from "../utils/date";
 
-// Create a new comment
 export async function createComment(
   userId: string,
   userName: string,
@@ -43,7 +43,6 @@ export async function createComment(
   }
 }
 
-// Read a single comment by ID
 export async function getCommentById(
   commentId: string
 ): Promise<VideoComment | null> {
@@ -62,7 +61,6 @@ export async function getCommentById(
   }
 }
 
-// Read comments with optional filtering and sorting
 export async function getComments(options?: {
   userId?: string;
   videoId?: number;
@@ -96,25 +94,19 @@ export async function getComments(options?: {
     }
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+      } as VideoComment;
+    });
   } catch (error) {
     console.error("Error getting comments:", error);
     throw error;
   }
 }
 
-function convertTimestampToDate(timestamp: Timestamp | string): Date {
-  if (timestamp instanceof Timestamp) {
-    return timestamp.toDate();
-  } else if (typeof timestamp === "string") {
-    // Remove the "at" and timezone information for easier parsing
-    const cleanedDateString = timestamp.replace(" at ", " ").split(" UTC")[0];
-    return new Date(cleanedDateString);
-  }
-  throw new Error("Invalid timestamp format");
-}
-
-// Get all comments for a specific videoId
 export async function getCommentsByVideoId(
   videoId: number
 ): Promise<VideoComment[]> {
@@ -141,7 +133,6 @@ export async function getCommentsByVideoId(
   }
 }
 
-// Update a comment
 export async function updateComment(
   commentId: string,
   content: string
@@ -158,7 +149,6 @@ export async function updateComment(
   }
 }
 
-// Delete a comment
 export async function deleteComment(commentId: string): Promise<void> {
   try {
     const docRef = doc(db, "comments", commentId);
