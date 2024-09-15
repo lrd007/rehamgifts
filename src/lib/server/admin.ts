@@ -1,3 +1,4 @@
+// lib/server/admin.ts
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { CLIENT_EMAIL, PRIVATE_KEY, PROJECT_ID } from "$env/static/private";
@@ -19,3 +20,7 @@ try {
 
 export const adminDB = getFirestore();
 export const adminAuth = getAuth();
+export async function isUserAdmin(uid: string): Promise<boolean> {
+  const adminDoc = await adminDB.collection('admins').doc(uid).get();
+  return adminDoc.exists;
+}

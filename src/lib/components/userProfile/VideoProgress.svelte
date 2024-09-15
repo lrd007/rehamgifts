@@ -2,21 +2,14 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
+  import type { VideoWithId } from "$lib/types";
 
-  export let watchedVideos: number[] = [];
+  export let watchedVideos: string[] = [];
+  export let videos: VideoWithId[] = [];
 
   const dispatch = createEventDispatcher();
 
-  const videos = [
-    { id: 1, name: "1-Free awareness video lesson" },
-    { id: 2, name: "2-feminine luxury" },
-    { id: 3, name: "3-Is female or male leadership" },
-    { id: 4, name: "4-emotional relationship feminine or masculine" },
-    { id: 5, name: "5-Is motherhood feminine or masculine" },
-    { id: 6, name: "6-Are you feminine or masculine" },
-  ];
-
-  function toggleVideoWatched(videoId: number) {
+  function toggleVideoWatched(videoId: string) {
     const isWatched = !watchedVideos.includes(videoId);
     dispatch("toggleVideo", { videoId, isWatched });
   }
@@ -35,7 +28,7 @@
               checked={watchedVideos.includes(video.id)}
               on:change={() => toggleVideoWatched(video.id)}
             />
-            <span class="label-text">{video.name}</span>
+            <span class="label-text">{video.title}</span>
           </label>
         </li>
       {/each}

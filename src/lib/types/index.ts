@@ -1,10 +1,12 @@
-// lib/types
+// lib/types/index.ts
+import type { Timestamp } from "firebase/firestore";
+
 export interface UserData {
   id: string;
   fullName: string;
   email: string;
   phoneNumber: string;
-  watchedVideos: number[];
+  watchedVideos: string[]; 
 }
 
 export interface VideoComment {
@@ -12,38 +14,12 @@ export interface VideoComment {
   userId: string;
   userName: string;
   content: string;
-  videoId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 
-export type VideoData = {
-  title: any;
-  id: number;
-  name: string;
-  displayName: {
-    en: string;
-    ar: string;
-  };
-  size: number;
-  lastModified: Date;
-  contentType: string;
-  description: {
-    en: string;
-    ar: string;
-  };
-  thumbnail: string;
-  videoUrl: string;
-};
-
-export interface VideoFileInfo {
-  id: number;
-  name: string;
-  displayName: string;
-  size: number;
-  lastModified: Date;
-  contentType: string;
-  description: string;
+export interface VideoComments {
+  [commentId: string]: VideoComment;
 }
 
 export interface Country {
@@ -52,18 +28,14 @@ export interface Country {
   flag: string;
   phoneCode: number;
 }
-// lib/types.ts
+
 export interface Video {
+  title: string;
+  description: string;
+  url: string;
+  thumbnail: string;
+}
+
+export interface VideoWithId extends Video {
   id: string;
-  name: {
-    en: string;
-    ar: string;
-  };
-  videoUrl: string;
-  description?: {
-    en: string;
-    ar: string;
-  };
-  thumbnail?: string;
-  title?: string;
 }

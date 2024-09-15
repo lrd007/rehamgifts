@@ -1,23 +1,23 @@
-import { adminAuth } from "$lib/server/admin";
+import { adminAuth, isUserAdmin } from "$lib/server/admin";
 import type { Handle } from "@sveltejs/kit";
 
 export const handle = (async ({ event, resolve }) => {
-    // Authentication logic
-    const sessionCookie = event.cookies.get("__session");
+  const sessionCookie = event.cookies.get("__session");
 
-    try {
-        const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie!);
-        event.locals.userID = decodedClaims.uid;
-    } catch (e) {
-        event.locals.userID = null;
-    }
+  try {
+    const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie!);
+    event.locals.userID = decodedClaims.uid;
+    event.locals.isAdmin = await isUserAdmin(decodedClaims.uid);
+  } catch (e) {
+    event.locals.userID = null;
+    event.locals.isAdmin = false;
+  }
 
-    // Language handling
-    const lang = event.cookies.get('lang') || 'en';
-    
-    const response = await resolve(event, {
-        transformPageChunk: ({ html }) => html.replace('%lang%', lang)
-    });
+  const lang = event.cookies.get("lang") || "en";
 
-    return response;
+  const response = await resolve(event, {
+    transformPageChunk: ({ html }) => html.replace("%lang%", lang),
+  });
+
+  return response;
 }) satisfies Handle;

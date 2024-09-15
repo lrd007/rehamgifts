@@ -1,3 +1,4 @@
+// lib/client/firebase.ts
 import { getApps, initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";

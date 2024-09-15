@@ -3,6 +3,9 @@
   import { SvelteToast } from "@zerodevx/svelte-toast";
   import { language } from "$lib/stores/language";
   import { Header, Footer } from "$lib/components";
+  import { page } from "$app/stores";
+
+  $: isAdminRoute = $page.url.pathname.startsWith("/admin");
 </script>
 
 <SvelteToast />
@@ -11,8 +14,11 @@
   dir={$language === "ar" ? "rtl" : "ltr"}
   lang={$language}
   class="flex flex-col min-h-screen font-century"
+  data-name={isAdminRoute ? "admin-layout" : "root-layout"}
 >
-  <Header />
+  {#if !isAdminRoute}
+    <Header />
+  {/if}
 
   <main class="flex-grow">
     <div class="container h-full mx-auto px-4 py-8">
@@ -20,5 +26,7 @@
     </div>
   </main>
 
-  <Footer />
+  {#if !isAdminRoute}
+    <Footer />
+  {/if}
 </div>

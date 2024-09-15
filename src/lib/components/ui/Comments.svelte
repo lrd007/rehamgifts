@@ -1,113 +1,107 @@
+<!-- Comments.svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { invalidate } from "$app/navigation";
-  import { user } from "$lib/stores/auth";
+  import { fade, slide } from "svelte/transition";
   import { userData } from "$lib/stores/user";
   import {
     createComment,
-    deleteComment,
     getCommentsByVideoId,
+    deleteComment,
   } from "$lib/services/comments";
   import type { VideoComment } from "$lib/types";
-  import { fade, slide } from "svelte/transition";
+  import { Timestamp } from "firebase/firestore";
 
-  export let videoId: number;
+  export let videoId: string;
 
   let comments: VideoComment[] = [];
   let newCommentContent = "";
   let isLoading = true;
-  let error: string | null = null;
   let isSubmitting = false;
+  let error = "";
 
-  $: userFullName = $userData?.fullName ?? "";
-  $: userId = $user?.uid ?? "";
-
-  onMount(loadComments);
+  function formatDate(timestamp: Timestamp): string {
+    return timestamp.toDate().toLocaleString();
+  }
 
   async function loadComments() {
     isLoading = true;
-    error = null;
+    error = "";
     try {
       comments = await getCommentsByVideoId(videoId);
-    } catch (err) {
-      error = "Failed to fetch comments. Please try again later.";
-      console.error(error, err);
+    } catch (e) {
+      error = "Failed to load comments. Please try again.";
     } finally {
       isLoading = false;
     }
   }
 
   async function handleSubmit() {
-    if (!newCommentContent.trim() || isSubmitting) return;
+    if (!$userData || !newCommentContent.trim()) return;
 
     isSubmitting = true;
-    error = null;
+    error = "";
     try {
-      const newComment = await createComment(
-        userId,
-        userFullName,
-        newCommentContent,
-        videoId
+      await createComment(
+        videoId,
+        $userData.id,
+        $userData.fullName,
+        newCommentContent.trim()
       );
-      comments = [newComment, ...comments];
       newCommentContent = "";
-      await invalidate(`comments:${videoId}`);
-    } catch (err) {
-      error = "Failed to add comment. Please try again.";
-      console.error(error, err);
+      await loadComments();
+    } catch (e) {
+      error = "Failed to post comment. Please try again.";
     } finally {
       isSubmitting = false;
     }
   }
 
   async function handleDelete(commentId: string) {
-    error = null;
+    if (!confirm("Are you sure you want to delete this comment?")) return;
+
+    error = "";
     try {
-      await deleteComment(commentId);
-      comments = comments.filter((c) => c.id !== commentId);
-      await invalidate(`comments:${videoId}`);
-    } catch (err) {
+      await deleteComment(videoId, commentId);
+      await loadComments();
+    } catch (e) {
       error = "Failed to delete comment. Please try again.";
-      console.error(error, err);
     }
   }
 
-  function formatDate(date: Date): string {
-    return new Date(date).toLocaleString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
+  onMount(loadComments);
 </script>
 
 <section class="max-w-2xl mx-auto p-4">
   <h2 class="text-2xl font-bold mb-4 text-primary">Comments</h2>
 
-  <form on:submit|preventDefault={handleSubmit} class="mb-6">
-    <div class="relative">
-      <textarea
-        bind:value={newCommentContent}
-        placeholder="Write a comment..."
-        required
-        class="textarea textarea-bordered w-full pr-24 resize-none"
-        rows="3"
-      />
-      <button
-        type="submit"
-        class="btn btn-primary absolute bottom-2 right-2"
-        disabled={!newCommentContent.trim() || isSubmitting}
-      >
-        {#if isSubmitting}
-          <span class="loading loading-spinner loading-sm"></span>
-        {:else}
-          Post
-        {/if}
-      </button>
-    </div>
-  </form>
+  {#if $userData}
+    <form on:submit|preventDefault={handleSubmit} class="mb-6">
+      <div class="relative">
+        <textarea
+          bind:value={newCommentContent}
+          placeholder="Write a comment..."
+          required
+          class="textarea textarea-bordered w-full pr-24 resize-none"
+          rows="3"
+        />
+        <button
+          type="submit"
+          class="btn btn-primary absolute bottom-2 right-2"
+          disabled={!newCommentContent.trim() || isSubmitting}
+        >
+          {#if isSubmitting}
+            <span class="loading loading-spinner loading-sm"></span>
+          {:else}
+            Post
+          {/if}
+        </button>
+      </div>
+    </form>
+  {:else}
+    <p class="text-center text-gray-500 mb-6">
+      Please sign in to post a comment.
+    </p>
+  {/if}
 
   {#if error}
     <div class="alert alert-error mb-4" transition:fade>
@@ -149,7 +143,7 @@
                 <span class="mx-1">•</span>
                 <span>{formatDate(comment.createdAt)}</span>
               </div>
-              {#if comment.userId === userId}
+              {#if $userData && comment.userId === $userData.id}
                 <button
                   on:click={() => handleDelete(comment.id)}
                   class="btn btn-ghost btn-xs text-error"

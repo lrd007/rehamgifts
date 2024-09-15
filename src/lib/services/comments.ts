@@ -1,158 +1,81 @@
 // $lib/services/comments.ts
 import {
-  collection,
-  addDoc,
-  getDoc,
-  getDocs,
-  updateDoc,
-  deleteDoc,
   doc,
-  query,
-  where,
-  orderBy,
-  limit,
-  Query,
-  CollectionReference,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteField,
+  serverTimestamp,
+  Timestamp,
 } from "firebase/firestore";
 
 import { db } from "../client/firebase";
-import type { VideoComment } from "../types";
-import { convertTimestampToDate } from "../utils/date";
+import type { VideoComment, VideoComments } from "../types";
 
 export async function createComment(
+  videoId: string,
   userId: string,
   userName: string,
-  content: string,
-  videoId: number
+  content: string
 ): Promise<VideoComment> {
   try {
-    const commentData: Omit<VideoComment, "id"> = {
+    const commentId = Date.now().toString(); // Generate a unique ID
+    const now = serverTimestamp();
+    const commentData: VideoComment = {
+      id: commentId,
       userId,
       userName,
       content,
-      videoId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: now,
+      updatedAt: now,
     };
 
-    const docRef = await addDoc(collection(db, "comments"), commentData);
-    return { ...commentData, id: docRef.id };
+    const videoCommentsRef = doc(db, "comments", videoId);
+    await setDoc(
+      videoCommentsRef,
+      {
+        [commentId]: commentData,
+      },
+      { merge: true }
+    );
+
+    return commentData;
   } catch (error) {
     console.error("Error creating comment:", error);
     throw error;
   }
 }
 
-export async function getCommentById(
-  commentId: string
-): Promise<VideoComment | null> {
-  try {
-    const docRef = doc(db, "comments", commentId);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() } as VideoComment;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error("Error getting comment:", error);
-    throw error;
-  }
-}
-
-export async function getComments(options?: {
-  userId?: string;
-  videoId?: number;
-  orderByField?: keyof VideoComment;
-  orderDirection?: "asc" | "desc";
-  limitTo?: number;
-}): Promise<VideoComment[]> {
-  try {
-    let q: Query<VideoComment> = collection(
-      db,
-      "comments"
-    ) as CollectionReference<VideoComment>;
-
-    if (options?.userId) {
-      q = query(q, where("userId", "==", options.userId));
-    }
-
-    if (options?.videoId !== undefined) {
-      q = query(q, where("videoId", "==", options.videoId));
-    }
-
-    if (options?.orderByField) {
-      q = query(
-        q,
-        orderBy(options.orderByField, options.orderDirection || "desc")
-      );
-    }
-
-    if (options?.limitTo) {
-      q = query(q, limit(options.limitTo));
-    }
-
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        ...data,
-        id: doc.id,
-      } as VideoComment;
-    });
-  } catch (error) {
-    console.error("Error getting comments:", error);
-    throw error;
-  }
-}
-
 export async function getCommentsByVideoId(
-  videoId: number
+  videoId: string
 ): Promise<VideoComment[]> {
   try {
-    const q = query(
-      collection(db, "comments"),
-      where("videoId", "==", videoId),
-      orderBy("createdAt", "desc")
-    );
+    const videoCommentsRef = doc(db, "comments", videoId);
+    const docSnap = await getDoc(videoCommentsRef);
 
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: convertTimestampToDate(data.createdAt),
-        updatedAt: convertTimestampToDate(data.updatedAt),
-      } as VideoComment;
-    });
+    if (docSnap.exists()) {
+      const comments: VideoComments = docSnap.data() as VideoComments;
+      return Object.values(comments).sort(
+        (a, b) => b.createdAt.seconds - a.createdAt.seconds
+      );
+    } else {
+      return [];
+    }
   } catch (error) {
     console.error("Error getting comments for video:", error);
     throw error;
   }
 }
 
-export async function updateComment(
-  commentId: string,
-  content: string
+export async function deleteComment(
+  videoId: string,
+  commentId: string
 ): Promise<void> {
   try {
-    const docRef = doc(db, "comments", commentId);
-    await updateDoc(docRef, {
-      content,
-      updatedAt: new Date(),
+    const videoCommentsRef = doc(db, "comments", videoId);
+    await updateDoc(videoCommentsRef, {
+      [commentId]: deleteField(),
     });
-  } catch (error) {
-    console.error("Error updating comment:", error);
-    throw error;
-  }
-}
-
-export async function deleteComment(commentId: string): Promise<void> {
-  try {
-    const docRef = doc(db, "comments", commentId);
-    await deleteDoc(docRef);
   } catch (error) {
     console.error("Error deleting comment:", error);
     throw error;

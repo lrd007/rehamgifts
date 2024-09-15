@@ -1,3 +1,4 @@
+// lib/services/user.ts
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../client/firebase";
 import type { UserData } from "../types";

@@ -8,10 +8,12 @@
   import { db } from "$lib/client/firebase";
   import { user } from "$lib/stores/auth";
   import { userData } from "$lib/stores/user";
+  import type { VideoWithId } from "$lib/types";
 
   let loading = true;
   let error: string | null = null;
   let passwordChangeComponent: PasswordChange;
+  let videos: VideoWithId[] = [];
 
   $: if ($user === null && !loading) {
     error = "Please log in to view your profile.";
@@ -20,6 +22,11 @@
   onMount(async () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulating network delay
+      const response = await fetch("/api/videos");
+      if (!response.ok) {
+        throw new Error("Failed to fetch videos");
+      }
+      videos = await response.json();
       loading = false;
     } catch (err) {
       console.error("Error loading user data:", err);
@@ -49,7 +56,7 @@
   }
 
   async function handleVideoToggle(
-    event: CustomEvent<{ videoId: number; isWatched: boolean }>
+    event: CustomEvent<{ videoId: string; isWatched: boolean }>
   ) {
     if (!$user || !$userData) return;
 
@@ -98,6 +105,7 @@
 
     <div class="mt-6">
       <VideoProgress
+        {videos}
         watchedVideos={$userData.watchedVideos}
         on:toggleVideo={handleVideoToggle}
       />

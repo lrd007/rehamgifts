@@ -3,19 +3,17 @@
   import { onMount } from "svelte";
   import { base } from "$app/paths";
   import { user } from "$lib/stores/auth";
-  import type { Video } from "$lib/types";
-  import { language, t } from "$lib/stores/language";
-  import { fetchVimeoData } from "$lib/services/vimeo";
+  import type { VideoWithId } from "$lib/types";
+  import { t } from "$lib/stores/language";
 
-  let videos: Video[] = [];
+  let videos: VideoWithId[] = [];
   let isLoading: boolean = true;
 
   async function fetchVideoData() {
     try {
-      const response = await fetch(`/api/video-data`);
+      const response = await fetch(`/api/videos`);
       if (response.ok) {
         videos = await response.json();
-        await Promise.all(videos.map(fetchVimeoData));
       } else {
         console.error($t("fetchVideoError"));
       }
@@ -70,7 +68,7 @@
           </a>
         </figure>
         <div class="card-body">
-          <h2 class="card-title text-lg">{video.title || video.name}</h2>
+          <h2 class="card-title text-lg">{video.title}</h2>
           {#if video.description}
             <p class="text-sm text-gray-600 line-clamp-2">
               {video.description}
