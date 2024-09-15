@@ -1,7 +1,7 @@
 <script lang="ts">
   import { invalidateAll } from "$app/navigation";
   import { page } from "$app/stores";
-  import AdminDashboard from "$lib/components/AdminDashboard.svelte";
+  import { AdminDashboard } from "$lib/components/index.js";
   import { signInAdmin } from "$lib/services/auth";
 
   export let data;

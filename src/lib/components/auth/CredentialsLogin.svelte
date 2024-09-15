@@ -1,3 +1,4 @@
+<!-- CredentialsLogin.svelte -->
 <script lang="ts">
   import {
     parsePhoneNumberFromString,

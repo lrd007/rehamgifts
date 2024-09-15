@@ -1,3 +1,4 @@
+<!-- /login -->
 <script lang="ts">
   import { signOut } from "firebase/auth";
   import { goto, invalidateAll } from "$app/navigation";
