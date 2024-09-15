@@ -18,6 +18,7 @@ export interface VideoComment {
 }
 
 export type VideoData = {
+  title: any;
   id: number;
   name: string;
   displayName: {

@@ -1,33 +1,22 @@
-<!-- routes/watch/[videoId]/+page.svelte -->
 <script lang="ts">
   import { getThumbnailUrl } from "$lib/utils";
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import { t, language } from "$lib/stores/language";
-  import type { Video } from "$lib/types";
+  import type { VideoData } from "$lib/types";
   import { VideoPlayer, Comments } from "$lib/components";
 
   $: videoKey = $page.params.videoId;
 
-  let video: Video | null = null;
+  let video: VideoData | null = null;
   let isLoading: boolean = true;
   let error: string = "";
 
-  async function fetchVimeoData(video: Video) {
-    try {
-      const videoId = video.videoUrl.split("/").pop()?.split("?")[0];
-      const response = await fetch(
-        `https://vimeo.com/api/oembed.json?url=https://vimeo.com/${videoId}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        video.thumbnail = data.thumbnail_url;
-        video.title = data.title;
-        video.description = data.description;
-      }
-    } catch (error) {
-      console.error(`Error fetching Vimeo data for video ${video.id}:`, error);
-    }
+  function getLocalizedContent(
+    content: { en: string; ar: string },
+    lang: string
+  ): string {
+    return lang === "ar" ? content.ar : content.en;
   }
 
   onMount(async () => {
@@ -35,13 +24,13 @@
       const response = await fetch(`/api/video-data/${videoKey}`);
       if (response.ok) {
         video = await response.json();
-        await fetchVimeoData(video);
+        // console.log("video on watch page", video);
       } else {
         error = $t("fetchVideoError");
       }
     } catch (err) {
-      console.error($t("fetchVideoErrorWithDetails"), err);
-      error = $t("fetchVideoError");
+      console.error("Error fetching video:", err);
+      error = "Error Fetching Video";
     } finally {
       isLoading = false;
     }
@@ -74,32 +63,23 @@
     </div>
   </div>
 {:else if video}
-  <h1 class="text-2xl font-bold mb-2">
-    {video.title || (video.name && video.name[$language]) || $t("videoTitle")}
+  <h1 class="text-2xl font-bold">
+    {video.title}
   </h1>
-
+  <a href="https://reham.com/" class=""
+    >Click here for femininity and self-love programs</a
+  >
   <div class="mt-4">
     <VideoPlayer
       videoUrl={video.videoUrl}
-      thumbnail={video.thumbnail || getThumbnailUrl(video.id)}
-      title={video.title ||
-        (video.name && video.name[$language]) ||
-        $t("videoTitle")}
+      thumbnail={video.thumbnail}
+      title={video.name}
     />
   </div>
-
   <div id="videoDesc" class="mt-4">
     <h2 class="text-xl font-semibold mb-2">{$t("description")}</h2>
-    <p>
-      {video.description ||
-        (video.description && video.description[$language]) ||
-        $t("noDescription")}
-    </p>
+    <p>{video.description}</p>
   </div>
-
-  <a href="https://reham.com/" class="mt-4 block text-blue-500 hover:underline"
-    >{$t("feminityProgramLink")}</a
-  >
 
   <Comments videoId={video.id} />
 {/if}

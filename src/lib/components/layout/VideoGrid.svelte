@@ -5,13 +5,14 @@
   import { user } from "$lib/stores/auth";
   import type { Video } from "$lib/types";
   import { language, t } from "$lib/stores/language";
+  import { fetchVimeoData } from "$lib/services/vimeo";
 
   let videos: Video[] = [];
   let isLoading: boolean = true;
 
   async function fetchVideoData() {
     try {
-      const response = await fetch(`/api/video-data?lang=${$language}`);
+      const response = await fetch(`/api/video-data`);
       if (response.ok) {
         videos = await response.json();
         await Promise.all(videos.map(fetchVimeoData));
@@ -22,31 +23,6 @@
       console.error($t("fetchVideoErrorWithDetails"), error);
     } finally {
       isLoading = false;
-    }
-  }
-
-  async function fetchVimeoData(video: Video) {
-    try {
-      const videoId = video.videoUrl.split("/").pop()?.split("?")[0];
-      const response = await fetch(
-        `https://vimeo.com/api/oembed.json?url=https://vimeo.com/${videoId}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Full Vimeo data for video", video.id, ":", data);
-
-        video.thumbnail = data.thumbnail_url;
-        video.title = data.title;
-        video.description = data.description;
-
-        // You can add more fields here based on what's available in the Vimeo data
-        // For example:
-        // video.duration = data.duration;
-        // video.uploadDate = data.upload_date;
-        // etc.
-      }
-    } catch (error) {
-      console.error(`Error fetching Vimeo data for video ${video.id}:`, error);
     }
   }
 
@@ -75,7 +51,12 @@
             </div>
           {/if}
 
-          <a href={$user ? `${base}/watch/${video.id}` : "#"} class="block">
+          <a
+            href={$user ? `${base}/watch/${video.id}` : "#"}
+            class="block"
+            class:pointer-events-none={!$user}
+            class:cursor-not-allowed={!$user}
+          >
             {#if video.thumbnail}
               <img
                 src={video.thumbnail}
