@@ -11,7 +11,11 @@
   import { createEventDispatcher } from "svelte";
   import { toast } from "@zerodevx/svelte-toast";
   import { t } from "$lib/stores/language";
-  import { registerWithEmailAndPassword, signInWithCredentials, resetPassword } from "$lib/services/auth";
+  import {
+    registerWithEmailAndPassword,
+    signInWithCredentials,
+    resetPassword,
+  } from "$lib/services/auth";
 
   // Props
   export let countriesData: Country[];
@@ -139,86 +143,13 @@
           )
         : await signInWithCredentials($form.email, $form.password);
 
-      const idToken = await user.getIdToken();
-      const res = await fetch("/api/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(
-          errorData.message || `HTTP error! status: ${res.status}`
-        );
-      }
-
       showSuccess(
         isRegistering ? $t("registrationSuccessful") : $t("loginSuccessful")
       );
       dispatch("loginSuccess");
-    } catch (err: any) {
-      let errorMessage = "An unexpected error occurred. Please try again.";
-
-      if (err.code) {
-        switch (err.code) {
-          // Registration errors
-          case "auth/email-already-in-use":
-            errorMessage =
-              "This email is already registered. Please use a different email or try logging in.";
-            break;
-          case "auth/invalid-email":
-            errorMessage =
-              "The email address is not valid. Please check and try again.";
-            break;
-          case "auth/weak-password":
-            errorMessage =
-              "The password is too weak. Please choose a stronger password (at least 6 characters).";
-            break;
-          case "auth/operation-not-allowed":
-            errorMessage =
-              "Account creation is currently disabled. Please contact support.";
-            break;
-
-          // Sign-in errors
-          case "auth/user-disabled":
-            errorMessage =
-              "This account has been disabled. Please contact support for assistance.";
-            break;
-          case "auth/user-not-found":
-            errorMessage =
-              "No account found with this email. Please check your email or register for a new account.";
-            break;
-          case "auth/wrong-password":
-            errorMessage =
-              "Incorrect password. Please try again or use the 'Forgot Password' option.";
-            break;
-          case "auth/invalid-login-credentials":
-          case "auth/invalid-credential":
-            errorMessage =
-              "Invalid login credentials. Please check your email and password and try again.";
-            break;
-
-          // General errors
-          case "auth/network-request-failed":
-            errorMessage =
-              "Network error. Please check your internet connection and try again.";
-            break;
-          case "auth/too-many-requests":
-            errorMessage =
-              "Too many unsuccessful attempts. Please try again later or reset your password.";
-            break;
-          case "auth/internal-error":
-            errorMessage =
-              "An internal error occurred. Please try again later.";
-            break;
-
-          default:
-            errorMessage = `Authentication error: ${err.message}`;
-        }
-      }
-
-      showError(errorMessage);
+    } catch (error : any) {
+      showError(error.message);
+    } finally {
       isLoading = false;
     }
   }
