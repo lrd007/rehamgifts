@@ -1,8 +1,9 @@
+<!-- VideoGrid.svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
   import { base } from "$app/paths";
   import { user } from "$lib/stores/auth";
-  import type { Video } from "../constants";
+  import type { Video } from "$lib/types";
   import { language, t } from "$lib/stores/language";
 
   let videos: Video[] = [];
@@ -13,7 +14,7 @@
       const response = await fetch(`/api/video-data?lang=${$language}`);
       if (response.ok) {
         videos = await response.json();
-        await Promise.all(videos.map(fetchThumbnail));
+        await Promise.all(videos.map(fetchVimeoData));
       } else {
         console.error($t("fetchVideoError"));
       }
@@ -24,17 +25,28 @@
     }
   }
 
-  async function fetchThumbnail(video: Video) {
+  async function fetchVimeoData(video: Video) {
     try {
+      const videoId = video.videoUrl.split("/").pop()?.split("?")[0];
       const response = await fetch(
-        `https://vimeo.com/api/oembed.json?url=${video.videoUrl}`
+        `https://vimeo.com/api/oembed.json?url=https://vimeo.com/${videoId}`
       );
       if (response.ok) {
         const data = await response.json();
+        console.log("Full Vimeo data for video", video.id, ":", data);
+
         video.thumbnail = data.thumbnail_url;
+        video.title = data.title;
+        video.description = data.description;
+
+        // You can add more fields here based on what's available in the Vimeo data
+        // For example:
+        // video.duration = data.duration;
+        // video.uploadDate = data.upload_date;
+        // etc.
       }
     } catch (error) {
-      console.error(`Error fetching thumbnail for video ${video.id}:`, error);
+      console.error(`Error fetching Vimeo data for video ${video.id}:`, error);
     }
   }
 
@@ -65,7 +77,10 @@
 
           <a href={$user ? `${base}/watch/${video.id}` : "#"} class="block">
             {#if video.thumbnail}
-              <img src={video.thumbnail} alt={$t("videoThumbnail")} />
+              <img
+                src={video.thumbnail}
+                alt={video.title || $t("videoThumbnail")}
+              />
             {:else}
               <div class="h-56 bg-base-300 flex items-center justify-center">
                 <span>{$t("thumbnailLoading")}</span>
@@ -74,7 +89,12 @@
           </a>
         </figure>
         <div class="card-body">
-          <h2 class="card-title text-lg">{video.name}</h2>
+          <h2 class="card-title text-lg">{video.title || video.name}</h2>
+          {#if video.description}
+            <p class="text-sm text-gray-600 line-clamp-2">
+              {video.description}
+            </p>
+          {/if}
         </div>
       </div>
     {/each}

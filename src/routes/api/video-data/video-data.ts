@@ -1,4 +1,4 @@
-// video-data.ts
+// routes/api/video-data.ts
 
 import type { VideoData } from "$lib/types";
 
@@ -18,6 +18,8 @@ export const videos: VideoData[] = [
       en: "Free awareness video lesson",
       ar: "درس فيديو توعوي مجاني",
     },
+    thumbnail: "",
+    videoUrl: ""
   },
   {
     id: 2,
@@ -33,6 +35,8 @@ export const videos: VideoData[] = [
       en: "Feminine luxury",
       ar: "الرفاهية الأنثوية",
     },
+    thumbnail: "",
+    videoUrl: ""
   },
   {
     id: 3,
@@ -48,6 +52,8 @@ export const videos: VideoData[] = [
       en: "Is female or male leadership",
       ar: "هل القيادة أنثوية أم ذكورية",
     },
+    thumbnail: "",
+    videoUrl: ""
   },
   {
     id: 4,
@@ -63,6 +69,8 @@ export const videos: VideoData[] = [
       en: "Emotional relationship feminine or masculine",
       ar: "العلاقة العاطفية أنثوية أم ذكورية",
     },
+    thumbnail: "",
+    videoUrl: ""
   },
   {
     id: 5,
@@ -78,6 +86,8 @@ export const videos: VideoData[] = [
       en: "Is motherhood feminine or masculine",
       ar: "هل الأمومة أنثوية أم ذكورية",
     },
+    thumbnail: "",
+    videoUrl: ""
   },
   {
     id: 6,
@@ -93,5 +103,7 @@ export const videos: VideoData[] = [
       en: "Are you feminine or masculine",
       ar: "هل أنت أنثوي أم ذكوري",
     },
+    thumbnail: "",
+    videoUrl: ""
   },
 ];

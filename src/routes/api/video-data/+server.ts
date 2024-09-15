@@ -1,29 +1,26 @@
 // routes/api/video-data/+server.ts
 import type { RequestHandler } from "@sveltejs/kit";
-import { createVideo, getAllVideos } from "$lib/videoFirebase";
+import {
+  getAllVideos,
+  createVideo,
+  updateVideo,
+  deleteVideo,
+} from "$lib/videoFirebase";
+import type { Video } from "$lib/types";
 
-// export const GET: RequestHandler = async ({ url }) => {
-//   const lang = url.searchParams.get("lang") || "en";
-
-//   const translatedVideos = videos.map((video) => ({
-//     ...video,
-//     displayName: video.displayName[lang as "en" | "ar"],
-//     description: video.description[lang as "en" | "ar"],
-//   }));
-
-//   return new Response(JSON.stringify(translatedVideos), {
-//     status: 200,
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   });
-// };
-
-export const POST: RequestHandler = async ({ request }) => {
+export const GET: RequestHandler = async ({ url }) => {
   try {
-    const videoData = await request.json();
-    const newVideo = await createVideo(videoData);
-    return new Response(JSON.stringify(newVideo), {
+    const lang = url.searchParams.get("lang") || "en";
+    const videos = await getAllVideos();
+
+    const translatedVideos = videos.map((video: Video) => ({
+      ...video,
+      name: video.name[lang as "en" | "ar"] || video.name.en,
+      description:
+        video.description?.[lang as "en" | "ar"] || video.description?.en || "",
+    }));
+
+    return new Response(JSON.stringify(translatedVideos), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -36,10 +33,11 @@ export const POST: RequestHandler = async ({ request }) => {
   }
 };
 
-export const GET: RequestHandler = async () => {
+export const POST: RequestHandler = async ({ request }) => {
   try {
-    const videos = await getAllVideos();
-    return new Response(JSON.stringify(videos), {
+    const videoData = await request.json();
+    const newVideo = await createVideo(videoData);
+    return new Response(JSON.stringify(newVideo), {
       status: 200,
       headers: {
         "Content-Type": "application/json",

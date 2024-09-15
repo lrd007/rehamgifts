@@ -1,3 +1,4 @@
+// routes/api/video-data/[videoId]/+server.ts
 import type { RequestHandler } from "@sveltejs/kit";
 import { deleteVideo, getVideoById, updateVideo } from "$lib/videoFirebase";
 

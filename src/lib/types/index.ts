@@ -1,5 +1,4 @@
-import { Timestamp } from "firebase/firestore";
-
+// lib/types
 export interface UserData {
   id: string;
   fullName: string;
@@ -51,4 +50,19 @@ export interface Country {
   name: string;
   flag: string;
   phoneCode: number;
+}
+// lib/types.ts
+export interface Video {
+  id: string;
+  name: {
+    en: string;
+    ar: string;
+  };
+  videoUrl: string;
+  description?: {
+    en: string;
+    ar: string;
+  };
+  thumbnail?: string;
+  title?: string;
 }
