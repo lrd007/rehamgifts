@@ -12,13 +12,11 @@
   <div class="container mx-auto px-4">
     <div class="navbar font-bold relative">
       <div class="navbar-start">
-        <a href="{base}/" class="text-center">
-          <img
-            src={logo}
-            alt={$t("rehamDivaLogo")}
-            class="h-20 w-auto mx-auto"
-          />
-          <span class="text-white font-century-bold">{$t("house")}</span>
+        <a href="{base}/" class="flex flex-col items-center">
+          <img src={logo} alt={$t("rehamDivaLogo")} class="h-auto w-12" />
+          <span class="text-xs text-white font-century-bold leading-tight"
+            >{$t("house")}</span
+          >
         </a>
       </div>
       <div class="navbar-center hidden lg:flex">
