@@ -86,7 +86,7 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     motherhood: "هل الأمومة أنثوية أم ذكورية",
     areYou: "هل أنت أنثوي أم ذكوري",
     rehamLogo: "شعار ديفا",
-    copyright: "جميع الحقوق محفوظة © {year} لدار رهام",
+    copyright: "جميع الحقوق محفوظة © {year} رهام هاوس",
     twitter: "تويتر",
     instagram: "انستغرام",
     fetchVideoError: "فشل في جلب ملفات الفيديو",
