@@ -9,7 +9,7 @@
   <a href="/watch" class="inline-block">
     <img
       class="w-auto md:max-h-[75vh] lg:max-h-[85vh]"
-      src="/src/lib/assets/reham-assets/branding/free_program.jpeg"
+      src={freeProgram}
       alt="Free Program"
     />
   </a>
