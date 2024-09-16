@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDnJHbXvYPHjjlKdLjh8kf3OucOE8iW6no",
-  authDomain: "rehamdiva-a8819.firebaseapp.com",
-  projectId: "rehamdiva-a8819",
-  storageBucket: "rehamdiva-a8819.appspot.com",
-  messagingSenderId: "913924175735",
-  appId: "1:913924175735:web:a058d2c5da78b87cfbd372",
+  apiKey: "AIzaSyAEI33y3QNamwb8IOQwelvJjoe-myVpFMo",
+  authDomain: "reham-2025-48434.firebaseapp.com",
+  projectId: "reham-2025-48434",
+  storageBucket: "reham-2025-48434.appspot.com",
+  messagingSenderId: "758939009368",
+  appId: "1:758939009368:web:44e0153ef998f069b8a52d", 
 };
 
 export const app = getApps().length
