@@ -23,12 +23,12 @@
   });
 </script>
 
-<div style="padding:56.25% 0 0 0;position:relative;">
+<div class="relative w-full pt-[56.25%] rounded-xl overflow-hidden">
   <iframe
     src={videoUrl}
+    class="absolute top-0 left-0 w-full h-full rounded-lg"
     frameborder="0"
     allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-    style="position:absolute;top:0;left:0;width:100%;height:100%;"
     {title}
   ></iframe>
 </div>
