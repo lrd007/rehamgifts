@@ -1,17 +1,21 @@
 <script>
-  import footerLogo from "$lib/assets/reham-assets/branding/rehamdiva-arabic-logo.svg";
+  import logoEn from "$lib/assets/reham-assets/branding/logo_white_name_2.png";
+  import logoAr from "$lib/assets/reham-assets/branding/reham-arabic-logo.svg";
   import { base } from "$app/paths";
-  import { t } from "$lib/stores/language";
+  import { language, t } from "$lib/stores/language";
 
   $: currentYear = new Date().getFullYear();
+
+  $: logo = $language === "ar" ? logoAr : logoEn;
 </script>
 
 <footer
   class="footer footer-center bg-rgPrimary text-white p-4 gap-y-2 relative overflow-hidden footer-pattern"
 >
   <aside>
-    <a href="https://reham.com/" target="_blank" class="flex items-center">
-      <img src={footerLogo} alt={$t("rehamDivaLogo")} class="h-24 w-auto" />
+    <a href="https://reham.com/" target="_blank" class="">
+      <img src={logo} alt={$t("rehamDivaLogo")} class="h-20 w-auto mx-auto" />
+      <span class="text-white font-century-bold">{$t("house")}</span>
     </a>
     <p class="text-xs sm:text-sm">
       {$t("copyright").replace("{year}", currentYear.toString())}
@@ -86,7 +90,7 @@
             d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
           ></path>
         </svg>
-        <span>+965 504 06406</span>
+        <span>+965 50406406</span>
       </a>
     </div>
   </nav>
