@@ -42,7 +42,9 @@
   }
 </script>
 
-<div class="flex flex-col items-center justify-center min-h-screen bg-base-200">
+<div
+  class="flex flex-col items-center justify-center mx-auto min-h-screen bg-base-200"
+>
   <h2 class="text-3xl font-bold mb-8">{$t("authentication")}</h2>
 
   {#if error}

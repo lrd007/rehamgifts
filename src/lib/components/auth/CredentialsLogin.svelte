@@ -147,7 +147,7 @@
         isRegistering ? $t("registrationSuccessful") : $t("loginSuccessful")
       );
       dispatch("loginSuccess");
-    } catch (error : any) {
+    } catch (error: any) {
       showError(error.message);
     } finally {
       isLoading = false;
@@ -186,7 +186,7 @@
   }
 </script>
 
-<div class="card w-96 bg-base-100 shadow-xl">
+<div class="card w-96 bg-base-100 mx-auto mt-10 shadow-xl">
   <div class="card-body">
     {#if showForgotPassword}
       <ForgotPassword
