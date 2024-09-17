@@ -72,6 +72,7 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     resetPassword: "Reset Password",
     backToLogin: "Back to Login",
     description: "Description",
+    goToFreeCourse: "Go to free course",
   },
   ar: {
     house: "هاوس",
@@ -143,5 +144,6 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     resetPassword: "إعادة تعيين كلمة المرور",
     backToLogin: "العودة لتسجيل الدخول",
     description: "الوصف",
+    goToFreeCourse: "انتقل إلى الدورة المجانية",
   },
 };

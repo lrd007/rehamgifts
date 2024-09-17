@@ -70,7 +70,7 @@
     <a
       href="{base}/watch"
       class="btn rounded-full bg-rgHighlight hoverbg-rgHighlightHover mt-4 text-xl py-2 sm:w-1/3 text-white"
-      >Go to free course</a
+      >{$t("goToFreeCourse")}</a
     >
   {:else}
     <CredentialsLogin
