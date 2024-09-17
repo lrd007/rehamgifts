@@ -186,7 +186,7 @@
   }
 </script>
 
-<div id="login" class="card bg-base-100 mx-auto mt-10 shadow-xl">
+<div id="login" class="card sm:w-96 bg-base-100 mx-auto mt-10 shadow-xl">
   <div class="card-body">
     {#if showForgotPassword}
       <ForgotPassword
