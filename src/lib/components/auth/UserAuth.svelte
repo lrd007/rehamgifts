@@ -1,6 +1,7 @@
 <!-- UserAuth.svelte -->
 <script lang="ts">
   import { base } from "$app/paths";
+  import { page } from "$app/stores";
   import { signOut } from "firebase/auth";
   import { invalidateAll } from "$app/navigation";
   import { goto } from "$app/navigation";
@@ -9,6 +10,8 @@
   import { auth } from "$lib/client/firebase";
 
   $: userFullName = $userData?.fullName.toUpperCase();
+  $: isRootRoute =
+    $page.url.pathname === base || $page.url.pathname === `${base}/`;
 
   async function handleLogout() {
     try {
@@ -19,10 +22,6 @@
     } catch (error) {
       console.error($t("errorSigningOut"), error);
     }
-  }
-
-  function handleLogin() {
-    goto(`${base}/login`);
   }
 </script>
 
@@ -75,11 +74,11 @@
       </li>
     </ul>
   </div>
-<!-- {:else}
-  <button
-    on:click={handleLogin}
+{:else if !isRootRoute}
+  <a
+    href="{base}/#login"
     class="text-white sm:min-w-44 btn m-1 flex-none bg-rgHighlight sm:hover:bg-rgHighlightHover rounded-3xl border-none"
   >
     {$t("login")}
-  </button> -->
+  </a>
 {/if}
