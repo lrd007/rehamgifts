@@ -186,7 +186,7 @@
   }
 </script>
 
-<div class="card w-96 bg-base-100 mx-auto mt-10 shadow-xl">
+<div class="card bg-base-100 mx-auto mt-10 shadow-xl">
   <div class="card-body">
     {#if showForgotPassword}
       <ForgotPassword
@@ -251,7 +251,7 @@
             <span class="label-text">{$t("phoneNumber")}</span>
           </label>
           <div class="flex items-center space-x-2 w-full max-w-2xl">
-            <div class="w-1/2">
+            <div class="w-1/3">
               <select
                 id="country-select"
                 class="select select-bordered w-full"
@@ -267,7 +267,7 @@
                 {/each}
               </select>
             </div>
-            <div class="w-1/2">
+            <div class="">
               <input
                 id="phone"
                 type="tel"

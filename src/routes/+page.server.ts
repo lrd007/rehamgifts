@@ -10,8 +10,9 @@ export const load: PageServerLoad = async ({ fetch }) => {
       code,
       name: info.name,
       flag: `https://flagcdn.com/w20/${code.toLowerCase()}.png`,
-      phoneCode: Array.isArray(info.phone) ? info.phone[0] : info.phone, // Handle both array and string cases
-    }));
+      phoneCode: info.phone[0],
+    })
+  );
 
   return {
     countriesData,

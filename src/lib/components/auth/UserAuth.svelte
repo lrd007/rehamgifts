@@ -75,11 +75,11 @@
       </li>
     </ul>
   </div>
-{:else}
+<!-- {:else}
   <button
     on:click={handleLogin}
     class="text-white sm:min-w-44 btn m-1 flex-none bg-rgHighlight sm:hover:bg-rgHighlightHover rounded-3xl border-none"
   >
     {$t("login")}
-  </button>
+  </button> -->
 {/if}
