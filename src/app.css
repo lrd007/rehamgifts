@@ -13,7 +13,7 @@
 @font-face {
   font-family: "Century Gothic";
   src: url("/fonts/century-gothic-bold.woff2") format("woff2"),
-       url("/fonts/century-gothic-bold.woff") format("woff");
+    url("/fonts/century-gothic-bold.woff") format("woff");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -26,4 +26,21 @@
   font-weight: 500;
   font-style: normal;
   font-display: swap;
+}
+
+@layer base {
+  html {
+    color: theme("colors.rgFontColor");
+    font-family: theme("fontFamily.century");
+  }
+}
+/* Add this to your global CSS file */
+:root[lang="en"] body,
+body.lang-en {
+  font-family: "Century Gothic", sans-serif;
+}
+
+:root[lang="ar"] body,
+body.lang-ar {
+  font-family: "GE Dinar One Medium", sans-serif;
 }

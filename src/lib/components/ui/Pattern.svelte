@@ -2,10 +2,12 @@
   export let left: boolean = false;
   export let right: boolean = false;
   export let animate: boolean = false;
+  export let mdScreen: boolean = false;
+  $: console.log(mdScreen);
 </script>
 
 {#if left}
-  <div class="pattern left" class:parallax={animate}></div>
+  <div class="pattern left" class:mdScreen={mdScreen} class:parallax={animate}></div>
 {/if}
 {#if right}
   <div class="pattern right" class:parallax={animate}></div>
@@ -18,7 +20,6 @@
     position: fixed;
     background-image: url("$lib/assets/reham-assets/patterns/pattern-light-3x.png");
     background-size: cover;
-    opacity: 1;
     pointer-events: none;
     width: 544px;
     height: 497px;
@@ -64,10 +65,13 @@
     }
 
     .pattern.left {
-      opacity: 0.2;
       top: 20%;
       left: 45%;
       /* transform: translateX(-50%) rotate(-30deg) scaleX(-1); */
+    }
+
+    .mdScreen {
+      display: none;
     }
 
     @keyframes translateAnimation {

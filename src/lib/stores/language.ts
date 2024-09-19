@@ -21,6 +21,10 @@ function createLanguageStore() {
     if (browser) {
       document.cookie = `lang=${lang};path=/;max-age=31536000`;
       document.documentElement.lang = lang;
+      document.body.className = document.body.className.replace(
+        /lang-\w+/,
+        `lang-${lang}`
+      );
       invalidateAll();
     }
   }

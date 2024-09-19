@@ -13,7 +13,7 @@
 
   let isLoading = false;
   let error = "";
-  $: console.log($user);
+  // $: console.log($user);
   async function handleAuthAction(action: () => Promise<void>) {
     try {
       error = "";
@@ -68,7 +68,7 @@
   {:else if $user}
     <a
       href="{base}/watch"
-      class="btn rounded-full bg-rgHighlight hoverbg-rgHighlightHover mt-4 text-xl py-2 sm:w-1/3 text-white"
+      class="btn rounded-full bg-rgHighlight hover:bg-rgHighlightHover mt-4 text-xl py-2 sm:w-1/3 text-white"
       >{$t("goToFreeCourse")}</a
     >
   {:else}

@@ -8,12 +8,12 @@
   import { Pattern } from "$lib/components";
 </script>
 
-<div class="md:px-12" dir="rtl">
-  <h1 class="text-3xl font-bold mb-6">عن رهام</h1>
+<div class="text-xl md:px-12" dir="rtl">
+  <h1 class="text-4xl font-bold mb-6">عن رهام</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-20">
     <div>
-      <h2 class="text-2xl font-semibold mb-4">نبذة عن رهام</h2>
+      <h2 class="text-3xl font-semibold mb-4">نبذة عن رهام</h2>
       <ul class="list-disc list-outside pr-5 space-y-2">
         <li>مدربة معتمدة من المجلس العالمي للتدريب و التدريس و الكوتشينق</li>
         <li>مدربة معتمدة من الأكاديمية العالمية للتدريب والاستشارات</li>
@@ -50,7 +50,7 @@
         <img src={whatsappCircled} alt="WhatsApp" class="w-10 h-10 ml-2" />
         <a
           href="https://api.whatsapp.com/send/?phone=96550406406&text&type=phone_number&app_absent=0"
-          class="text-green-500 hover:underline">واتساب</a
+          class="hover:underline">واتساب</a
         >
       </p>
       <p class="flex items-center">
@@ -62,4 +62,4 @@
     </div>
   </div>
 </div>
-<Pattern left />
+<Pattern left mdScreen/>

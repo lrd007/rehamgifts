@@ -47,7 +47,7 @@ export const registerWithEmailAndPassword = async (
     await setDoc(doc(db, "users", user.uid), userData);
     await sendIdTokenToServer(user);
 
-    // await sendMail(email, name);
+    await sendMail(email, name);
 
     return user;
   } catch (error) {

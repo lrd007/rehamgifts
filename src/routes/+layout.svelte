@@ -8,6 +8,10 @@
   $: isAdminRoute = $page.url.pathname.startsWith("/admin");
 </script>
 
+<svelte:head>
+  <meta name="color-scheme" content="light">
+</svelte:head>
+
 <SvelteToast />
 
 <div
@@ -20,7 +24,7 @@
     <Header />
   {/if}
 
-  <main class="flex-grow">
+  <main class="flex-grow flex items-center">
     <div class="container h-full mx-auto px-4 py-8">
       <slot />
     </div>

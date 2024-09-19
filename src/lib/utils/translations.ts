@@ -80,7 +80,33 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     description: "Description",
     goToFreeCourse: "Go to free course",
     registerForSecretsOfFemaleIntelligence:
-      "Register for the Secrets of Female Intelligence program",
+      "Register your data here to enter the Secrets of Female Intelligence program",
+    subject: "Subject",
+    subjectPlaceholder: "Enter the subject",
+    message: "Message",
+    messagePlaceholder: "Enter your message",
+    sendMessage: "Send Message",
+    sending: "Sending...",
+    messageSentSuccess: "Your message has been sent successfully!",
+    pleaseFillAllFields: "Please fill in all fields.",
+    fieldsTooLong: "One or more fields exceed the maximum allowed length.",
+    pleaseEnterValidEmail: "Please enter a valid email address.",
+    tooManyRequests: "Too many requests. Please try again later.",
+    serverStorageFull:
+      "The server is currently unable to process new submissions. Please try again later.",
+    unexpectedError: "An unexpected error occurred. Please try again later.",
+    noVideosMessage:
+      "😍 Congratulations, you have successfully registered\n" +
+      "\n" +
+      "The program starts on Tuesday 9/24/2024 Kuwait and Mecca time\n" +
+      "\n" +
+      "💜 Save the date in your personal calendar to remember the program with love\n" +
+      "\n" +
+      "💌 We will send you a reminder email that day\n" +
+      "\n" +
+      "For any assistance, we are at your service\n" +
+      "\n" +
+      "hello@reham.com\n",
   },
   ar: {
     name: "الاسم",
@@ -160,6 +186,32 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     description: "الوصف",
     goToFreeCourse: "انتقل إلى الدورة المجانية",
     registerForSecretsOfFemaleIntelligence:
-      "سجل بياناتك هنا في برنامج اسرار الذكاء الانثوي",
+      "سجل بياناتك هنا للدخول الى برنامج اسرار الذكاء الانثوي",
+    subject: "الموضوع",
+    subjectPlaceholder: "أدخل الموضوع",
+    message: "الرسالة",
+    messagePlaceholder: "أدخل رسالتك",
+    sendMessage: "إرسال الرسالة",
+    sending: "جاري الإرسال...",
+    messageSentSuccess: "تم إرسال رسالتك بنجاح!",
+    pleaseFillAllFields: "يرجى ملء جميع الحقول.",
+    fieldsTooLong:
+      "واحد أو أكثر من الحقول يتجاوز الحد الأقصى المسموح به للطول.",
+    pleaseEnterValidEmail: "يرجى إدخال عنوان بريد إلكتروني صالح.",
+    tooManyRequests: "طلبات كثيرة جدًا. يرجى المحاولة مرة أخرى لاحقًا.",
+    serverStorageFull:
+      "الخادم غير قادر حاليًا على معالجة طلبات جديدة. يرجى المحاولة مرة أخرى لاحقًا.",
+    unexpectedError: "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقًا.",
+    noVideosMessage:
+      "😍 مبروك تم تسجيلك بنجاح\n" +
+      "\n" +
+      "ينطلق البرنامج يوم الثلاثاء 24/9/2024 بتوقيت الكويت ومكة المكرمة\n" +
+      "💜 سجلي الموعد في رزنامتك الشخصية لتتذكري البرنامج بحب\n" +
+      "\n" +
+      "💌 سوف نرسل لك ايميل تذكيري يومها\n" +
+      "\n" +
+      "لأي مساعدة نحن في خدمتك\n" +
+      "\n" +
+      "hello@reham.com\n",
   },
 };

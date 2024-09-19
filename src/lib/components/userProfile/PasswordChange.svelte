@@ -63,7 +63,7 @@
       </PasswordInput>
 
       <div class="form-control mt-6">
-        <button type="submit" class="btn btn-primary">Change Password</button>
+        <button type="submit" class="btn btn-primary text-white">Change Password</button>
       </div>
     </form>
     {#if passwordError}

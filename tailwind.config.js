@@ -4,9 +4,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        rgPrimary: '#ed1974',
-        rgHighlight: '#F0428E',
-        rgHighlightHover: '#F46FA9'
+        rgPrimary: '#EB8EBA',
+        rgHighlight: '#F799CA',
+        rgHighlightHover: '#ffa8d2',
+        rgFontColor: '#ea8db9'
       },
       fontFamily: {
         'century': ['Century Gothic', 'sans-serif'],
@@ -16,4 +17,17 @@ export default {
     },
   },
   plugins: [require("daisyui")],
+  daisyui: {
+    themes: [
+      {
+        light: {
+          ...require("daisyui/src/theming/themes")["[data-theme=light]"],
+          "base-content": '#ea8db9',
+          "primary": '#EB8EBA',
+          "base-100": '#fff',
+        },
+      },
+    ],
+    darkTheme: "light",
+  },
 };
