@@ -24,7 +24,7 @@
     <Header />
   {/if}
 
-  <main class="flex-grow flex items-center">
+  <main class="flex-grow">
     <div class="container h-full mx-auto px-4 py-8">
       <slot />
     </div>

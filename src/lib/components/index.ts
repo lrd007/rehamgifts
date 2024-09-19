@@ -22,4 +22,4 @@ export { default as VideoPlayer } from "./ui/VideoPlayer.svelte";
 export { default as ErrorMessage } from "./userProfile/ErrorMessage.svelte";
 export { default as PasswordChange } from "./userProfile/PasswordChange.svelte";
 export { default as VideoProgress } from "./userProfile/VideoProgress.svelte";
-export {default as AdminDashboard } from "./userProfile/AdminDashboard.svelte"
+export {default as AdminDashboard } from "./admin/AdminDashboard.svelte"
