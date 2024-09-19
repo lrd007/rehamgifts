@@ -71,7 +71,7 @@ import {
             },
           ],
         };
-        console.log("Sending email with data =====>>>", sendpulseEmailData);
+        // console.log("Sending email with data =====>>>", sendpulseEmailData);
         sendpulse.smtpSendMail(function (data: unknown) {
           if (data && (data as any).is_error) {
             reject(new Error("Failed to send email: " + (data as any).message));

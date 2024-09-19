@@ -3,7 +3,6 @@
   export let right: boolean = false;
   export let animate: boolean = false;
   export let mdScreen: boolean = false;
-  $: console.log(mdScreen);
 </script>
 
 {#if left}

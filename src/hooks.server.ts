@@ -11,7 +11,7 @@ export const handle = (async ({ event, resolve }) => {
   } catch (e) {
     event.locals.userID = null;
     event.locals.isAdmin = false;
-    console.log("Error verifying session cookie:", e, event.locals.userID);
+    // console.log("Error verifying session cookie:", e, event.locals.userID);
   }
 
   const lang = event.cookies.get("lang") || "en";
