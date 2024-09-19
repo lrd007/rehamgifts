@@ -92,7 +92,7 @@
         <div class="card-body">
           <h2 class="card-title">Personal Information</h2>
           <p><strong>Email:</strong> {$user.email}</p>
-          <p><strong>Name:</strong> {$userData.fullName}</p>
+          <p><strong>Name:</strong> {$userData.name}</p>
           <p><strong>Phone:</strong> {$userData.phoneNumber}</p>
         </div>
       </div>

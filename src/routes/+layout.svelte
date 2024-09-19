@@ -13,7 +13,7 @@
 <div
   dir={$language === "ar" ? "rtl" : "ltr"}
   lang={$language}
-  class="flex flex-col min-h-screen font-century"
+  class="flex flex-col min-h-screen"
   data-name={isAdminRoute ? "admin-layout" : "root-layout"}
 >
   {#if !isAdminRoute}

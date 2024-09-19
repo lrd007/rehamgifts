@@ -20,3 +20,9 @@ function userStore() {
 }
 
 export const user = userStore();
+
+export const isRegistering = writable(true);
+
+export function setIsRegistering(value: boolean) {
+  isRegistering.set(value);
+}

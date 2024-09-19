@@ -8,8 +8,9 @@
   import { t } from "$lib/stores/language";
   import { userData } from "$lib/stores/user";
   import { auth } from "$lib/client/firebase";
+  import { setIsRegistering } from "$lib/stores/auth";
 
-  $: userFullName = $userData?.fullName.toUpperCase();
+  $: userName = $userData?.name.toUpperCase();
   $: isRootRoute =
     $page.url.pathname === base || $page.url.pathname === `${base}/`;
 
@@ -23,6 +24,11 @@
       console.error($t("errorSigningOut"), error);
     }
   }
+  
+  function handleLogin() {
+    setIsRegistering(false);
+    goto(`${base}/#login`);
+  }
 </script>
 
 {#if $userData}
@@ -33,8 +39,8 @@
       class="btn flex bg-rgHighlight sm:hover:bg-rgHighlightHover rounded-full border-none md:min-w-48"
     >
       <span class="md:inline hidden min-w-[100px] text-white">
-        {#if userFullName}
-          {userFullName}
+        {#if userName}
+          {userName}
         {:else}
           <div class="skeleton h-1 w-28"></div>
         {/if}
@@ -74,11 +80,11 @@
       </li>
     </ul>
   </div>
-{:else if !isRootRoute}
-  <a
-    href="{base}/#login"
+{:else}
+  <button
+    on:click={handleLogin}
     class="text-white sm:min-w-44 btn m-1 flex-none bg-rgHighlight sm:hover:bg-rgHighlightHover rounded-3xl border-none"
   >
     {$t("login")}
-  </a>
+  </button>
 {/if}

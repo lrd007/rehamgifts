@@ -3,10 +3,11 @@ import type { Timestamp } from "firebase/firestore";
 
 export interface UserData {
   id: string;
-  fullName: string;
+  name: string;  // Changed from fullName to name
   email: string;
+  country: string;  // Added country
   phoneNumber: string;
-  watchedVideos: string[]; 
+  watchedVideos: string[];
 }
 
 export interface VideoComment {
@@ -38,4 +39,8 @@ export interface Video {
 
 export interface VideoWithId extends Video {
   id: string;
+}
+export interface SendPulseResponse {
+  result: boolean;
+  message?: string;
 }

@@ -1,3 +1,4 @@
+<!-- AdminDashboard.svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
   import {
@@ -8,11 +9,14 @@
   } from "$lib/videoFirebase";
   import { logoutUser } from "$lib/services/auth";
   import { invalidateAll } from "$app/navigation";
-  import type { Video, VideoWithId } from "$lib/types";
+  import type { Video, VideoWithId, UserData } from "$lib/types";
+  import { collection, getDocs } from "firebase/firestore";
+  import { db } from "$lib/client/firebase";
 
   let videos: VideoWithId[] = [];
   let showAddForm = false;
   let editingVideo: VideoWithId | null = null;
+  let users: Partial<UserData>[] = [];
 
   let newVideo: Video = {
     title: "",
@@ -23,7 +27,36 @@
 
   onMount(async () => {
     videos = await getAllVideos();
+    await fetchUsers();
   });
+
+  async function fetchUsers() {
+    const usersCollection = collection(db, "users");
+    const userSnapshot = await getDocs(usersCollection);
+    users = userSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      name: doc.data().name,
+      email: doc.data().email,
+      phoneNumber: doc.data().phoneNumber,
+    }));
+  }
+
+  function exportUsers() {
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      "Name,Email,Phone Number\n" +
+      users
+        .map((user) => `${user.name},${user.email},${user.phoneNumber}`)
+        .join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "users_export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
   async function handleAddVideo() {
     try {
@@ -84,10 +117,36 @@
 
 <div class="container mx-auto p-4">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold">Video Management</h1>
+    <h1 class="text-3xl font-bold">Admin Dashboard</h1>
     <button class="btn btn-secondary" on:click={handleLogout}>Logout</button>
   </div>
 
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold mb-4">User Management</h2>
+    <button class="btn btn-primary" on:click={exportUsers}>Export Users</button>
+    <div class="overflow-x-auto mt-4">
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each users as user (user.id)}
+            <tr>
+              <td>{user.name}</td>
+              <td>{user.email}</td>
+              <td>{user.phoneNumber}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2 class="text-2xl font-bold mb-4">Video Management</h2>
   <button
     class="btn btn-primary mb-4"
     on:click={() => (showAddForm = !showAddForm)}

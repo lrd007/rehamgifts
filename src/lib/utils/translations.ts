@@ -4,6 +4,12 @@ type TranslationSet = {
 
 export const translations: Record<"en" | "ar", TranslationSet> = {
   en: {
+    name: "Name",
+    namePlaceholder: "Enter your name",
+    nameRequired: "Name is required",
+    country: "Country",
+    countryPlaceholder: "Enter your country",
+    countryRequired: "Country is required",
     house: "HOUSE",
     home: "Home",
     about: "About",
@@ -43,8 +49,8 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     password: "Password",
     enterPassword: "Enter password",
     confirmPassword: "Confirm Password",
-    fullName: "Full Name",
-    fullNamePlaceholder: "Enter your full name",
+    fullName: "Name",
+    fullNamePlaceholder: "Enter your name",
     phoneNumber: "Phone Number",
     phoneNumberPlaceholder: "Enter your phone number",
     selectCountry: "Select country",
@@ -52,7 +58,7 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     invalidEmailFormat: "Invalid email format",
     passwordRequired: "Password is required",
     passwordMinLength: "Password must be at least 8 characters",
-    fullNameRequired: "Full name is required",
+    fullNameRequired: "Name is required",
     confirmPasswordRequired: "Confirm password is required",
     passwordsMismatch: "Passwords do not match",
     phoneNumberRequired: "Phone number is required",
@@ -73,8 +79,16 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     backToLogin: "Back to Login",
     description: "Description",
     goToFreeCourse: "Go to free course",
+    registerForSecretsOfFemaleIntelligence:
+      "Register for the Secrets of Female Intelligence program",
   },
   ar: {
+    name: "الاسم",
+    namePlaceholder: "أدخل اسمك",
+    nameRequired: "الاسم مطلوب",
+    country: "البلد",
+    countryPlaceholder: "أدخل بلدك",
+    countryRequired: "البلد مطلوب",
     house: "هاوس",
     home: "الرئيسية",
     about: "معلومات",
@@ -145,5 +159,7 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     backToLogin: "العودة لتسجيل الدخول",
     description: "الوصف",
     goToFreeCourse: "انتقل إلى الدورة المجانية",
+    registerForSecretsOfFemaleIntelligence:
+      "سجل بياناتك هنا في برنامج اسرار الذكاء الانثوي",
   },
 };

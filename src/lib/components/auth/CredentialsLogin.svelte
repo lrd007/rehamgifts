@@ -16,6 +16,7 @@
     signInWithCredentials,
     resetPassword,
   } from "$lib/services/auth";
+  import { isRegistering, setIsRegistering } from "$lib/stores/auth";
 
   // Props
   export let countriesData: Country[];
@@ -25,7 +26,8 @@
     email: string;
     password: string;
     confirmPassword: string;
-    fullName: string;
+    name: string;
+    country: string;
     phoneNumber: string;
     selectedCountry: Country | null;
   }
@@ -34,7 +36,8 @@
     email?: string;
     password?: string;
     confirmPassword?: string;
-    fullName?: string;
+    name?: string;
+    country?: string;
     phoneNumber?: string;
   }
 
@@ -42,23 +45,24 @@
     email: "",
     password: "",
     confirmPassword: "",
-    fullName: "",
+    name: "",
+    country: "",
     phoneNumber: "",
     selectedCountry: null,
   });
 
-  let isRegistering = false;
   let showForgotPassword = false;
   let errors: Writable<FormErrors> = writable({});
   const dispatch = createEventDispatcher();
 
   const isFormValid = derived([form, errors], ([$form, $errors]) => {
-    if (isRegistering) {
+    if ($isRegistering) {
       return (
         $form.email &&
         $form.password &&
         $form.confirmPassword &&
-        $form.fullName &&
+        $form.name &&
+        $form.country &&
         $form.phoneNumber &&
         $form.selectedCountry &&
         Object.keys($errors).length === 0
@@ -103,8 +107,9 @@
     else if ($form.password.length < 8)
       newErrors.password = $t("passwordMinLength");
 
-    if (isRegistering) {
-      if (!$form.fullName.trim()) newErrors.fullName = $t("fullNameRequired");
+    if ($isRegistering) {
+      if (!$form.name.trim()) newErrors.name = $t("nameRequired");
+      if (!$form.country.trim()) newErrors.country = $t("countryRequired");
 
       if (!$form.confirmPassword)
         newErrors.confirmPassword = $t("confirmPasswordRequired");
@@ -134,17 +139,18 @@
     isLoading = true;
 
     try {
-      const user = isRegistering
+      const user = $isRegistering
         ? await registerWithEmailAndPassword(
             $form.email,
             $form.password,
-            $form.fullName,
+            $form.name,
+            $form.country,
             formatPhoneNumber($form.phoneNumber, $form.selectedCountry!)
           )
         : await signInWithCredentials($form.email, $form.password);
 
       showSuccess(
-        isRegistering ? $t("registrationSuccessful") : $t("loginSuccessful")
+        $isRegistering ? $t("registrationSuccessful") : $t("loginSuccessful")
       );
       dispatch("loginSuccess");
     } catch (error: any) {
@@ -163,7 +169,7 @@
   }
 
   function toggleMode() {
-    isRegistering = !isRegistering;
+    setIsRegistering(!$isRegistering);
     errors.set({});
   }
 
@@ -195,7 +201,7 @@
         onCancel={() => (showForgotPassword = false)}
       />
     {:else}
-      <h2 class="card-title">{isRegistering ? $t("register") : $t("login")}</h2>
+      <h2 class="card-title">{$isRegistering ? $t("register") : $t("login")}</h2>
       <form
         on:submit|preventDefault={handleAuth}
         class="form-control w-full max-w-xs"
@@ -223,7 +229,7 @@
           {$t("password")}
         </PasswordInput>
 
-        {#if isRegistering}
+        {#if $isRegistering}
           <PasswordInput
             id="confirmPassword"
             bind:value={$form.confirmPassword}
@@ -233,18 +239,32 @@
             {$t("confirmPassword")}
           </PasswordInput>
 
-          <label class="label" for="fullName">
-            <span class="label-text">{$t("fullName")}</span>
+          <label class="label" for="name">
+            <span class="label-text">{$t("name")}</span>
           </label>
           <input
-            id="fullName"
+            id="name"
             type="text"
-            bind:value={$form.fullName}
-            placeholder={$t("fullNamePlaceholder")}
+            bind:value={$form.name}
+            placeholder={$t("namePlaceholder")}
             class="input input-bordered w-full max-w-xs"
           />
-          {#if $errors.fullName}<span class="text-error text-sm mt-1"
-              >{$errors.fullName}</span
+          {#if $errors.name}<span class="text-error text-sm mt-1"
+              >{$errors.name}</span
+            >{/if}
+
+          <label class="label" for="country">
+            <span class="label-text">{$t("country")}</span>
+          </label>
+          <input
+            id="country"
+            type="text"
+            bind:value={$form.country}
+            placeholder={$t("countryPlaceholder")}
+            class="input input-bordered w-full max-w-xs"
+          />
+          {#if $errors.country}<span class="text-error text-sm mt-1"
+              >{$errors.country}</span
             >{/if}
 
           <label class="label" for="phone">
@@ -290,13 +310,13 @@
           {#if isLoading}
             <span class="loading loading-spinner loading-sm"></span>
           {/if}
-          {isRegistering ? $t("register") : $t("login")}
+          {$isRegistering ? $t("register") : $t("login")}
         </button>
       </form>
       <button on:click={toggleMode} class="btn btn-link mt-2">
-        {isRegistering ? $t("alreadyHaveAccount") : $t("needAccount")}
+        {$isRegistering ? $t("alreadyHaveAccount") : $t("needAccount")}
       </button>
-      {#if !isRegistering}
+      {#if !$isRegistering}
         <button
           on:click={() => (showForgotPassword = true)}
           class="btn btn-link mt-2"

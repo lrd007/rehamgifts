@@ -1,4 +1,4 @@
-<!-- /login -->
+<!-- /+page.svelte -->
 <script lang="ts">
   import { goto, invalidateAll } from "$app/navigation";
   import type { PageData } from "./$types";
@@ -13,7 +13,7 @@
 
   let isLoading = false;
   let error = "";
-
+  $: console.log($user);
   async function handleAuthAction(action: () => Promise<void>) {
     try {
       error = "";
@@ -26,7 +26,6 @@
       isLoading = false;
     }
   }
-
   function handleLoginSuccess() {
     return handleAuthAction(async () => {
       await goto("/watch");
@@ -73,6 +72,10 @@
       >{$t("goToFreeCourse")}</a
     >
   {:else}
+    <!-- <EmailTestButton /> -->
+    <h1 class="text-3xl font-bold mt-8">
+      {$t("registerForSecretsOfFemaleIntelligence")}
+    </h1>
     <CredentialsLogin
       countriesData={data.countriesData}
       on:loginSuccess={handleLoginSuccess}

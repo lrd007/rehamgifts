@@ -1,3 +1,4 @@
+// $lib/stores/user.ts
 import { writable } from "svelte/store";
 import { auth, db } from "../client/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
@@ -13,8 +14,9 @@ auth.onAuthStateChanged((firebaseUser) => {
         const data = snapshot.data();
         userData.set({
           id: snapshot.id,
-          fullName: data.fullName,
+          name: data.name,
           email: data.email,
+          country: data.country,
           phoneNumber: data.phoneNumber,
           watchedVideos: data.watchedVideos,
         });
