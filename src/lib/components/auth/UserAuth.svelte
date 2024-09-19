@@ -8,7 +8,7 @@
   import { t } from "$lib/stores/language";
   import { userData } from "$lib/stores/user";
   import { auth } from "$lib/client/firebase";
-  import { setIsRegistering } from "$lib/stores/auth";
+  import { setIsRegistering, user } from "$lib/stores/auth";
 
   $: userName = $userData?.name.toUpperCase();
   $: isRootRoute =
@@ -24,14 +24,15 @@
       console.error($t("errorSigningOut"), error);
     }
   }
-  
+
   function handleLogin() {
     setIsRegistering(false);
     goto(`${base}/#login`);
   }
+  // $: console.log($user);
 </script>
 
-{#if $userData}
+{#if $user}
   <div class="dropdown dropdown-end">
     <div
       tabindex="0"
