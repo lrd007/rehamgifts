@@ -7,7 +7,7 @@ import {
   signOut,
   type User,
 } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, Timestamp } from "firebase/firestore";
 import type { UserData } from "../types";
 import { handleAuthError } from "./handleAuthError";
 
@@ -28,6 +28,7 @@ const createUserData = (
   country,
   phoneNumber,
   watchedVideos: [],
+  createdAt: Timestamp.now(), // Add this line
 });
 
 export const registerWithEmailAndPassword = async (
@@ -151,4 +152,3 @@ async function sendMail(email: string, name: string) {
     console.error("Error sending welcome email:", emailError);
   }
 }
-

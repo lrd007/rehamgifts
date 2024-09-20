@@ -1,13 +1,13 @@
-// lib/types/index.ts
 import type { Timestamp } from "firebase/firestore";
 
 export interface UserData {
   id: string;
-  name: string;  // Changed from fullName to name
+  name: string;
   email: string;
-  country: string;  // Added country
+  country: string;
   phoneNumber: string;
   watchedVideos: string[];
+  createdAt: Timestamp; // Added this line
 }
 
 export interface VideoComment {
@@ -40,6 +40,7 @@ export interface Video {
 export interface VideoWithId extends Video {
   id: string;
 }
+
 export interface SendPulseResponse {
   result: boolean;
   message?: string;
