@@ -186,7 +186,7 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     description: "الوصف",
     goToFreeCourse: "انتقل إلى الدورة المجانية",
     registerForSecretsOfFemaleIntelligence:
-      "سجل بياناتك هنا للدخول الى برنامج اسرار الذكاء الانثوي",
+      "سجلي بياناتك هنا للدخول الى برنامج اسرار الذكاء الانثوي",
     subject: "الموضوع",
     subjectPlaceholder: "أدخل الموضوع",
     message: "الرسالة",
