@@ -1,115 +1,140 @@
+<!-- src/lib/components/admin/UserManagement.svelte -->
 <script lang="ts">
-  import {
-    collection,
-    query,
-    limit,
-    startAfter,
-    getDocs,
-  } from "firebase/firestore";
-  import { db } from "$lib/client/firebase";
+  import { createEventDispatcher } from "svelte";
   import type { UserData } from "$lib/types";
-  import { RefreshCw } from "lucide-svelte";
-  import { getCache, setCache, clearCache } from "$lib/utils/cacheUtility";
 
-  export let users: UserData[];
-  export let onRefresh: () => Promise<void>;
+  export let userData: {
+    users: UserData[];
+    totalUsers: number;
+    currentPage: number;
+    usersPerPage: number;
+  };
 
-  let currentPage = 1;
-  let usersPerPage = 10;
-  let lastVisible: any = null;
-  let loading = false;
+  $: ({ users, totalUsers, currentPage, usersPerPage } = userData);
+  $: totalPages = Math.ceil(totalUsers / usersPerPage);
 
-  async function loadMoreUsers() {
-    loading = true;
-    const cacheKey = `users_page_${currentPage}`;
-    const cachedUsers = getCache<UserData[]>(cacheKey);
+  const dispatch = createEventDispatcher();
 
-    if (cachedUsers) {
-      users = [...users, ...cachedUsers];
-      currentPage++;
-      loading = false;
-      return;
-    }
+  function handlePageChange(newPage: number) {
+    dispatch("pageChange", newPage);
+  }
 
+  function handleUsersPerPageChange(event: Event) {
+    const newUsersPerPage = parseInt((event.target as HTMLSelectElement).value);
+    dispatch("usersPerPageChange", newUsersPerPage);
+  }
+
+  async function exportUsers() {
     try {
-      const usersCollection = collection(db, "users");
-      let q = query(usersCollection, limit(usersPerPage));
-
-      if (lastVisible) {
-        q = query(
-          usersCollection,
-          startAfter(lastVisible),
-          limit(usersPerPage)
-        );
-      }
-
-      const userSnapshot = await getDocs(q);
-      const newUsers = userSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        name: doc.data().name,
-        email: doc.data().email,
-        country: doc.data().country,
-        phoneNumber: doc.data().phoneNumber,
-        watchedVideos: doc.data().watchedVideos || [],
-      }));
-
-      setCache(cacheKey, newUsers, 5 * 60 * 1000); // Cache for 5 minutes
-
-      users = [...users, ...newUsers];
-      lastVisible = userSnapshot.docs[userSnapshot.docs.length - 1];
-      currentPage++;
+      const response = await fetch("/api/admin/users/export");
+      if (!response.ok) throw new Error("Export failed");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      a.download = "users_export.csv";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Error loading more users:", error);
-      alert("Failed to load more users. Please try again later.");
-    } finally {
-      loading = false;
+      console.error("Error exporting users:", error);
+      alert("Failed to export users. Please try again.");
     }
   }
 
-  async function refreshUsers() {
-    clearCache("users");
-    for (let i = 1; i < currentPage; i++) {
-      clearCache(`users_page_${i}`);
+  function getPaginationRange(
+    current: number,
+    total: number,
+    max: number = 10
+  ) {
+    if (total <= max) return Array.from({ length: total }, (_, i) => i + 1);
+
+    let start = Math.max(1, current - Math.floor(max / 2));
+    let end = Math.min(total, start + max - 1);
+
+    if (end - start + 1 < max) {
+      start = Math.max(1, end - max + 1);
     }
-    currentPage = 1;
-    lastVisible = null;
-    await onRefresh();
+
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   }
+
+  $: paginationRange = getPaginationRange(currentPage, totalPages);
 </script>
 
 <div>
   <div class="flex justify-between items-center mb-4">
     <h2 class="text-2xl font-bold">User Management</h2>
-    <button class="btn btn-primary" on:click={refreshUsers} disabled={loading}>
-      <RefreshCw size={20} class={loading ? "animate-spin" : ""} />
-      Refresh
+    <button class="btn btn-primary" on:click={exportUsers}>
+      Export All Users
     </button>
   </div>
-  <table class="table w-full">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Country</th>
-        <th>Phone Number</th>
-      </tr>
-    </thead>
-    <tbody>
-      {#each users as user}
+
+  <div class="mb-4">
+    <label for="usersPerPage">Users per page: </label>
+    <select
+      id="usersPerPage"
+      value={usersPerPage}
+      on:change={handleUsersPerPageChange}
+      class="select select-bordered w-full max-w-xs"
+    >
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="table w-full">
+      <thead>
         <tr>
-          <td>{user.name}</td>
-          <td>{user.email}</td>
-          <td>{user.country}</td>
-          <td>{user.phoneNumber}</td>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Country</th>
+          <th>Phone Number</th>
         </tr>
+      </thead>
+      <tbody>
+        {#each users as user (user.id)}
+          <tr>
+            <td>{user.name}</td>
+            <td>{user.email}</td>
+            <td>{user.country}</td>
+            <td>{user.phoneNumber}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex justify-center items-center mt-4">
+    <div class="join">
+      <button
+        class="join-item btn"
+        on:click={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        «
+      </button>
+      {#each paginationRange as page}
+        <button
+          class="join-item btn {page === currentPage ? 'btn-active' : ''}"
+          on:click={() => handlePageChange(page)}
+        >
+          {page}
+        </button>
       {/each}
-    </tbody>
-  </table>
-  <button
-    class="btn btn-primary mt-4"
-    on:click={loadMoreUsers}
-    disabled={loading}
-  >
-    {loading ? "Loading..." : "Load More Users"}
-  </button>
+      <button
+        class="join-item btn"
+        on:click={() => handlePageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        »
+      </button>
+    </div>
+  </div>
+  <div class="text-center mt-2">
+    Page {currentPage} of {totalPages} (Total Users: {totalUsers})
+  </div>
 </div>

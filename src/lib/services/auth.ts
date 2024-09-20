@@ -110,7 +110,7 @@ export const signInAdmin = async (
     const { user } = await signInWithEmailAndPassword(auth, email, password);
     const idToken = await user.getIdToken();
 
-    const response = await fetch("/api/admin-signin", {
+    const response = await fetch("/api/admin/signin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ idToken }),

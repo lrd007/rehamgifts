@@ -1,3 +1,4 @@
+// lib/utils/cacheUtility.ts
 const CACHE_PREFIX = "firestore_cache_";
 const DEFAULT_CACHE_TIME = 5 * 60 * 1000; // 5 minutes
 
