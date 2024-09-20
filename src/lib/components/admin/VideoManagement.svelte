@@ -59,6 +59,19 @@
     }
   }
 
+  async function toggleVideoActive(video: VideoWithId) {
+    try {
+      loading = true;
+      await updateVideo(video.id, { active: !video.active });
+      dispatch("videoChange");
+    } catch (error) {
+      console.error("Error updating video active status:", error);
+      alert("Failed to update video status. Please try again.");
+    } finally {
+      loading = false;
+    }
+  }
+
   function refreshVideos() {
     dispatch("videoChange");
   }
@@ -97,6 +110,7 @@
             <th>Description</th>
             <th>Video URL</th>
             <th>Thumbnail URL</th>
+            <th>Active</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -116,6 +130,14 @@
                   target="_blank"
                   class="link link-secondary">{video.thumbnail}</a
                 >
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={video.active}
+                  on:change={() => toggleVideoActive(video)}
+                  class="toggle toggle-primary"
+                />
               </td>
               <td>
                 {#if editingVideo?.id === video.id}

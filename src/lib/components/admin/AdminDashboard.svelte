@@ -46,10 +46,6 @@
     await loadData();
   }
 
-  function refreshPage() {
-    window.location.reload();
-  }
-
   async function handleUserPageChange(event: CustomEvent<number>) {
     userData.currentPage = event.detail;
     await loadData();
@@ -68,9 +64,6 @@
     <div class="space-x-2">
       <button class="btn btn-primary" on:click={refreshData} disabled={loading}>
         Refresh Data
-      </button>
-      <button class="btn btn-secondary" on:click={refreshPage}>
-        Refresh Page
       </button>
     </div>
   </div>

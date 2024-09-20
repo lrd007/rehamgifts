@@ -35,6 +35,7 @@ export interface Video {
   description: string;
   url: string;
   thumbnail: string;
+  active: boolean;
 }
 
 export interface VideoWithId extends Video {

@@ -28,12 +28,18 @@
     try {
       const response = await fetch("/api/admin/users/export");
       if (!response.ok) throw new Error("Export failed");
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = url;
-      a.download = "users_export.csv";
+      // Get the filename from the Content-Disposition header if available
+      const contentDisposition = response.headers.get("Content-Disposition");
+      const filenameMatch =
+        contentDisposition && contentDisposition.match(/filename="?(.+)"?/i);
+      a.download = filenameMatch ? filenameMatch[1] : "users_export.csv";
+
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
