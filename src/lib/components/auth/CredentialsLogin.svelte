@@ -27,7 +27,7 @@
     password: string;
     confirmPassword: string;
     name: string;
-    country: string;
+    country: Country | null;
     phoneNumber: string;
     selectedCountry: Country | null;
   }
@@ -46,7 +46,7 @@
     password: "",
     confirmPassword: "",
     name: "",
-    country: "",
+    country: null,
     phoneNumber: "",
     selectedCountry: null,
   });
@@ -109,7 +109,7 @@
 
     if ($isRegistering) {
       if (!$form.name.trim()) newErrors.name = $t("nameRequired");
-      if (!$form.country.trim()) newErrors.country = $t("countryRequired");
+      if (!$form.country) newErrors.country = $t("countryRequired");
 
       if (!$form.confirmPassword)
         newErrors.confirmPassword = $t("confirmPasswordRequired");
@@ -134,6 +134,13 @@
     errors.set(newErrors);
   }
 
+  function getFullPhoneNumber($form: FormData): string {
+    if ($form.selectedCountry && $form.phoneNumber) {
+      return `+${$form.selectedCountry.phoneCode}${$form.phoneNumber.replace(/^0+/, "")}`;
+    }
+    return "";
+  }
+
   async function handleAuth() {
     if (!$isFormValid) return;
     isLoading = true;
@@ -144,8 +151,8 @@
             $form.email,
             $form.password,
             $form.name,
-            $form.country,
-            formatPhoneNumber($form.phoneNumber, $form.selectedCountry!)
+            $form.country!.name,
+            getFullPhoneNumber($form)
           )
         : await signInWithCredentials($form.email, $form.password);
 
@@ -158,14 +165,6 @@
     } finally {
       isLoading = false;
     }
-  }
-
-  function formatPhoneNumber(number: string, country: Country): string {
-    const phoneNumber = parsePhoneNumberFromString(
-      number,
-      country.code as CountryCode
-    );
-    return phoneNumber ? phoneNumber.formatInternational() : number;
   }
 
   function toggleMode() {
@@ -201,7 +200,9 @@
         onCancel={() => (showForgotPassword = false)}
       />
     {:else}
-      <h2 class="card-title">{$isRegistering ? $t("register") : $t("login")}</h2>
+      <h2 class="card-title">
+        {$isRegistering ? $t("register") : $t("login")}
+      </h2>
       <form
         on:submit|preventDefault={handleAuth}
         class="form-control w-full max-w-xs"
@@ -256,13 +257,19 @@
           <label class="label" for="country">
             <span class="label-text">{$t("country")}</span>
           </label>
-          <input
+          <select
             id="country"
-            type="text"
             bind:value={$form.country}
-            placeholder={$t("countryPlaceholder")}
-            class="input input-bordered w-full max-w-xs"
-          />
+            class="select select-bordered w-full max-w-xs"
+          >
+            <option value={null} disabled selected>{$t("selectCountry")}</option
+            >
+            {#each countriesData as country}
+              <option value={country}>
+                {country.name}
+              </option>
+            {/each}
+          </select>
           {#if $errors.country}<span class="text-error text-sm mt-1"
               >{$errors.country}</span
             >{/if}
