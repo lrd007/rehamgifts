@@ -49,9 +49,11 @@ import {
   }
   
   export async function sendTemplateEmail(emailData: EmailData): Promise<unknown> {
+    // console.log("Sending email with data =====>>>", emailData);
     try {
       await initSendPulse();
       const sender = await getFirstSender();
+      // console.log("Sender =====>>>", sender);
   
       return new Promise((resolve, reject) => {
         const sendpulseEmailData = {

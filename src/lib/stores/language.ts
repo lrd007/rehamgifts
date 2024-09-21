@@ -8,9 +8,9 @@ type Language = "en" | "ar";
 function getBrowserLanguage(): Language {
   if (browser) {
     const lang = document.documentElement.lang as Language;
-    return lang === "ar" ? "ar" : "en";
+    return lang === "en" ? "en" : "ar"; // Default to "ar" if not explicitly "en"
   }
-  return "en";
+  return "ar"; // Default to "ar" for non-browser environments
 }
 
 function createLanguageStore() {
@@ -28,6 +28,9 @@ function createLanguageStore() {
       invalidateAll();
     }
   }
+
+  // Initialize the language to Arabic
+  setLanguage("ar");
 
   return {
     subscribe,

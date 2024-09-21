@@ -127,6 +127,7 @@ export const signInAdmin = async (
   }
 };
 async function sendMail(email: string, name: string) {
+  // console.log("Sending welcome email to:", { email, name });
   try {
     const welcomeEmailResponse = await fetch("/api/send-email", {
       method: "POST",
