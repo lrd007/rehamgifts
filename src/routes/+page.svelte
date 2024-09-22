@@ -3,11 +3,11 @@
   import { goto, invalidateAll } from "$app/navigation";
   import type { PageData } from "./$types";
   import { t } from "$lib/stores/language";
-  import CredentialsLogin from "$lib/components/auth/CredentialsLogin.svelte";
   import freeProgram from "$lib/assets/reham-assets/branding/free_program.jpeg";
   import { Pattern } from "$lib/components";
   import { user } from "$lib/stores/auth";
   import { base } from "$app/paths";
+  import Auth from "$lib/components/auth/Auth.svelte";
 
   export let data: PageData;
 
@@ -76,7 +76,7 @@
     <h1 class="text-3xl font-bold mt-8">
       {$t("registerForSecretsOfFemaleIntelligence")}
     </h1>
-    <CredentialsLogin
+    <Auth
       countriesData={data.countriesData}
       on:loginSuccess={handleLoginSuccess}
       bind:isLoading

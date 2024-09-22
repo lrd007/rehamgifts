@@ -13,6 +13,7 @@
   import { isRegistering, setIsRegistering } from "$lib/stores/auth";
   import LoginForm from "./LoginForm.svelte";
   import RegisterForm from "./RegisterForm.svelte";
+  import { parsePhoneNumber, isValidPhoneNumber } from "libphonenumber-js";
 
   export let countriesData: Country[];
   export let isLoading = false;
@@ -54,7 +55,7 @@
     }
   );
 
-  async function handleAuth(event: { detail: any; }) {
+  async function handleAuth(event: { detail: any }) {
     const formData = event.detail;
     if (!$isFormValid) return;
     isLoading = true;
@@ -92,10 +93,21 @@
     }
   }
 
-  function getFullPhoneNumber(formData: { selectedCountry: { phoneCode: any; }; phoneNumber: string; }) {
-    return formData.selectedCountry && formData.phoneNumber
-      ? `+${formData.selectedCountry.phoneCode}${formData.phoneNumber.replace(/^0+/, "")}`
-      : "";
+  function getFullPhoneNumber(formData: {
+    selectedCountry: { phoneCode: string };
+    phoneNumber: string;
+  }): string {
+    if (formData.selectedCountry && formData.phoneNumber) {
+      const phoneNumber = formData.phoneNumber.replace(/^0+/, ""); // Remove leading zeros
+      const fullNumber = `+${formData.selectedCountry.phoneCode}${phoneNumber}`;
+
+      if (isValidPhoneNumber(fullNumber)) {
+        return parsePhoneNumber(fullNumber).format("E.164");
+      } else {
+        throw new Error($t("invalidPhoneNumber"));
+      }
+    }
+    return "";
   }
 
   function toggleMode() {

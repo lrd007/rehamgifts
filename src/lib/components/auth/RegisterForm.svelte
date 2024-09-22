@@ -1,3 +1,4 @@
+<!-- RegisterForm.svelte -->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import PasswordInput from "./PasswordInput.svelte";

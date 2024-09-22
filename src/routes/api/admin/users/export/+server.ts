@@ -42,7 +42,7 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
     const filename = `users_export_${date}.csv`;
     setHeaders({
       "Content-Type": "text/csv",
-      "Content-Disposition": `attachment; filename="${filename}"`,
+      "Content-Disposition": `attachment; filename=${filename}`,
     });
 
     return new Response(csvContent);
