@@ -78,7 +78,7 @@ export async function getAllVideos(): Promise<VideoWithId[]> {
     querySnapshot.forEach((doc) => {
       videos.push({ id: doc.id, ...(doc.data() as Video) });
     });
-    console.log(videos);
+    
     return videos;
   } catch (error) {
     console.error("Error getting all videos:", error);
