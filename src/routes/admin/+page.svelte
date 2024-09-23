@@ -2,6 +2,7 @@
   import { invalidateAll } from "$app/navigation";
   import AdminLogin from "$lib/components/admin/AdminLogin.svelte";
   import { AdminDashboard } from "$lib/components/index.js";
+  import LanguageToggle from "$lib/components/ui/LanguageToggle.svelte";
   import { signInAdmin } from "$lib/services/auth";
 
   export let data;
@@ -25,6 +26,8 @@
     }
   }
 </script>
+
+<LanguageToggle />
 
 {#if userID && isAdmin}
   <AdminDashboard />

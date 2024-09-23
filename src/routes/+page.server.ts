@@ -11,9 +11,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
       name: info.name,
       flag: `https://flagcdn.com/w20/${code.toLowerCase()}.png`,
       phoneCode: info.phone[0],
-    })
-  );
-
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
   return {
     countriesData,
   };
