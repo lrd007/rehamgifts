@@ -9,17 +9,15 @@ import {
   doc,
   query,
   orderBy,
+  where,
 } from "firebase/firestore";
 import { db } from "./client/firebase";
 import type { Video, VideoWithId } from "./types";
 
 export async function createVideo(videoData: Video): Promise<VideoWithId> {
   try {
-    const docRef = await addDoc(collection(db, "videos"), {
-      ...videoData,
-      active: true, // Set active to true by default when creating a new video
-    });
-    return { ...videoData, id: docRef.id, active: true };
+    const docRef = await addDoc(collection(db, "videos"), videoData);
+    return { ...videoData, id: docRef.id };
   } catch (error) {
     console.error("Error creating video:", error);
     throw new Error("Failed to create video");
@@ -54,7 +52,7 @@ export async function getVideoById(id: string): Promise<VideoWithId | null> {
     const docRef = doc(db, "videos", id);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
+    if (docSnap.exists() && docSnap.data().active) {
       return { id: docSnap.id, ...(docSnap.data() as Video) };
     } else {
       console.log("No such document!");
@@ -69,14 +67,18 @@ export async function getVideoById(id: string): Promise<VideoWithId | null> {
 export async function getAllVideos(): Promise<VideoWithId[]> {
   try {
     const videosCollection = collection(db, "videos");
-    const q = query(videosCollection, orderBy("title"));
+    const q = query(
+      videosCollection,
+      where("active", "==", true),
+      orderBy("order", "asc")
+    );
     const querySnapshot = await getDocs(q);
 
     const videos: VideoWithId[] = [];
     querySnapshot.forEach((doc) => {
       videos.push({ id: doc.id, ...(doc.data() as Video) });
     });
-
+    console.log(videos);
     return videos;
   } catch (error) {
     console.error("Error getting all videos:", error);

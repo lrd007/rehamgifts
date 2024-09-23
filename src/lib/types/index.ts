@@ -1,3 +1,4 @@
+// $lib/types/index.ts
 import type { Timestamp } from "firebase/firestore";
 
 export interface UserData {
@@ -31,6 +32,7 @@ export interface Country {
 }
 
 export interface Video {
+  order: number;
   title: string;
   description: string;
   url: string;

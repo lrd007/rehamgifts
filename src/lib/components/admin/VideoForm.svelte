@@ -8,6 +8,8 @@
     description: "",
     url: "",
     thumbnail: "",
+    active: false,
+    order: 0,
   };
 
   const dispatch = createEventDispatcher();
@@ -53,6 +55,24 @@
         placeholder="Thumbnail URL"
         required
       />
+      <div class="flex items-center space-x-2">
+        <input
+          type="number"
+          class="input input-bordered w-24"
+          bind:value={video.order}
+          placeholder="Order"
+          min="0"
+          required
+        />
+        <label class="cursor-pointer label">
+          <span class="label-text mr-2">Active</span>
+          <input
+            type="checkbox"
+            class="toggle toggle-primary"
+            bind:checked={video.active}
+          />
+        </label>
+      </div>
       <div class="flex justify-end space-x-2">
         <button type="submit" class="btn btn-primary">
           {isEditing ? "Update" : "Add"} Video
