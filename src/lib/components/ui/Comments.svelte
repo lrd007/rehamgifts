@@ -1,4 +1,3 @@
-<!-- Comments.svelte -->
 <script lang="ts">
   import { onMount } from "svelte";
   import { fade, slide } from "svelte/transition";
@@ -15,6 +14,7 @@
   export let videoId: string;
 
   let comments: VideoComment[] = [];
+  let totalComments = 0;
   let newCommentContent = "";
   let isLoading = true;
   let isSubmitting = false;
@@ -28,7 +28,9 @@
     isLoading = true;
     error = "";
     try {
-      comments = await getCommentsByVideoId(videoId);
+      const result = await getCommentsByVideoId(videoId);
+      comments = result.comments;
+      totalComments = result.totalCount;
     } catch (e) {
       error = $t("fetchCommentsError");
     } finally {
@@ -73,7 +75,9 @@
 </script>
 
 <section class="max-w-2xl mx-auto p-4">
-  <h2 class="text-2xl font-bold mb-4 text-primary">{$t("comments")}</h2>
+  <h2 class="text-2xl font-bold mb-4 text-primary">
+    {$t("comments")} ({totalComments})
+  </h2>
 
   {#if $userData}
     <form on:submit|preventDefault={handleSubmit} class="mb-6">

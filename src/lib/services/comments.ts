@@ -8,7 +8,6 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
-
 import { db } from "../client/firebase";
 import type { VideoComment, VideoComments } from "../types";
 
@@ -20,7 +19,7 @@ export async function createComment(
 ): Promise<VideoComment> {
   try {
     const commentId = Date.now().toString(); // Generate a unique ID
-    const now = serverTimestamp();
+    const now = Timestamp.now(); // Use Timestamp.now() instead of serverTimestamp()
     const commentData: VideoComment = {
       id: commentId,
       userId,
@@ -34,7 +33,11 @@ export async function createComment(
     await setDoc(
       videoCommentsRef,
       {
-        [commentId]: commentData,
+        [commentId]: {
+          ...commentData,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        },
       },
       { merge: true }
     );
@@ -48,18 +51,22 @@ export async function createComment(
 
 export async function getCommentsByVideoId(
   videoId: string
-): Promise<VideoComment[]> {
+): Promise<{ comments: VideoComment[]; totalCount: number }> {
   try {
     const videoCommentsRef = doc(db, "comments", videoId);
     const docSnap = await getDoc(videoCommentsRef);
 
     if (docSnap.exists()) {
       const comments: VideoComments = docSnap.data() as VideoComments;
-      return Object.values(comments).sort(
-        (a, b) => b.createdAt.seconds - a.createdAt.seconds
+      const commentArray = Object.values(comments).sort(
+        (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
       );
+      return {
+        comments: commentArray,
+        totalCount: commentArray.length,
+      };
     } else {
-      return [];
+      return { comments: [], totalCount: 0 };
     }
   } catch (error) {
     console.error("Error getting comments for video:", error);
