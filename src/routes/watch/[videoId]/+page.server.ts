@@ -1,3 +1,4 @@
+// routes/watch/[videoId]/+page.server.ts
 import type { PageServerLoad } from './$types';
 import { getVideoById } from "$lib/videoFirebase";
 

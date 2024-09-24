@@ -7,7 +7,6 @@
 
   let activeTab = "users";
   let userData = { users: [], totalUsers: 0, currentPage: 1, usersPerPage: 20 };
-  let videosData: VideoWithId[] = [];
   let loading = true;
 
   onMount(async () => {
@@ -16,14 +15,11 @@
 
   async function loadData() {
     loading = true;
-    const [usersResponse, videosResponse] = await Promise.all([
-      fetch(
-        `/api/admin/users?page=${userData.currentPage}&limit=${userData.usersPerPage}`
-      ),
-      fetch("/api/admin/videos"),
-    ]);
+    const usersResponse = await fetch(
+      `/api/admin/users?page=${userData.currentPage}&limit=${userData.usersPerPage}`
+    );
 
-    if (usersResponse.ok && videosResponse.ok) {
+    if (usersResponse.ok) {``
       const usersJson = await usersResponse.json();
       userData = {
         users: usersJson.users,
@@ -31,9 +27,8 @@
         currentPage: userData.currentPage,
         usersPerPage: userData.usersPerPage,
       };
-      videosData = await videosResponse.json();
     } else {
-      console.error("Failed to fetch data");
+      console.error("Failed to fetch user data");
     }
     loading = false;
   }
@@ -55,6 +50,12 @@
     userData.usersPerPage = event.detail;
     userData.currentPage = 1;
     await loadData();
+  }
+
+  function handleVideoChange() {
+    // This function is called when a video is added, updated, or deleted
+    // You can add any additional logic here if needed
+    console.log("Video data changed");
   }
 </script>
 
@@ -83,7 +84,7 @@
     </button>
   </div>
 
-  {#if loading}
+  {#if loading && activeTab === "users"}
     <div class="flex justify-center items-center h-32">
       <span class="loading loading-spinner loading-lg"></span>
     </div>
@@ -94,6 +95,6 @@
       on:usersPerPageChange={handleUsersPerPageChange}
     />
   {:else if activeTab === "videos"}
-    <VideoManagement {videosData} on:videoChange={refreshData} />
+    <VideoManagement on:videoChange={handleVideoChange} />
   {/if}
 </div>
