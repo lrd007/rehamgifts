@@ -3,7 +3,6 @@
   import { onMount } from "svelte";
   import UserManagement from "./UserManagement.svelte";
   import VideoManagement from "./VideoManagement.svelte";
-  import type { VideoWithId } from "$lib/types";
 
   let activeTab = "users";
   let userData = { users: [], totalUsers: 0, currentPage: 1, usersPerPage: 20 };

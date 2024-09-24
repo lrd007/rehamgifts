@@ -28,13 +28,13 @@
   }
   function handleLoginSuccess() {
     return handleAuthAction(async () => {
-      await goto("/watch");
+      await goto("/program");
     });
   }
 </script>
 
 <div class="flex justify-center">
-  <!-- <a href="/watch" class="inline-block"> -->
+  <!-- <a href="/program" class="inline-block"> -->
   <img
     class="w-auto md:max-h-[75vh] lg:max-h-[85vh]"
     src={freeProgram}
@@ -67,7 +67,7 @@
     <span class="my-10 loading loading-spinner loading-lg"></span>
   {:else if $user}
     <a
-      href="{base}/watch"
+      href="{base}/program"
       class="btn rounded-full bg-rgHighlight hover:bg-rgHighlightHover mt-4 text-xl py-2 sm:w-1/3 text-white"
       >{$t("goToFreeCourse")}</a
     >

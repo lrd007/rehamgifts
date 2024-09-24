@@ -107,6 +107,17 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
       "For any assistance, we are at your service\n" +
       "\n" +
       "hello@reham.com\n",
+    callToActionLink: "Click here for femininity and self-love programs",
+    comments: "Comments",
+    writeAComment: "Write a comment...",
+    post: "Post",
+    signInToComment: "Please sign in to post a comment.",
+    noComments: "No comments yet. Be the first to comment!",
+    delete: "Delete",
+    fetchCommentsError: "Failed to load comments. Please try again.",
+    postCommentError: "Failed to post comment. Please try again.",
+    deleteCommentError: "Failed to delete comment. Please try again.",
+    confirmDeleteComment: "Are you sure you want to delete this comment?",
   },
   ar: {
     name: "الاسم",
@@ -213,5 +224,16 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
       "لأي مساعدة نحن في خدمتك\n" +
       "\n" +
       "hello@reham.com\n",
+    callToActionLink: "انقر هنا للحصول على برامج الأنوثة وحب الذات",
+    comments: "التعليقات",
+    writeAComment: "اكتب تعليقًا...",
+    post: "نشر",
+    signInToComment: "يرجى تسجيل الدخول لنشر تعليق.",
+    noComments: "لا توجد تعليقات حتى الآن. كن أول من يعلق!",
+    delete: "حذف",
+    fetchCommentsError: "فشل في تحميل التعليقات. يرجى المحاولة مرة أخرى.",
+    postCommentError: "فشل في نشر التعليق. يرجى المحاولة مرة أخرى.",
+    deleteCommentError: "فشل في حذف التعليق. يرجى المحاولة مرة أخرى.",
+    confirmDeleteComment: "هل أنت متأكد أنك تريد حذف هذا التعليق؟",
   },
 };

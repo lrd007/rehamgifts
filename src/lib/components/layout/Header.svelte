@@ -22,6 +22,7 @@
       <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1 text-white text-base">
           <!-- <li><a href="{base}/">{$t("home")}</a></li> -->
+          <li><a href="{base}/program">{$t("programs")}</a></li>
           <li><a href="{base}/about">{$t("about")}</a></li>
           <li><a href="{base}/contact">{$t("contact")}</a></li>
         </ul>

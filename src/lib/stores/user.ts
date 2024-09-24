@@ -18,6 +18,7 @@ auth.onAuthStateChanged((firebaseUser) => {
           email: data.email,
           country: data.country,
           phoneNumber: data.phoneNumber,
+          createdAt: data.createdAt,
           watchedVideos: data.watchedVideos,
         });
       } else {

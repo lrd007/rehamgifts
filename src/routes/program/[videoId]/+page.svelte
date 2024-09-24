@@ -1,12 +1,20 @@
-<!-- /watch/[videoId]/+page.svelte -->
+<!-- /program/[videoId]/+page.svelte -->
 <script lang="ts">
   import { t } from "$lib/stores/language";
   import type { VideoWithId } from "$lib/types";
   import { VideoPlayer, Comments } from "$lib/components";
+  import { Carta, Markdown } from "carta-md";
+  import DOMPurify from "dompurify";
 
   export let data: { video: VideoWithId };
 
+  const carta = new Carta({
+    sanitizer: DOMPurify.sanitize,
+  });
+  let value = "";
+
   $: ({ video } = data);
+  $: value = video?.description || "";
 </script>
 
 {#if !video}
@@ -28,11 +36,11 @@
     </div>
   </div>
 {:else}
-  <h1 class="text-2xl font-bold">
+  <h1 class="text-3xl font-bold">
     {video.title}
   </h1>
-  <a href="https://reham.com/" class="text-blue-500 hover:underline"
-    >Click here for femininity and self-love programs</a
+  <a href="https://reham.com/" class="text-xl text-blue-500 hover:underline"
+    >{$t("callToActionLink")}</a
   >
   <div class="mt-4">
     <VideoPlayer
@@ -43,7 +51,7 @@
   </div>
   <div id="videoDesc" class="mt-4">
     <h2 class="text-xl font-semibold mb-2">{$t("description")}</h2>
-    <p>{video.description}</p>
+    <Markdown {carta} {value} />
   </div>
 
   <Comments videoId={video.id} />

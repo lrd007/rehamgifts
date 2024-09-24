@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import { fade, slide } from "svelte/transition";
   import { userData } from "$lib/stores/user";
+  import { t } from "$lib/stores/language";
   import {
     createComment,
     getCommentsByVideoId,
@@ -29,7 +30,7 @@
     try {
       comments = await getCommentsByVideoId(videoId);
     } catch (e) {
-      error = "Failed to load comments. Please try again.";
+      error = $t("fetchCommentsError");
     } finally {
       isLoading = false;
     }
@@ -44,27 +45,27 @@
       await createComment(
         videoId,
         $userData.id,
-        $userData.fullName,
+        $userData.name,
         newCommentContent.trim()
       );
       newCommentContent = "";
       await loadComments();
     } catch (e) {
-      error = "Failed to post comment. Please try again.";
+      error = $t("postCommentError");
     } finally {
       isSubmitting = false;
     }
   }
 
   async function handleDelete(commentId: string) {
-    if (!confirm("Are you sure you want to delete this comment?")) return;
+    if (!confirm($t("confirmDeleteComment"))) return;
 
     error = "";
     try {
       await deleteComment(videoId, commentId);
       await loadComments();
     } catch (e) {
-      error = "Failed to delete comment. Please try again.";
+      error = $t("deleteCommentError");
     }
   }
 
@@ -72,14 +73,14 @@
 </script>
 
 <section class="max-w-2xl mx-auto p-4">
-  <h2 class="text-2xl font-bold mb-4 text-primary">Comments</h2>
+  <h2 class="text-2xl font-bold mb-4 text-primary">{$t("comments")}</h2>
 
   {#if $userData}
     <form on:submit|preventDefault={handleSubmit} class="mb-6">
       <div class="relative">
         <textarea
           bind:value={newCommentContent}
-          placeholder="Write a comment..."
+          placeholder={$t("writeAComment")}
           required
           class="textarea textarea-bordered w-full pr-24 resize-none"
           rows="3"
@@ -92,14 +93,14 @@
           {#if isSubmitting}
             <span class="loading loading-spinner loading-sm"></span>
           {:else}
-            Post
+            {$t("post")}
           {/if}
         </button>
       </div>
     </form>
   {:else}
     <p class="text-center text-gray-500 mb-6">
-      Please sign in to post a comment.
+      {$t("signInToComment")}
     </p>
   {/if}
 
@@ -127,7 +128,7 @@
     </div>
   {:else if comments.length === 0}
     <p class="text-center text-gray-500 py-8">
-      No comments yet. Be the first to comment!
+      {$t("noComments")}
     </p>
   {:else}
     <ul class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
@@ -148,7 +149,7 @@
                   on:click={() => handleDelete(comment.id)}
                   class="btn btn-ghost btn-xs text-error"
                 >
-                  Delete
+                  {$t("delete")}
                 </button>
               {/if}
             </div>
