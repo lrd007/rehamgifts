@@ -1,7 +1,6 @@
 <!-- VideoManagement.svelte -->
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import { getAllVideos } from "$lib/videoFirebase";
+  import { createEventDispatcher, onMount } from "svelte";
   import type { VideoWithId } from "$lib/types";
   import { RefreshCw, Plus } from "lucide-svelte";
   import VideoList from "./VideoList.svelte";
@@ -16,7 +15,11 @@
   async function loadVideos() {
     loading = true;
     try {
-      videosData = await getAllVideos();
+      const response = await fetch("/api/admin/videos");
+      if (!response.ok) {
+        throw new Error("Failed to fetch videos");
+      }
+      videosData = await response.json();
     } catch (error) {
       console.error("Error loading videos:", error);
       alert("Failed to load videos. Please try again.");
@@ -31,7 +34,9 @@
   }
 
   // Initial load
-  loadVideos();
+  onMount(async () => {
+    loadVideos();
+  });
 </script>
 
 <div>

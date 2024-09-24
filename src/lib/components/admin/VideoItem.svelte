@@ -25,7 +25,6 @@
     try {
       loading = true;
       await updateVideo(video.id, video);
-      console.log("Video updated:", video);
       dispatch("videoUpdated", video);
       editingId = null;
     } catch (error) {
@@ -52,7 +51,6 @@
   }
 
   async function toggleVideoActive() {
-    video.active = !video.active;
     await handleUpdate();
   }
 </script>

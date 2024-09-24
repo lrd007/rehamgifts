@@ -38,6 +38,7 @@ export async function updateVideo(
   id: string,
   videoData: Partial<Video>
 ): Promise<void> {
+  console.log("updating video", id, videoData);
   try {
     const docRef = doc(db, "videos", id);
     await updateDoc(docRef, videoData);
@@ -78,7 +79,7 @@ export async function getAllVideos(): Promise<VideoWithId[]> {
     querySnapshot.forEach((doc) => {
       videos.push({ id: doc.id, ...(doc.data() as Video) });
     });
-    
+
     return videos;
   } catch (error) {
     console.error("Error getting all videos:", error);
