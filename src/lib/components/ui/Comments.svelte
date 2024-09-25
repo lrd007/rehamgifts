@@ -139,10 +139,8 @@
       {#each comments as comment (comment.id)}
         <li class="card bg-base-200 shadow-xl" transition:slide|local>
           <div class="card-body py-4 px-5">
-            <p class="mb-2">{comment.content}</p>
-            <div
-              class="flex justify-between items-center text-sm text-gray-500"
-            >
+            <p class="mb-2 text-gray-500">{comment.content}</p>
+            <div class="flex justify-between items-center text-sm">
               <div>
                 <span class="font-semibold">{comment.userName}</span>
                 <span class="mx-1">•</span>
