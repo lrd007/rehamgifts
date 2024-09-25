@@ -1,13 +1,17 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { db } from "$lib/client/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { adminDB } from "$lib/server/admin";
 import type { UserData } from "$lib/types";
 
-export const GET: RequestHandler = async ({ setHeaders }) => {
+export const GET: RequestHandler = async ({ locals, setHeaders }) => {
+  // Check if the user is authenticated and an admin
+  if (!locals.userID || !locals.isAdmin) {
+    return json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    const usersCollection = collection(db, "users");
-    const userSnapshot = await getDocs(usersCollection);
+    const usersCollection = adminDB.collection("users");
+    const userSnapshot = await usersCollection.get();
 
     const users: UserData[] = userSnapshot.docs.map(
       (doc) =>
@@ -26,11 +30,11 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
       "Watched Videos",
     ];
     const csvRows = users.map((user) => [
-      user.name,
-      user.email,
-      user.country,
-      user.phoneNumber,
-      user.watchedVideos.join(";"), // Join watched videos with semicolon
+      user.name || "",
+      user.email || "",
+      user.country || "",
+      user.phoneNumber || "",
+      (user.watchedVideos || []).join(";"), // Join watched videos with semicolon
     ]);
 
     const csvContent = [
