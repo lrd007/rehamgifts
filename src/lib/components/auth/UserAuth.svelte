@@ -61,21 +61,25 @@
         </svg>
       </div>
     </div>
+    <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <ul
       tabindex="0"
       class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
     >
-      <li class="lg:hidden hover:bg-pink-100 hover:text-pink-900">
+      <li class="lg:hidden">
+        <a href="{base}/program">{$t("programs")}</a>
+      </li>
+      <li class="lg:hidden">
         <a href="{base}/about">{$t("about")}</a>
       </li>
-      <li class="lg:hidden hover:bg-pink-100 hover:text-pink-900">
+      <li class="lg:hidden">
         <a href="{base}/contact">{$t("contact")}</a>
       </li>
-      <li class="hover:bg-pink-100 hover:text-pink-900">
+      <li class="">
         <a href="{base}/profile">{$t("profile")}</a>
       </li>
-      <li class="hover:bg-pink-100 hover:text-pink-900">
-        <a on:click={handleLogout} href="javascript:void(0);">{$t("logout")}</a>
+      <li class="">
+        <button on:click={handleLogout}>{$t("logout")}</button>
       </li>
     </ul>
   </div>

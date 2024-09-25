@@ -118,6 +118,8 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     postCommentError: "Failed to post comment. Please try again.",
     deleteCommentError: "Failed to delete comment. Please try again.",
     confirmDeleteComment: "Are you sure you want to delete this comment?",
+    next: "Next",
+    previous: "Previous",
   },
   ar: {
     name: "الاسم",
@@ -235,5 +237,7 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     postCommentError: "فشل في نشر التعليق. يرجى المحاولة مرة أخرى.",
     deleteCommentError: "فشل في حذف التعليق. يرجى المحاولة مرة أخرى.",
     confirmDeleteComment: "هل أنت متأكد أنك تريد حذف هذا التعليق؟",
+    next: "التالي",
+    previous: "سابق",
   },
 };

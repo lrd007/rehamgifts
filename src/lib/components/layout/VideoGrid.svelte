@@ -1,3 +1,4 @@
+<!-- VideoGrid.svelte -->
 <script lang="ts">
   import { base } from "$app/paths";
   import { user } from "$lib/stores/auth";

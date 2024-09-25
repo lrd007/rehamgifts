@@ -1,3 +1,4 @@
+// /program/+page.server.ts
 import type { PageServerLoad } from "./$types";
 import type { VideoWithId } from "$lib/types";
 
