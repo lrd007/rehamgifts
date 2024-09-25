@@ -11,8 +11,7 @@
   import { setIsRegistering, user } from "$lib/stores/auth";
 
   $: userName = $userData?.name.toUpperCase();
-  $: isRootRoute =
-    $page.url.pathname === base || $page.url.pathname === `${base}/`;
+  $: console.log($userData);
 
   async function handleLogout() {
     try {

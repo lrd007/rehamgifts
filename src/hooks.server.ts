@@ -1,3 +1,4 @@
+// hooks.server.ts
 import { adminAuth, isUserAdmin } from "$lib/server/admin";
 import type { Handle } from "@sveltejs/kit";
 
