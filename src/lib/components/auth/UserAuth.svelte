@@ -11,7 +11,6 @@
   import { setIsRegistering, user } from "$lib/stores/auth";
 
   $: userName = $userData?.name.toUpperCase();
-  $: console.log($userData);
 
   async function handleLogout() {
     try {
