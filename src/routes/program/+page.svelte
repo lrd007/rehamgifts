@@ -4,4 +4,4 @@
   export let data;
 </script>
 
-<VideoGrid {data} />
+<VideoGrid videos={data.videos} />

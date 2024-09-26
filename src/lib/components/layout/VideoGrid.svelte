@@ -1,32 +1,48 @@
-<!-- VideoGrid.svelte -->
 <script lang="ts">
   import { base } from "$app/paths";
   import { user } from "$lib/stores/auth";
   import type { VideoWithId } from "$lib/types";
   import { t } from "$lib/stores/language";
+  import { fade } from "svelte/transition";
 
-  export let data: { videos: VideoWithId[] };
-  $: videos = data.videos;
+  export let videos: VideoWithId[];
 </script>
 
 {#if videos.length === 0}
-  <div class="text-xl whitespace-pre-line">{$t("noVideosMessage")}</div>
+  <div class="alert alert-info" transition:fade>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      class="stroke-current shrink-0 w-6 h-6"
+      ><path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      ></path></svg
+    >
+    <span>{$t("noVideosMessage")}</span>
+  </div>
 {:else}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+  <div class="flex flex-wrap justify-center gap-6">
     {#each videos as video (video.id)}
-      <div class="card bg-base-100 shadow-xl overflow-hidden max-w-96 mx-auto">
-        <figure class="relative">
+      <div
+        class="card w-96 bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300"
+        transition:fade
+      >
+        <figure class="relative h-60">
           {#if !$user}
             <div
-              class="absolute inset-0 flex items-center justify-center text-white font-bold bg-black bg-opacity-70"
+              class="absolute inset-0 flex items-center justify-center bg-base-300 bg-opacity-75 z-10"
             >
-              <span>{$t("signInToWatch")}</span>
+              <span class="badge badge-lg">{$t("signInToWatch")}</span>
             </div>
           {/if}
 
           <a
             href={$user ? `${base}/program/${video.id}` : "#"}
-            class="block"
+            class="block w-full h-full"
             class:pointer-events-none={!$user}
             class:cursor-not-allowed={!$user}
           >
@@ -34,11 +50,11 @@
               <img
                 src={video.thumbnail}
                 alt={video.title || $t("videoThumbnail")}
+                class="w-full h-full object-cover"
+                loading="lazy"
               />
             {:else}
-              <div class="h-56 bg-base-300 flex items-center justify-center">
-                <span>{$t("thumbnailLoading")}</span>
-              </div>
+              <div class="skeleton w-full h-full"></div>
             {/if}
           </a>
         </figure>

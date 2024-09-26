@@ -120,6 +120,7 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     confirmDeleteComment: "Are you sure you want to delete this comment?",
     next: "Next",
     previous: "Previous",
+    continueWatching: "Continue watching",
   },
   ar: {
     name: "الاسم",
@@ -239,5 +240,6 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     confirmDeleteComment: "هل أنت متأكد أنك تريد حذف هذا التعليق؟",
     next: "التالي",
     previous: "سابق",
+    continueWatching: "تابع المشاهدة",
   },
 };

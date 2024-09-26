@@ -8,6 +8,7 @@
   import { user } from "$lib/stores/auth";
   import { base } from "$app/paths";
   import Auth from "$lib/components/auth/Auth.svelte";
+  import VideoGrid from "$lib/components/layout/VideoGrid.svelte";
 
   export let data: PageData;
 
@@ -33,14 +34,14 @@
   }
 </script>
 
-<div class="flex justify-center">
-  <!-- <a href="/program" class="inline-block"> -->
-  <img
-    class="w-auto md:max-h-[75vh] lg:max-h-[85vh]"
-    src={freeProgram}
-    alt="Free Program"
-  />
-  <!-- </a> -->
+<div class="flex justify-center mb-20">
+  <a href="/program" class="inline-block">
+    <img
+      class="w-auto md:max-h-[75vh] lg:max-h-[85vh]"
+      src={freeProgram}
+      alt="Free Program"
+    />
+  </a>
 </div>
 <div class="flex flex-col items-center justify-center mx-auto">
   {#if error}
@@ -66,13 +67,9 @@
   {#if isLoading}
     <span class="my-10 loading loading-spinner loading-lg"></span>
   {:else if $user}
-    <a
-      href="{base}/program"
-      class="btn rounded-full bg-rgHighlight hover:bg-rgHighlightHover mt-4 text-xl py-2 sm:w-1/3 text-white"
-      >{$t("goToFreeCourse")}</a
-    >
+    <h1 class="text-3xl font-bold my-8">{$t("continueWatching")}</h1>
+    <VideoGrid videos={data.videos} />
   {:else}
-    <!-- <EmailTestButton /> -->
     <h1 class="text-3xl font-bold mt-8">
       {$t("registerForSecretsOfFemaleIntelligence")}
     </h1>
