@@ -49,7 +49,7 @@
         );
       } else {
         return (
-          $form.email && $form.password && !$errors.email && !$errors.password
+          $form.email && $form.password && Object.keys($errors).length === 0
         );
       }
     }
@@ -98,7 +98,7 @@
     phoneNumber: string;
   }): string {
     if (formData.selectedCountry && formData.phoneNumber) {
-      const phoneNumber = formData.phoneNumber.replace(/^0+/, ""); // Remove leading zeros
+      const phoneNumber = formData.phoneNumber.replace(/^0+/, "");
       const fullNumber = `+${formData.selectedCountry.phoneCode}${phoneNumber}`;
 
       if (isValidPhoneNumber(fullNumber)) {
@@ -113,6 +113,15 @@
   function toggleMode() {
     setIsRegistering(!$isRegistering);
     errors.set({});
+    form.set({
+      email: "",
+      password: "",
+      confirmPassword: "",
+      name: "",
+      country: null,
+      phoneNumber: "",
+      selectedCountry: null,
+    });
   }
 
   async function handleForgotPassword(email: string) {

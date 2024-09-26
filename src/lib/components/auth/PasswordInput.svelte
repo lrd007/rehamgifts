@@ -1,5 +1,6 @@
+<!-- PasswordInput.svelte -->
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount } from "svelte";
 
   export let id: string;
   export let value: string;

@@ -14,48 +14,75 @@
 
   function handleSubmit() {
     attemptedSubmit = true;
+    validateForm();
     if ($isFormValid) {
       dispatch("submit", $form);
+    }
+  }
+
+  function validateForm() {
+    $errors = {};
+
+    if (!$form.email) {
+      $errors.email = $t("emailRequired");
+    } else if (!/\S+@\S+\.\S+/.test($form.email)) {
+      $errors.email = $t("invalidEmail");
+    }
+
+    if (!$form.password) {
+      $errors.password = $t("passwordRequired");
+    }
+  }
+
+  $: {
+    if (attemptedSubmit) {
+      validateForm();
     }
   }
 </script>
 
 <form
   on:submit|preventDefault={handleSubmit}
-  class="form-control w-full max-w-xs"
+  class="form-control w-full max-w-xs space-y-4"
 >
-  <label class="label" for="email">
-    <span class="label-text">{$t("email")}</span>
-  </label>
-  <input
-    id="email"
-    type="email"
-    bind:value={$form.email}
-    placeholder={$t("emailPlaceholder")}
-    class="input input-bordered w-full max-w-xs"
-  />
-  {#if attemptedSubmit && $errors.email}<span class="text-error text-sm mt-1"
-      >{$errors.email}</span
-    >{/if}
+  <div>
+    <label for="email" class="label">
+      <span class="label-text">{$t("email")}</span>
+    </label>
+    <input
+      id="email"
+      type="email"
+      bind:value={$form.email}
+      placeholder={$t("emailPlaceholder")}
+      class="input input-bordered w-full"
+      required
+    />
+    {#if $errors.email}<span class="text-error text-sm mt-1"
+        >{$errors.email}</span
+      >{/if}
+  </div>
 
   <PasswordInput
     id="password"
     bind:value={$form.password}
-    error={attemptedSubmit ? $errors.password : null}
+    error={$errors.password}
     placeholder={$t("enterPassword")}
-    minlength={8}
+    required
   >
     {$t("password")}
   </PasswordInput>
 
-  <button type="submit" class="btn btn-primary mt-4" disabled={isLoading}>
+  <button type="submit" class="btn btn-primary w-full" disabled={isLoading}>
     {#if isLoading}
       <span class="loading loading-spinner loading-sm"></span>
     {/if}
     {$t("login")}
   </button>
-</form>
 
-<button on:click={() => dispatch("forgotPassword")} class="btn btn-link mt-2">
-  {$t("forgotPassword")}
-</button>
+  <button
+    on:click={() => dispatch("forgotPassword")}
+    class="btn btn-link w-full"
+  >
+    {$t("forgotPassword")}
+  </button>
+</form>
