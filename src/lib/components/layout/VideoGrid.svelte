@@ -6,6 +6,9 @@
   import { fade } from "svelte/transition";
 
   export let videos: VideoWithId[];
+
+  // Sort videos based on the 'order' field
+  $: sortedVideos = [...videos].sort((a, b) => a.order - b.order);
 </script>
 
 {#if videos.length === 0}
@@ -26,7 +29,7 @@
   </div>
 {:else}
   <div class="flex flex-wrap justify-center gap-6">
-    {#each videos as video (video.id)}
+    {#each sortedVideos as video (video.id)}
       <div
         class="card w-96 bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300"
         transition:fade

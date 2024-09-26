@@ -1,3 +1,4 @@
+// /+layout.server.ts
 import { countries } from "countries-list";
 import type { LayoutServerLoad } from "./$types";
 import type { Country, VideoWithId } from "$lib/types";
