@@ -8,20 +8,40 @@
     getCommentsByVideoId,
     deleteComment,
   } from "$lib/services/comments";
-  import type { VideoComment } from "$lib/types";
+  import type { VideoComment, SerializedVideoComment } from "$lib/types";
+  import { page } from "$app/stores";
   import { Timestamp } from "firebase/firestore";
+  import { invalidate } from "$app/navigation";
 
-  export let videoId: string;
+  export let data: { comments: SerializedVideoComment[]; videoId: string };
 
-  let comments: VideoComment[] = [];
-  let totalComments = 0;
+  let comments = data.comments;
+  let videoId = data.videoId;
+  $: totalComments = comments.length;
   let newCommentContent = "";
-  let isLoading = true;
+  let isLoading = false;
   let isSubmitting = false;
   let error = "";
 
-  function formatDate(timestamp: Timestamp): string {
-    return timestamp.toDate().toLocaleString();
+  $: if ($page.params.videoId !== videoId) {
+    videoId = $page.params.videoId;
+    loadComments();
+  }
+
+  function formatDate(date: string | Timestamp): string {
+    if (typeof date === "string") {
+      return new Date(date).toLocaleString();
+    } else {
+      return date.toDate().toLocaleString();
+    }
+  }
+
+  function serializeComment(comment: VideoComment): SerializedVideoComment {
+    return {
+      ...comment,
+      createdAt: comment.createdAt.toDate().toISOString(),
+      updatedAt: comment.updatedAt.toDate().toISOString(),
+    };
   }
 
   async function loadComments() {
@@ -29,8 +49,8 @@
     error = "";
     try {
       const result = await getCommentsByVideoId(videoId);
-      comments = result.comments;
-      totalComments = result.totalCount;
+      comments = result.comments.map(serializeComment);
+      await invalidate(`/program/${videoId}`);
     } catch (e) {
       error = $t("fetchCommentsError");
     } finally {
@@ -71,7 +91,11 @@
     }
   }
 
-  onMount(loadComments);
+  onMount(() => {
+    if (comments.length === 0) {
+      loadComments();
+    }
+  });
 </script>
 
 <section class="max-w-2xl mx-auto p-4">

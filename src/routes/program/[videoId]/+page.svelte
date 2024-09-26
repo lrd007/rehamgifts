@@ -1,14 +1,21 @@
 <script lang="ts">
   import { t } from "$lib/stores/language";
-  import type { VideoWithId } from "$lib/types";
+  import type {
+    SerializedVideoComment,
+    VideoComment,
+    VideoWithId,
+  } from "$lib/types";
   import { VideoPlayer, Comments } from "$lib/components";
   import { Carta, Markdown } from "carta-md";
   import DOMPurify from "dompurify";
   import { base } from "$app/paths";
   import { goto, invalidate } from "$app/navigation";
   import { page } from "$app/stores";
+  import { Timestamp } from "firebase/firestore";
 
   export let data: {
+    comments: VideoComment[];
+    videoId: string;
     video: VideoWithId;
     previousVideoId: string | null;
     nextVideoId: string | null;
@@ -18,6 +25,32 @@
   const carta = new Carta({
     sanitizer: DOMPurify.sanitize,
   });
+  
+  function serializeComment(
+    comment: VideoComment | SerializedVideoComment
+  ): SerializedVideoComment {
+    return {
+      ...comment,
+      createdAt: serializeDate(comment.createdAt),
+      updatedAt: serializeDate(comment.updatedAt),
+    };
+  }
+
+  function serializeDate(date: Timestamp | string | Date): string {
+    if (date instanceof Timestamp) {
+      return date.toDate().toISOString();
+    } else if (date instanceof Date) {
+      return date.toISOString();
+    } else if (typeof date === "string") {
+      // Check if it's already an ISO string
+      return isNaN(Date.parse(date)) ? date : new Date(date).toISOString();
+    } else {
+      console.error("Unexpected date format:", date);
+      return new Date().toISOString(); // Fallback to current date
+    }
+  }
+
+  $: serializedComments = data.comments.map(serializeComment);
 
   $: ({ video, previousVideoId, nextVideoId, allVideos } = data);
   $: value = video?.description ?? "";
@@ -84,13 +117,13 @@
               d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
             />
           </svg>
-          {$t("previous")}
+          {$t("previousChapter")}
         </button>
         <button
           on:click={() => navigateToVideo(nextVideoId)}
           class="btn btn-primary {!nextVideoId ? 'btn-disabled' : ''}"
         >
-          {$t("next")}
+          {$t("nextChapter")}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6 ml-2"
@@ -113,7 +146,6 @@
       <h2 class="font-semibold mb-2">{$t("description")}</h2>
       <Markdown {carta} {value} />
     </div>
-
-    <Comments videoId={video.id} />
+    <Comments data={{ comments: serializedComments, videoId: data.videoId }} />
   {/if}
 {/key}

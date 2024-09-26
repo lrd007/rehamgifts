@@ -19,6 +19,14 @@ export interface VideoComment {
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
+export interface SerializedVideoComment {
+  id: string;
+  userId: string;
+  userName: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface VideoComments {
   [commentId: string]: VideoComment;
