@@ -1,34 +1,52 @@
-<!-- VideoPlayer.svelte -->
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
 
   export let videoUrl: string;
-  export let thumbnail;
-  export let title;
-  // let player;
+  export let title: string;
+
+  const dispatch = createEventDispatcher<{
+    videoEnded: void;
+  }>();
+
+  let iframe: HTMLIFrameElement;
+
+  $: embedUrl = getEmbedUrl(videoUrl);
+
+  function getEmbedUrl(url: string): string {
+    const videoId = url.split("/").pop();
+    return `https://odysee.com/$/embed/${videoId}`;
+  }
 
   onMount(() => {
-    const script = document.createElement("script");
-    script.src = "https://player.vimeo.com/api/player.js";
-    script.async = true;
-    document.body.appendChild(script);
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== "https://odysee.com") return;
 
-    // script.onload = () => {
-    //   player = new Vimeo.Player(document.querySelector('iframe'));
-    // };
+      try {
+        const data = JSON.parse(event.data);
+        if (data.event === "ended") {
+          dispatch("videoEnded");
+        }
+      } catch (error) {
+        console.error("Error parsing message:", error);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
 
     return () => {
-      document.body.removeChild(script);
+      window.removeEventListener("message", handleMessage);
     };
   });
 </script>
 
 <div class="relative w-full pt-[56.25%] rounded-xl overflow-hidden">
   <iframe
-    src={videoUrl}
+    bind:this={iframe}
+    src={embedUrl}
     class="absolute top-0 left-0 w-full h-full rounded-lg"
     frameborder="0"
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+    allow="autoplay; fullscreen"
+    allowfullscreen
     {title}
   ></iframe>
 </div>

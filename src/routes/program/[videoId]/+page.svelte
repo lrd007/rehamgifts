@@ -1,58 +1,29 @@
 <script lang="ts">
   import { t } from "$lib/stores/language";
-  import type {
-    SerializedVideoComment,
-    VideoComment,
-    VideoWithId,
-  } from "$lib/types";
+  import type { SerializedVideoComment, VideoWithId } from "$lib/types";
   import { VideoPlayer, Comments } from "$lib/components";
   import { Carta, Markdown } from "carta-md";
   import DOMPurify from "dompurify";
   import { base } from "$app/paths";
   import { goto, invalidate } from "$app/navigation";
   import { page } from "$app/stores";
-  import { Timestamp } from "firebase/firestore";
 
-  export let data: {
-    comments: VideoComment[];
+  interface PageData {
+    comments: SerializedVideoComment[];
     videoId: string;
     video: VideoWithId;
     previousVideoId: string | null;
     nextVideoId: string | null;
     allVideos: VideoWithId[];
-  };
+  }
+
+  export let data: PageData;
 
   const carta = new Carta({
     sanitizer: DOMPurify.sanitize,
   });
-  
-  function serializeComment(
-    comment: VideoComment | SerializedVideoComment
-  ): SerializedVideoComment {
-    return {
-      ...comment,
-      createdAt: serializeDate(comment.createdAt),
-      updatedAt: serializeDate(comment.updatedAt),
-    };
-  }
 
-  function serializeDate(date: Timestamp | string | Date): string {
-    if (date instanceof Timestamp) {
-      return date.toDate().toISOString();
-    } else if (date instanceof Date) {
-      return date.toISOString();
-    } else if (typeof date === "string") {
-      // Check if it's already an ISO string
-      return isNaN(Date.parse(date)) ? date : new Date(date).toISOString();
-    } else {
-      console.error("Unexpected date format:", date);
-      return new Date().toISOString(); // Fallback to current date
-    }
-  }
-
-  $: serializedComments = data.comments.map(serializeComment);
-
-  $: ({ video, previousVideoId, nextVideoId, allVideos } = data);
+  $: ({ video, previousVideoId, nextVideoId, allVideos, comments } = data);
   $: value = video?.description ?? "";
 
   async function navigateToVideo(videoId: string | null) {
@@ -94,7 +65,6 @@
     <div class="mt-4">
       <VideoPlayer
         videoUrl={video.url}
-        thumbnail={video.thumbnail}
         title={video.title}
       />
 
@@ -146,6 +116,6 @@
       <h2 class="font-semibold mb-2">{$t("description")}</h2>
       <Markdown {carta} {value} />
     </div>
-    <Comments data={{ comments: serializedComments, videoId: data.videoId }} />
+    <Comments data={{ comments, videoId: data.videoId }} />
   {/if}
 {/key}

@@ -1,4 +1,3 @@
-// $lib/services/comments.ts
 import {
   doc,
   getDoc,
@@ -18,26 +17,22 @@ export async function createComment(
   content: string
 ): Promise<VideoComment> {
   try {
-    const commentId = Date.now().toString(); // Generate a unique ID
-    const now = Timestamp.now(); // Use Timestamp.now() instead of serverTimestamp()
+    const commentId = Date.now().toString();
+    const now = serverTimestamp();
     const commentData: VideoComment = {
       id: commentId,
       userId,
       userName,
       content,
-      createdAt: now,
-      updatedAt: now,
+      createdAt: now as Timestamp,
+      updatedAt: now as Timestamp,
     };
 
     const videoCommentsRef = doc(db, "comments", videoId);
     await setDoc(
       videoCommentsRef,
       {
-        [commentId]: {
-          ...commentData,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        },
+        [commentId]: commentData,
       },
       { merge: true }
     );

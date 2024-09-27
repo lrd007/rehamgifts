@@ -28,7 +28,7 @@
         </ul>
       </div>
       <div class="navbar-end flex gap-2 md:gap-4">
-        <AnimatedButton buttonText={$t("programs")} link="https://reham.com/" />
+        <!-- <AnimatedButton buttonText={$t("programs")} link="https://reham.com/" /> -->
         <LanguageToggle />
         <UserAuth />
       </div>
