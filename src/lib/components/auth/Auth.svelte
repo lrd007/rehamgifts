@@ -61,7 +61,7 @@
     isLoading = true;
 
     try {
-      const user = $isRegistering
+      const userResult = $isRegistering
         ? await registerWithEmailAndPassword(
             formData.email,
             formData.password,
@@ -82,12 +82,22 @@
       );
       dispatch("loginSuccess");
     } catch (error: any) {
-      toast.push(error.message, {
+      let errorMessage = error.message;
+
+      // For registration errors related to the transaction
+      if ($isRegistering && error.message.includes("transaction")) {
+        errorMessage = $t("registrationFailed");
+      }
+
+      toast.push(errorMessage, {
         theme: {
           "--toastBackground": "#F56565",
           "--toastBarBackground": "#C53030",
         },
       });
+
+      // Clear the password fields on error
+      form.update((f) => ({ ...f, password: "", confirmPassword: "" }));
     } finally {
       isLoading = false;
     }

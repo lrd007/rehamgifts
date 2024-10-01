@@ -6,8 +6,9 @@ import {
   sendPasswordResetEmail,
   signOut,
   type User,
+  deleteUser,
 } from "firebase/auth";
-import { setDoc, doc, Timestamp } from "firebase/firestore";
+import { setDoc, doc, Timestamp, runTransaction } from "firebase/firestore";
 import type { UserData } from "../types";
 import { handleAuthError } from "./handleAuthError";
 
@@ -28,7 +29,7 @@ const createUserData = (
   country,
   phoneNumber,
   watchedVideos: [],
-  createdAt: Timestamp.now(), // Add this line
+  createdAt: Timestamp.now(),
 });
 
 export const registerWithEmailAndPassword = async (
@@ -38,20 +39,43 @@ export const registerWithEmailAndPassword = async (
   country: string,
   phoneNumber: string
 ): Promise<User> => {
+  let user: User | null = null;
+
   try {
-    const { user } = await createUserWithEmailAndPassword(
+    // Step 1: Create the user in Firebase Authentication
+    const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
-    const userData = createUserData(user, name, country, phoneNumber);
-    await setDoc(doc(db, "users", user.uid), userData);
+    user = userCredential.user;
+
+    // Step 2: Create user data in Firestore using a transaction
+    await runTransaction(db, async (transaction) => {
+      const userDocRef = doc(db, "users", user!.uid);
+      const userData = createUserData(user!, name, country, phoneNumber);
+      transaction.set(userDocRef, userData);
+    });
+
+    // Step 3: Send ID token to server
     await sendIdTokenToServer(user);
 
+    // Step 4: Send welcome email
     await sendMail(email, name);
 
     return user;
   } catch (error) {
+    // If any step fails, clean up and throw an error
+    if (user) {
+      try {
+        await deleteUser(user);
+      } catch (deleteError) {
+        console.error(
+          "Error deleting user after failed registration:",
+          deleteError
+        );
+      }
+    }
     throw new Error(handleAuthError(error as AuthError));
   }
 };

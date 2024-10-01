@@ -1,3 +1,4 @@
+// $lib/stores/auth.ts
 import { writable } from "svelte/store";
 import { auth } from "../client/firebase";
 import type { User } from "firebase/auth";
