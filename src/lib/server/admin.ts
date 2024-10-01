@@ -21,6 +21,6 @@ try {
 export const adminDB = getFirestore();
 export const adminAuth = getAuth();
 export async function isUserAdmin(uid: string): Promise<boolean> {
-  const adminDoc = await adminDB.collection('admins').doc(uid).get();
+  const adminDoc = await adminDB.collection("admins").doc(uid).get();
   return adminDoc.exists;
 }
