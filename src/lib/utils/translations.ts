@@ -121,6 +121,9 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     nextChapter: "Next Chapter",
     previousChapter: "Previous Chapter",
     continueWatching: "Continue watching",
+    confirmEmail: "Confirm Email",
+    confirmEmailPlaceholder: "Enter email again",
+    emailsMismatched: "Emails do not match",
   },
   ar: {
     name: "الاسم",
@@ -241,5 +244,8 @@ export const translations: Record<"en" | "ar", TranslationSet> = {
     nextChapter: "الفصل التالي",
     previousChapter: "الفصل السابق",
     continueWatching: "تابع المشاهدة",
+    confirmEmail: ".تأكيد عنوان البريد الإلكتروني",
+    confirmEmailPlaceholder: "أدخل البريد الإلكتروني مرة أخرى",
+    emailsMismatched: "رسائل البريد الإلكتروني لا تتطابق",
   },
 };

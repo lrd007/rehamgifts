@@ -30,6 +30,12 @@
       $errors.email = $t("invalidEmail");
     }
 
+    if (!$form.confirmEmail) {
+      $errors.confirmEmail = $t("confirmEmailRequired");
+    } else if ($form.email !== $form.confirmEmail) {
+      $errors.confirmEmail = $t("emailsMismatched");
+    }
+
     if (!$form.password) {
       $errors.password = $t("passwordRequired");
     } else if ($form.password.length < 8) {
@@ -66,7 +72,7 @@
   on:submit|preventDefault={handleSubmit}
   class="form-control w-full max-w-xs space-y-4"
 >
-  <div>
+  <div class="form-control">
     <label for="email" class="label">
       <span class="label-text">{$t("email")}</span>
     </label>
@@ -75,12 +81,35 @@
       type="email"
       bind:value={$form.email}
       placeholder={$t("emailPlaceholder")}
-      class="input input-bordered w-full"
+      class="input input-bordered w-full {$errors.email ? 'input-error' : ''}"
       required
     />
-    {#if $errors.email}<span class="text-error text-sm mt-1"
-        >{$errors.email}</span
-      >{/if}
+    {#if $errors.email}
+      <label class="label">
+        <span class="label-text-alt text-error">{$errors.email}</span>
+      </label>
+    {/if}
+  </div>
+
+  <div class="form-control">
+    <label for="confirmEmail" class="label">
+      <span class="label-text">{$t("confirmEmail")}</span>
+    </label>
+    <input
+      id="confirmEmail"
+      type="email"
+      bind:value={$form.confirmEmail}
+      placeholder={$t("confirmEmailPlaceholder")}
+      class="input input-bordered w-full {$errors.confirmEmail
+        ? 'input-error'
+        : ''}"
+      required
+    />
+    {#if $errors.confirmEmail}
+      <label class="label">
+        <span class="label-text-alt text-error">{$errors.confirmEmail}</span>
+      </label>
+    {/if}
   </div>
 
   <PasswordInput
@@ -103,7 +132,7 @@
     {$t("confirmPassword")}
   </PasswordInput>
 
-  <div>
+  <div class="form-control">
     <label for="name" class="label">
       <span class="label-text">{$t("name")}</span>
     </label>
@@ -112,21 +141,26 @@
       type="text"
       bind:value={$form.name}
       placeholder={$t("namePlaceholder")}
-      class="input input-bordered w-full"
+      class="input input-bordered w-full {$errors.name ? 'input-error' : ''}"
       required
     />
-    {#if $errors.name}<span class="text-error text-sm mt-1">{$errors.name}</span
-      >{/if}
+    {#if $errors.name}
+      <label class="label">
+        <span class="label-text-alt text-error">{$errors.name}</span>
+      </label>
+    {/if}
   </div>
 
-  <div>
+  <div class="form-control">
     <label for="country" class="label">
       <span class="label-text">{$t("country")}</span>
     </label>
     <select
       id="country"
       bind:value={$form.country}
-      class="select select-bordered w-full"
+      class="select select-bordered w-full {$errors.country
+        ? 'select-error'
+        : ''}"
       required
     >
       <option value={null} disabled selected>{$t("selectCountry")}</option>
@@ -136,19 +170,23 @@
         </option>
       {/each}
     </select>
-    {#if $errors.country}<span class="text-error text-sm mt-1"
-        >{$errors.country}</span
-      >{/if}
+    {#if $errors.country}
+      <label class="label">
+        <span class="label-text-alt text-error">{$errors.country}</span>
+      </label>
+    {/if}
   </div>
 
-  <div>
+  <div class="form-control">
     <label for="phone" class="label">
       <span class="label-text">{$t("phoneNumber")}</span>
     </label>
     <div class="flex items-center space-x-2">
       <select
         id="country-select"
-        class="select select-bordered w-1/3"
+        class="select select-bordered w-1/3 {$errors.phoneNumber
+          ? 'select-error'
+          : ''}"
         bind:value={$form.selectedCountry}
         required
       >
@@ -164,13 +202,17 @@
         type="tel"
         bind:value={$form.phoneNumber}
         placeholder={$t("phoneNumberPlaceholder")}
-        class="input input-bordered flex-1"
+        class="input input-bordered flex-1 {$errors.phoneNumber
+          ? 'input-error'
+          : ''}"
         required
       />
     </div>
-    {#if $errors.phoneNumber}<span class="text-error text-sm mt-1"
-        >{$errors.phoneNumber}</span
-      >{/if}
+    {#if $errors.phoneNumber}
+      <label class="label">
+        <span class="label-text-alt text-error">{$errors.phoneNumber}</span>
+      </label>
+    {/if}
   </div>
 
   <button type="submit" class="btn btn-primary w-full" disabled={isLoading}>

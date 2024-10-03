@@ -22,6 +22,7 @@
 
   const form = writable({
     email: "",
+    confirmEmail: "",
     password: "",
     confirmPassword: "",
     name: "",
@@ -131,6 +132,7 @@
       country: null,
       phoneNumber: "",
       selectedCountry: null,
+      confirmEmail: ""
     });
   }
 
